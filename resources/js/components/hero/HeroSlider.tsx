@@ -5,9 +5,9 @@ import { HeroSlide } from './HeroSlide';
 import { useHeroSlider } from './useHeroSlider';
 
 export function HeroSlider() {
-    const { index, next, prev } = useHeroSlider({
+    const { index, progress, next, prev } = useHeroSlider({
         length: heroSlides.length,
-        interval: 3000,
+        interval: 8192,
     });
 
     const activeSlide = heroSlides[index];
@@ -16,20 +16,26 @@ export function HeroSlider() {
         <section className="relative w-full overflow-hidden">
             <HeroSlide slide={activeSlide} />
 
+            {/* Progress Bar */}
+            <div className="absolute bottom-0 left-0 z-20 h-1 w-full bg-black/30">
+                <div
+                    className="h-full bg-red-600 transition-none"
+                    style={{ width: `${progress}%` }}
+                />
+            </div>
+
             {/* Controls */}
-            <div className="absolute right-6 bottom-6 z-20 flex gap-3">
+            <div className="absolute right-6 bottom-6 z-30 flex gap-3">
                 <button
                     onClick={prev}
-                    aria-label="Previous slide"
-                    className="flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition hover:bg-black/80"
+                    className="flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md hover:bg-black/80"
                 >
                     <ChevronLeft size={22} />
                 </button>
 
                 <button
                     onClick={next}
-                    aria-label="Next slide"
-                    className="flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition hover:bg-black/80"
+                    className="flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md hover:bg-black/80"
                 >
                     <ChevronRight size={22} />
                 </button>
