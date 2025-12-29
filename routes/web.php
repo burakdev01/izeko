@@ -2,11 +2,14 @@
 
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Laravel\Fortify\Features;
 
 Route::get('/', function () {
-    return "hey";
+    return "abo";
 })->name('home');
+
+Route::get('/deneme', function () {
+    return Inertia::render('deneme');
+})->name('examples.deneme');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
