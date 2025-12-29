@@ -6,6 +6,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import TopBar from './components/contact-header';
 import { Navbar } from './components/navbar/Navbar';
+import { SectionHeader } from './components/section-header/SectionHeader';
 import { initializeTheme } from './hooks/use-appearance';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
@@ -25,6 +26,14 @@ createInertiaApp({
                 <TopBar />
                 <Navbar />
                 <App {...props} />
+                <SectionHeader
+                    data={{
+                        eyebrow: 'İZMİR KOMİSYONCULAR ODASI HABERLERİ',
+                        title: 'Haberler',
+                        buttonLabel: 'Tüm Haberler',
+                        buttonHref: '/haberler',
+                    }}
+                />
             </StrictMode>,
         );
     },
