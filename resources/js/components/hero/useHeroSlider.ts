@@ -1,3 +1,4 @@
+// components/hero/useHeroSlider.ts
 import { useEffect, useState } from 'react';
 
 interface Options {
@@ -8,15 +9,24 @@ interface Options {
 export function useHeroSlider({ length, interval = 3000 }: Options) {
     const [index, setIndex] = useState(0);
 
+    const next = () => {
+        setIndex((prev) => (prev + 1) % length);
+    };
+
+    const prev = () => {
+        setIndex((prev) => (prev - 1 + length) % length);
+    };
+
     useEffect(() => {
         if (length <= 1) return;
 
-        const timer = setInterval(() => {
-            setIndex((prev) => (prev + 1) % length);
-        }, interval);
-
+        const timer = setInterval(next, interval);
         return () => clearInterval(timer);
     }, [length, interval]);
 
-    return index;
+    return {
+        index,
+        next,
+        prev,
+    };
 }
