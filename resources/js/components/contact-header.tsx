@@ -7,7 +7,7 @@ import {
     Youtube,
 } from 'lucide-react';
 
-export default function ContactHeader() {
+export default function TopBar() {
     return (
         <div className="bg-red-600 py-3 text-white">
             <div className="container mx-auto px-4">

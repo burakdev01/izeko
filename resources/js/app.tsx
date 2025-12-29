@@ -4,7 +4,8 @@ import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import ContactHeader from '@/components/contact-header';
+import TopBar from './components/contact-header';
+import { Navbar } from './components/navbar/Navbar';
 import { initializeTheme } from './hooks/use-appearance';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
@@ -21,7 +22,8 @@ createInertiaApp({
 
         root.render(
             <StrictMode>
-                <ContactHeader />
+                <TopBar />
+                <Navbar />
                 <App {...props} />
             </StrictMode>,
         );

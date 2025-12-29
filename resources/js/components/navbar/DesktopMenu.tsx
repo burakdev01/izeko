@@ -11,7 +11,7 @@ export function DesktopMenu({ items }: Props) {
             {items.map((item) =>
                 item.submenu ? (
                     <div key={item.id} className="group relative">
-                        <button className="flex items-center gap-1 text-sm font-medium text-gray-700 hover:text-red-600">
+                        <button className="flex items-center gap-1 text-lg font-bold text-gray-700 hover:text-red-600">
                             {item.label}
                             <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
                         </button>
@@ -21,7 +21,7 @@ export function DesktopMenu({ items }: Props) {
                                 <a
                                     key={sub.path}
                                     href={sub.path}
-                                    className={`block px-6 py-3 text-sm ${
+                                    className={`block px-6 py-3 text-lg ${
                                         sub.isHighlighted
                                             ? 'border-l-4 border-l-red-600 bg-red-50 text-red-600'
                                             : 'text-gray-700 hover:bg-gray-50 hover:text-red-600'
@@ -40,7 +40,7 @@ export function DesktopMenu({ items }: Props) {
                     <a
                         key={item.id}
                         href={item.path}
-                        className="text-sm font-medium text-gray-700 hover:text-red-600"
+                        className="text-lg font-bold text-gray-700 hover:text-red-600"
                     >
                         {item.label}
                     </a>

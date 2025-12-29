@@ -12,7 +12,7 @@ export function Navbar() {
 
     return (
         <nav className="bg-white shadow-md">
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto px-4 py-6">
                 <div className="flex h-20 items-center justify-between">
                     <img
                         src="https://izeko.org.tr/app/themes/default/assets/images/izeko-logo.png"
