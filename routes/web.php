@@ -8,7 +8,7 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/deneme', function () {
-    return Inertia::render('deneme');
+    return Inertia::render('ContactHeader');
 })->name('examples.deneme');
 
 Route::middleware(['auth', 'verified'])->group(function () {
