@@ -28,14 +28,14 @@ export function HeroSlider() {
             <div className="absolute right-6 bottom-6 z-30 flex gap-3">
                 <button
                     onClick={prev}
-                    className="flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md hover:bg-black/80"
+                    className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md hover:bg-black/80"
                 >
                     <ChevronLeft size={22} />
                 </button>
 
                 <button
                     onClick={next}
-                    className="flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md hover:bg-black/80"
+                    className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md hover:bg-black/80"
                 >
                     <ChevronRight size={22} />
                 </button>

@@ -4,8 +4,11 @@ import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { AnnouncementsSection } from './components/announcements/AnnouncementsSection';
 import TopBar from './components/contact-header';
+import { MembershipSection } from './components/membership/MembershipSection';
 import { Navbar } from './components/navbar/Navbar';
+import { NewsCarousel } from './components/news-carousel/NewsCarousel';
 import { SectionHeader } from './components/section-header/SectionHeader';
 import { initializeTheme } from './hooks/use-appearance';
 
@@ -34,6 +37,9 @@ createInertiaApp({
                         buttonHref: '/haberler',
                     }}
                 />
+                <NewsCarousel />
+                <MembershipSection />
+                <AnnouncementsSection />
             </StrictMode>,
         );
     },

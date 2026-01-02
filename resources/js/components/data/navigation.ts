@@ -18,7 +18,6 @@ export const navItems: NavItem[] = [
                 isHighlighted: true,
             },
             { label: 'Yönetim Kurulu', path: '#yonetim-kurulu' },
-            { label: 'Denetim Kurulu', path: '#denetim-kurulu' },
             { label: 'Oda Ekibimiz', path: '#oda-ekibimiz' },
             { label: 'Bölge Sorumlularımız', path: '#bolge-sorumlularimiz' },
             { label: 'Oda Hesap Numaraları', path: '#oda-hesap-numaralari' },

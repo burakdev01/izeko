@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 
-@import "tw-animate-css";
+@import 'tw-animate-css';
 
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -140,4 +140,34 @@
     body {
         @apply bg-background text-foreground;
     }
+}
+.swiper-slide {
+    transition:
+        transform 0.45s ease,
+        opacity 0.45s ease;
+}
+
+/* ORTA (AKTİF) */
+.swiper-slide-active {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    z-index: 20;
+}
+
+/* SOL & SAĞ */
+.swiper-slide-prev,
+.swiper-slide-next {
+    transform: translateY(32px) scale(0.9);
+    opacity: 0.55;
+    z-index: 10;
+}
+
+/* DİĞERLER */
+.swiper-slide:not(
+    .swiper-slide-active,
+    .swiper-slide-prev,
+    .swiper-slide-next
+) {
+    opacity: 0;
+    pointer-events: none;
 }
