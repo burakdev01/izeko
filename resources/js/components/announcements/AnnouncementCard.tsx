@@ -1,53 +1,57 @@
-import { Calendar } from 'lucide-react';
-import { Announcement } from './types';
+type AnnouncementCardProps = {
+    image: string;
+    date: {
+        day: string;
+        month: string;
+        year: string;
+    };
+    title: string;
+    description: string;
+};
 
-interface Props {
-    announcement: Announcement;
-}
-
-export function AnnouncementCard({ announcement }: Props) {
+const AnnouncementCard = ({
+    image,
+    date,
+    title,
+    description,
+}: AnnouncementCardProps) => {
     return (
-        <article className="overflow-hidden rounded-2xl bg-white shadow-md">
-            {/* ÜST ALAN */}
-            <div className="relative flex h-56 flex-col items-center justify-center rounded-t-2xl bg-gradient-to-b from-gray-200 via-gray-100 to-white">
-                <h3 className="mb-4 text-center text-xl font-semibold text-red-600">
-                    {announcement.title}
+        <div className="flex h-full flex-col rounded-xl border border-gray-200 bg-white">
+            <div className="h-48 overflow-hidden rounded-t-xl">
+                <img
+                    src={image}
+                    alt={title}
+                    className="h-full w-full object-cover"
+                />
+            </div>
+
+            <div className="flex flex-1 flex-col p-5">
+                <div className="mb-3 flex items-center gap-2">
+                    <span className="text-2xl font-bold text-red-600">
+                        {date.day}
+                    </span>
+                    <span className="text-sm text-gray-500">
+                        {date.month} {date.year}
+                    </span>
+                </div>
+
+                <h3 className="mb-2 line-clamp-2 text-sm font-semibold text-gray-900">
+                    {title}
                 </h3>
 
-                <img
-                    src={announcement.image}
-                    alt={announcement.title}
-                    className="h-24 w-auto"
-                />
-
-                {/* alt yumuşak geçiş */}
-                <div className="absolute bottom-0 left-0 h-8 w-full bg-gradient-to-t from-black/10 to-transparent" />
-            </div>
-
-            {/* ALT ALAN */}
-            <div className="p-6">
-                <h4 className="text-lg font-semibold text-gray-900">
-                    {announcement.subtitle}
-                </h4>
-
-                <p className="mt-3 line-clamp-2 text-gray-600">
-                    {announcement.excerpt}
+                <p className="mb-4 line-clamp-2 text-sm text-gray-500">
+                    {description}
                 </p>
 
-                <div className="mt-6 flex items-center justify-between">
-                    <a
-                        href={`/duyurular/${announcement.id}`}
-                        className="rounded-full border border-red-500 px-6 py-2 text-sm font-medium text-red-500 transition hover:bg-red-500 hover:text-white"
-                    >
-                        Devamını Oku →
-                    </a>
-
-                    <div className="flex items-center gap-2 text-sm text-gray-500">
-                        <Calendar size={16} />
-                        {announcement.date}
-                    </div>
-                </div>
+                <a
+                    href="#"
+                    className="mt-auto text-sm font-medium text-gray-700 transition hover:text-red-600"
+                >
+                    Detayları Oku →
+                </a>
             </div>
-        </article>
+        </div>
     );
-}
+};
+
+export default AnnouncementCard;

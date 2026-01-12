@@ -1,5 +1,5 @@
 export interface HeroSlideData {
-    id: string;
+    id: number;
     title: string;
     subtitle: string;
     image: string;

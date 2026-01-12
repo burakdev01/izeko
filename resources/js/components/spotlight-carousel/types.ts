@@ -1,6 +1,6 @@
-export interface Announcement {
+interface SlideData {
     id: number;
-    date: string; // "25 Kasım 2025"
+    date: string;
     title: string;
     description: string;
     image: string;

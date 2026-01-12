@@ -1,7 +1,5 @@
 import { HeroSlider } from '@/components/hero/HeroSlider';
 
-MainNavbar;
-
-export default function MainNavbar() {
+export default function ContactHeader() {
     return <HeroSlider />;
 }
