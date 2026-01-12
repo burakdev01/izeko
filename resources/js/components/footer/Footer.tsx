@@ -7,19 +7,20 @@ const Footer = () => {
             {/* Top */}
             <div className="mx-auto max-w-7xl px-6 py-16">
                 {/* Logo */}
-                <div className="mb-14 flex justify-center">
-                    <img
-                        src="https://izeko.org.tr/app/themes/default/assets/images/izeko-logo.png"
-                        alt="İZEKO"
-                        className="h-14"
-                    />
-                </div>
 
                 {/* Columns */}
                 <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-4">
                     {/* About */}
+
                     <FooterColumn title="Hakkımızda">
                         <p>{aboutText}</p>
+                        <div className="justify-centera mb-14 flex">
+                            <img
+                                src="https://izeko.org.tr/app/themes/default/assets/images/izeko-logo.png"
+                                alt="İZEKO"
+                                className="h-14"
+                            />
+                        </div>
                     </FooterColumn>
 
                     {/* Quick Links */}
