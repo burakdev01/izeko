@@ -3,6 +3,7 @@ import BlogSection from '@/components/blog/BlogSection';
 import TopBar from '@/components/contact-header';
 import Footer from '@/components/footer/Footer';
 import { HeroSlider } from '@/components/hero/HeroSlider';
+import { MembershipSection } from '@/components/membership/MembershipSection';
 import { Navbar } from '@/components/navbar/Navbar';
 import { SectionHeader } from '@/components/section-header/SectionHeader';
 import { SpotlightCarousel } from '@/components/spotlight-carousel/SpotlightCarousel';
@@ -22,7 +23,7 @@ export default function HomeComponent() {
                 }}
             />
             <SpotlightCarousel />
-            {/* <MembershipSection /> */}
+            <MembershipSection />
             <AnnouncementsSection />
             <BlogSection />
             <Footer />
