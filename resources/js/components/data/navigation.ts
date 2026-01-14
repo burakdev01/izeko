@@ -4,7 +4,7 @@ export const navItems: NavItem[] = [
     {
         id: 'home',
         label: 'Anasayfa',
-        path: '#anasayfa',
+        path: '/',
         icon: 'home',
     },
     {
@@ -28,13 +28,19 @@ export const navItems: NavItem[] = [
                 label: 'Oda Hesap Numaraları',
                 path: '/kurumsal/oda-hesap-numaralari',
             },
-            { label: 'Kayıt Ücretleri ve Aidat', path: '/kurumsal/kayit-ucretleri' },
+            {
+                label: 'Kayıt Ücretleri ve Aidat',
+                path: '/kurumsal/kayit-ucretleri',
+            },
             {
                 label: 'Neden Emlak Ofisiyle Çalışmalısınız?',
                 path: '/kurumsal/neden-emlak-ofisi',
             },
             { label: 'izeko.org.tr Nedir?', path: '/kurumsal/izeko-nedir' },
-            { label: 'Oda Kayıt İşlemleri', path: '/kurumsal/oda-kayit-islemleri' },
+            {
+                label: 'Oda Kayıt İşlemleri',
+                path: '/kurumsal/oda-kayit-islemleri',
+            },
         ],
     },
     {
@@ -52,19 +58,19 @@ export const navItems: NavItem[] = [
     {
         id: 'live',
         label: 'Canlı Yayınlar',
-        path: '#canli-yayinlar',
+        path: '/canli-yayinlar',
         icon: 'live',
     },
     {
         id: 'announcements',
         label: 'Duyurular',
-        path: '#duyurular',
+        path: '/duyurular',
         icon: 'announcements',
     },
     {
-        id: 'contact',
-        label: 'İletişim',
-        path: '#iletisim',
-        icon: 'contact',
+        id: 'ilanlar',
+        label: 'İlanlar',
+        path: '/ilanlar',
+        icon: 'announcements',
     },
 ];

@@ -55,6 +55,18 @@ Route::get('/haberler', function () {
     return Inertia::render('haberler');
 })->name('haberler');
 
+Route::get('/canli-yayinlar', function () {
+    return Inertia::render('canli-yayinlar');
+})->name('canli-yayinlar');
+
+Route::get('/duyurular', function () {
+    return Inertia::render('duyurular');
+})->name('duyurular');
+
+Route::get('/ilanlar', function () {
+    return Inertia::render('ilanlar');
+})->name('ilanlar');
+
 
 
 
