@@ -55,7 +55,7 @@ const stats: Stat[] = [
 
 export function MembershipSection() {
     return (
-        <section className="relative bg-gradient-to-br from-blue-50 to-purple-50 py-24">
+        <section className="relative mb-4 bg-gradient-to-br from-blue-50 to-purple-50 py-8">
             <div className="container mx-auto grid gap-16 px-4 lg:grid-cols-2">
                 {/* Sol */}
                 <div className="rounded-3xl bg-white p-10 shadow-lg">

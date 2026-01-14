@@ -26,13 +26,7 @@ interface ArticleSidebarProps {
     newsActionHref?: string;
 }
 
-const ActionLink = ({
-    href,
-    label,
-}: {
-    href?: string;
-    label: string;
-}) =>
+const ActionLink = ({ href, label }: { href?: string; label: string }) =>
     href ? (
         <a
             href={href}
@@ -75,10 +69,9 @@ export function ArticleSidebar({
                         </h2>
                     </div>
 
-                    <div className="p-4">
+                    <div className="flex flex-col gap-4 p-4">
                         {announcements.map((announcement) => {
-                            const [day, ...rest] =
-                                announcement.date.split(' ');
+                            const [day, ...rest] = announcement.date.split(' ');
                             const month = rest.join(' ');
 
                             return (
@@ -87,12 +80,12 @@ export function ArticleSidebar({
                                     className="flex gap-4"
                                 >
                                     <div className="flex-shrink-0">
-                                        <div className="flex h-14 w-14 flex-col items-center justify-center rounded-lg bg-red-500 text-white">
-                                            <div className="text-xl font-bold">
+                                        <div className="flex h-14 w-14 flex-col items-center justify-center rounded-lg bg-red-500 pb-1 text-white">
+                                            <div className="text-lg font-bold">
                                                 {day}
                                             </div>
                                             {month ? (
-                                                <div className="text-xs">
+                                                <div className="text-center text-xs">
                                                     {month}
                                                 </div>
                                             ) : null}

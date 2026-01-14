@@ -18,7 +18,7 @@ const Footer = () => {
                             <img
                                 src="https://izeko.org.tr/app/themes/default/assets/images/izeko-logo.png"
                                 alt="İZEKO"
-                                className="h-14"
+                                className="h-18"
                             />
                         </div>
                     </FooterColumn>

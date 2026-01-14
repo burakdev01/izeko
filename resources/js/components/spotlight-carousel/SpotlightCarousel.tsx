@@ -44,8 +44,8 @@ export const SpotlightCarousel = () => {
     ];
 
     return (
-        <div className="min-h-screen w-full px-4 py-12">
-            <div className="mx-auto max-w-5xl">
+        <div className="w-full px-4">
+            <div className="mx-auto max-w-6xl">
                 <Swiper
                     modules={[Pagination, Autoplay, EffectCoverflow]}
                     effect="coverflow"
@@ -70,7 +70,7 @@ export const SpotlightCarousel = () => {
                     {slides.map((slide) => (
                         <SwiperSlide
                             key={slide.id}
-                            className="!w-[85%] md:!w-[60%]"
+                            className="!w-[80%] md:!w-[60%]"
                         >
                             <div className="group relative h-[430px] cursor-pointer overflow-hidden rounded-2xl shadow-2xl">
                                 {/* Background Image */}

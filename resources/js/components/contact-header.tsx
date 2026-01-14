@@ -1,11 +1,5 @@
-import {
-    Facebook,
-    Instagram,
-    Mail,
-    MapPin,
-    Phone,
-    Youtube,
-} from 'lucide-react';
+import { Mail, MapPin, Phone } from 'lucide-react';
+const publicUrl = import.meta.env.VITE_PUBLIC_URL;
 
 export default function TopBar() {
     return (
@@ -54,25 +48,37 @@ export default function TopBar() {
                                 href="https://facebook.com"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="bg-opacity-20 hover:bg-opacity-30 flex h-8 w-8 items-center justify-center rounded-full bg-white transition-all"
+                                className="bg-opacity-20 hover:bg-opacity-30 flex h-6 w-6 items-center justify-center rounded-full bg-white transition-all"
                             >
-                                <Facebook size={16} />
+                                <img
+                                    src={`${publicUrl}/images/facebook.png`}
+                                    className="h-4 w-4"
+                                    alt=""
+                                />
                             </a>
                             <a
                                 href="https://instagram.com"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="bg-opacity-20 hover:bg-opacity-30 flex h-8 w-8 items-center justify-center rounded-full bg-white transition-all"
+                                className="bg-opacity-20 hover:bg-opacity-30 flex h-6 w-6 items-center justify-center rounded-full bg-white transition-all"
                             >
-                                <Instagram size={16} />
+                                <img
+                                    src={`${publicUrl}/images/twitter.png`}
+                                    className="h-3 w-3"
+                                    alt=""
+                                />
                             </a>
                             <a
                                 href="https://youtube.com"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="bg-opacity-20 hover:bg-opacity-30 flex h-8 w-8 items-center justify-center rounded-full bg-white transition-all"
+                                className="bg-opacity-20 hover:bg-opacity-30 flex h-6 w-6 items-center justify-center rounded-full bg-white transition-all"
                             >
-                                <Youtube size={16} />
+                                <img
+                                    src={`${publicUrl}/images/youtube.png`}
+                                    className="h-4 w-4"
+                                    alt=""
+                                />
                             </a>
                         </div>
                     </div>

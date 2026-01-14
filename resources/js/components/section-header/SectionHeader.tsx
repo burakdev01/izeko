@@ -8,7 +8,7 @@ interface Props {
 
 export function SectionHeader({ data }: Props) {
     return (
-        <section className="py-24 text-center">
+        <section className="py-16 text-center">
             {/* Eyebrow */}
             <p className="mb-6 text-sm font-medium tracking-[0.25em] text-black">
                 {data.eyebrow}

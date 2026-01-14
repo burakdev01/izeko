@@ -1,3 +1,5 @@
+import { announcements as announcementsData } from '@/components/announcements/announcements.data';
+import { slides as spotlightSlides } from '@/components/spotlight-carousel/data';
 import { ChevronRight, Home } from 'lucide-react';
 import { type ReactNode } from 'react';
 import {
@@ -5,8 +7,6 @@ import {
     type AnnouncementItem,
     type NewsItem,
 } from './ArticleSidebar';
-import { announcements as announcementsData } from '@/components/announcements/announcements.data';
-import { slides as spotlightSlides } from '@/components/spotlight-carousel/data';
 
 const sidebarAnnouncements: AnnouncementItem[] = announcementsData
     .slice(0, 3)
@@ -14,7 +14,7 @@ const sidebarAnnouncements: AnnouncementItem[] = announcementsData
         id: item.id,
         title: item.title,
         description: item.description,
-        date: `${item.date.day} ${item.date.month} ${item.date.year}`,
+        date: `${item.date.day} ${item.date.month}`,
     }));
 
 const sidebarNews: NewsItem[] = spotlightSlides.slice(0, 3).map((slide) => ({
@@ -31,6 +31,7 @@ interface ArticleLayoutProps {
     heroPosition?: string;
     breadcrumbLabel?: string;
     homeHref?: string;
+    showSidebar?: boolean;
     children: ReactNode;
 }
 
@@ -41,11 +42,13 @@ export function ArticleLayout({
     heroPosition = 'center',
     breadcrumbLabel,
     homeHref = '/',
+    showSidebar = true,
     children,
 }: ArticleLayoutProps) {
     const breadcrumbText = breadcrumbLabel ?? title;
     const hasSidebar =
-        sidebarAnnouncements.length > 0 || sidebarNews.length > 0;
+        showSidebar &&
+        (sidebarAnnouncements.length > 0 || sidebarNews.length > 0);
 
     return (
         <main>
@@ -103,9 +106,7 @@ export function ArticleLayout({
                             }
                         >
                             <div className="rounded-lg bg-white p-8 shadow-sm">
-                                <article className="space-y-6 text-base leading-relaxed text-gray-700">
-                                    {children}
-                                </article>
+                                <article className="">{children}</article>
                             </div>
                         </div>
 
