@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\Admin\ActivityController;
+use App\Http\Controllers\Admin\BlogPostController;
 use App\Models\Activity;
+use App\Models\BlogPost;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -69,7 +71,19 @@ Route::get('/faaliyetler', function () {
 })->name('faaliyetler');
 
 Route::get('/haberler', function () {
-    return Inertia::render('haberler');
+    $posts = BlogPost::orderByDesc('date')
+        ->get()
+        ->map(fn (BlogPost $post) => [
+            'id' => $post->id,
+            'image' => $post->image,
+            'title' => $post->title,
+            'excerpt' => $post->excerpt,
+            'date' => optional($post->date)->format('Y-m-d'),
+        ]);
+
+    return Inertia::render('haberler', [
+        'posts' => $posts,
+    ]);
 })->name('haberler');
 
 Route::get('/canli-yayinlar', function () {
@@ -114,6 +128,11 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         ->except('show')
         ->names('admin.activities')
         ->parameters(['faaliyetler' => 'activity']);
+
+    Route::resource('haberler', BlogPostController::class)
+        ->except('show')
+        ->names('admin.haberler')
+        ->parameters(['haberler' => 'blogPost']);
 });
 
 

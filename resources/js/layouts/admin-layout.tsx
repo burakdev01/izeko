@@ -1,6 +1,6 @@
 import { type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { Calendar, LayoutGrid, LogOut } from 'lucide-react';
+import { Calendar, LayoutGrid, LogOut, PenTool } from 'lucide-react';
 import { type PropsWithChildren } from 'react';
 
 type AdminLayoutProps = PropsWithChildren<{
@@ -11,6 +11,7 @@ type AdminLayoutProps = PropsWithChildren<{
 const navItems = [
     { label: 'Dashboard', href: '/admin', icon: LayoutGrid },
     { label: 'Faaliyetler', href: '/admin/faaliyetler', icon: Calendar },
+    { label: 'Blog & Haberler', href: '/admin/haberler', icon: PenTool },
 ];
 
 export default function AdminLayout({
