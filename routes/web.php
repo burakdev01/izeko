@@ -3,10 +3,12 @@
 use App\Http\Controllers\Admin\ActivityController;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\BlogPostController;
+use App\Http\Controllers\Admin\HeroSlideController;
 use App\Http\Controllers\Admin\LiveStreamController;
 use App\Models\Activity;
 use App\Models\Announcement;
 use App\Models\BlogPost;
+use App\Models\HeroSlide;
 use App\Models\LiveStream;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +17,21 @@ use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
 Route::get('/', function () {
-    return Inertia::render('Home'); 
+    $slides = HeroSlide::orderBy('sort_order')
+        ->orderByDesc('id')
+        ->get()
+        ->map(fn (HeroSlide $slide) => [
+            'id' => $slide->id,
+            'title' => $slide->title,
+            'subtitle' => $slide->subtitle ?? '',
+            'image' => $slide->image,
+            'video' => $slide->video,
+            'poster' => $slide->poster,
+        ]);
+
+    return Inertia::render('Home', [
+        'heroSlides' => $slides,
+    ]);
 })->name('home');
 
 Route::get('/kurumsal/yonetim-kurulu-baskanimiz', function () {
@@ -173,6 +189,11 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         ->except('show')
         ->names('admin.duyurular')
         ->parameters(['duyurular' => 'announcement']);
+
+    Route::resource('hero-slides', HeroSlideController::class)
+        ->except('show')
+        ->names('admin.hero-slides')
+        ->parameters(['hero-slides' => 'heroSlide']);
 });
 
 

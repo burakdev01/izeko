@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Activity;
 use App\Models\Announcement;
 use App\Models\BlogPost;
+use App\Models\HeroSlide;
 use App\Models\LiveStream;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -170,6 +171,34 @@ class DatabaseSeeder extends Seeder
                 'image' => 'https://izeko.org.tr/files/system//r5rmkQB7SatE4V5XwIPYv28307USz5Qz8NFgbtmX%20(1).png',
                 'link' => null,
                 'date' => '2025-11-20',
+            ]
+        );
+
+        HeroSlide::firstOrCreate(
+            [
+                'title' => "Izmir'de Yasam Bir Ayricaliktir....",
+            ],
+            [
+                'subtitle' =>
+                    'Gayrimenkul yatirimlariniz icin yetkili danismanlarla calisin.',
+                'image' => 'https://izeko.org.tr/files/system//xT6wJAV6qGwtCDMVtAneKKAg4PiizuGjXQII0lM7.png',
+                'video' => null,
+                'poster' => null,
+                'sort_order' => 1,
+            ]
+        );
+
+        HeroSlide::firstOrCreate(
+            [
+                'title' => 'IZEKO CRM NEDIR?',
+            ],
+            [
+                'subtitle' =>
+                    "Turkiye'nin ilk ve tek esnaf odasi ozel CRM cozumu!",
+                'image' => null,
+                'video' => 'https://izeko.org.tr/files/system//IOFaZiyIqP3i62Z4BUZN2auVlcWSYqrrDg0x3jTk.mp4',
+                'poster' => null,
+                'sort_order' => 2,
             ]
         );
     }

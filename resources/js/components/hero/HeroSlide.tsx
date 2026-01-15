@@ -7,7 +7,7 @@ interface Props {
 
 const videoSourceRegex = /\.(mp4|webm|ogg)(\?.*)?$/i;
 
-const isVideoSource = (src?: string) =>
+const isVideoSource = (src?: string | null) =>
     Boolean(src && videoSourceRegex.test(src));
 
 export function HeroSlide({ slide }: Props) {

@@ -3,14 +3,24 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { heroSlides } from '../data/heroSlides';
 import { HeroSlide } from './HeroSlide';
 import { useHeroSlider } from './useHeroSlider';
+import { HeroSlideData } from './types';
 
-export function HeroSlider() {
+interface HeroSliderProps {
+    slides?: HeroSlideData[];
+}
+
+export function HeroSlider({ slides = heroSlides }: HeroSliderProps) {
+    const availableSlides = slides.length ? slides : heroSlides;
     const { index, progress, next, prev } = useHeroSlider({
-        length: heroSlides.length,
+        length: Math.max(availableSlides.length, 1),
         interval: 8192,
     });
 
-    const activeSlide = heroSlides[index];
+    if (availableSlides.length === 0) {
+        return null;
+    }
+
+    const activeSlide = availableSlides[index];
 
     return (
         <section className="relative w-full overflow-hidden">

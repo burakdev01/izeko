@@ -3,6 +3,7 @@ import { Link, usePage } from '@inertiajs/react';
 import {
     Bell,
     Calendar,
+    Image,
     LayoutGrid,
     LogOut,
     PenTool,
@@ -21,6 +22,7 @@ const navItems = [
     { label: 'Blog & Haberler', href: '/admin/haberler', icon: PenTool },
     { label: 'Canli Yayinlar', href: '/admin/canli-yayinlar', icon: Video },
     { label: 'Duyurular', href: '/admin/duyurular', icon: Bell },
+    { label: 'Hero Slider', href: '/admin/hero-slides', icon: Image },
 ];
 
 export default function AdminLayout({
