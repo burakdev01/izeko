@@ -1,7 +1,10 @@
 <?php
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Laravel\Fortify\Features;
 
 Route::get('/', function () {
     return Inertia::render('Home'); 
@@ -67,6 +70,30 @@ Route::get('/ilanlar', function () {
     return Inertia::render('ilanlar');
 })->name('ilanlar');
 
+Route::get('/admin/login', function (Request $request) {
+    $user = $request->user();
+
+    if ($user) {
+        if ($user->is_admin) {
+            return redirect()->route('admin.dashboard');
+        }
+
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+    }
+
+    return Inertia::render('admin/login', [
+        'canResetPassword' => Features::enabled(Features::resetPasswords()),
+        'status' => $request->session()->get('status'),
+    ]);
+})->name('admin.login');
+
+Route::prefix('admin')->middleware('admin')->group(function () {
+    Route::get('/', function () {
+        return Inertia::render('admin/dashboard');
+    })->name('admin.dashboard');
+});
 
 
 
