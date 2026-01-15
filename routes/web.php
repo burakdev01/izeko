@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\Admin\ActivityController;
+use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\BlogPostController;
 use App\Http\Controllers\Admin\LiveStreamController;
 use App\Models\Activity;
+use App\Models\Announcement;
 use App\Models\BlogPost;
 use App\Models\LiveStream;
 use Illuminate\Http\Request;
@@ -105,7 +107,21 @@ Route::get('/canli-yayinlar', function () {
 })->name('canli-yayinlar');
 
 Route::get('/duyurular', function () {
-    return Inertia::render('duyurular');
+    $announcements = Announcement::orderByDesc('date')
+        ->get()
+        ->map(fn (Announcement $announcement) => [
+            'id' => $announcement->id,
+            'title' => $announcement->title,
+            'subtitle' => $announcement->subtitle,
+            'excerpt' => $announcement->excerpt,
+            'image' => $announcement->image,
+            'link' => $announcement->link,
+            'date' => optional($announcement->date)->format('Y-m-d'),
+        ]);
+
+    return Inertia::render('duyurular', [
+        'announcements' => $announcements,
+    ]);
 })->name('duyurular');
 
 Route::get('/ilanlar', function () {
@@ -152,6 +168,11 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         ->except('show')
         ->names('admin.canli-yayinlar')
         ->parameters(['canli-yayinlar' => 'liveStream']);
+
+    Route::resource('duyurular', AnnouncementController::class)
+        ->except('show')
+        ->names('admin.duyurular')
+        ->parameters(['duyurular' => 'announcement']);
 });
 
 

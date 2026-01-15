@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Activity;
+use App\Models\Announcement;
 use App\Models\BlogPost;
 use App\Models\LiveStream;
 use App\Models\User;
@@ -138,6 +139,37 @@ class DatabaseSeeder extends Seeder
                 'date' => '2025-11-25',
                 'video_url' => 'https://www.youtube.com/watch?v=ysz5S6PUM-U',
                 'thumbnail' => 'https://img.youtube.com/vi/ysz5S6PUM-U/hqdefault.jpg',
+            ]
+        );
+
+        Announcement::firstOrCreate(
+            [
+                'title' =>
+                    'ODAMIZA YAPILACAK TUM ODEMELER ICIN SISTEMDE GERCEKLESEN DEGISIKLIK',
+            ],
+            [
+                'subtitle' => 'DIKKAT! Onemli Duyuru',
+                'excerpt' => 'Sayin Uyelerimiz,',
+                'content' =>
+                    'Odemeler sisteminde yapilan degisiklikler hakkinda bilgilendirme.',
+                'image' => 'https://izeko.org.tr/files/system//r5rmkQB7SatE4V5XwIPYv28307USz5Qz8NFgbtmX%20(1).png',
+                'link' => null,
+                'date' => '2025-11-25',
+            ]
+        );
+
+        Announcement::firstOrCreate(
+            [
+                'title' => 'AIDAT ODEMELERI ICIN YENI HATIRLATMA SISTEMI',
+            ],
+            [
+                'subtitle' => 'Bilgilendirme',
+                'excerpt' => 'Uyelerimizin dikkatine,',
+                'content' =>
+                    'Aidat odemelerinde yeni hatirlatma sistemi devreye alinmistir.',
+                'image' => 'https://izeko.org.tr/files/system//r5rmkQB7SatE4V5XwIPYv28307USz5Qz8NFgbtmX%20(1).png',
+                'link' => null,
+                'date' => '2025-11-20',
             ]
         );
     }

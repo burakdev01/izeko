@@ -5,82 +5,29 @@ import { Navbar } from '@/components/navbar/Navbar';
 import { ArrowRight } from 'lucide-react';
 
 type Announcement = {
+    id: number;
     title: string;
-    subtitle: string;
+    subtitle?: string | null;
     excerpt: string;
-    day: string;
-    monthYear: string;
     image: string;
-    href: string;
+    link?: string | null;
+    date: string;
 };
 
-export default function Duyurular() {
-    const announcements: Announcement[] = [
-        {
-            title: 'ODAMIZA YAPILACAK TÜM ÖDEMELER İÇİN SİSTEMDE GERÇEKLEŞEN DEĞİŞİKLİK',
-            subtitle: 'DİKKAT! Önemli Duyuru',
-            excerpt: 'Sayın Üyelerimiz,',
-            day: '25',
-            monthYear: 'Kasım 2025',
-            image: 'https://izeko.org.tr/files/system//r5rmkQB7SatE4V5XwIPYv28307USz5Qz8NFgbtmX%20(1).png',
-            href: '#',
-        },
-        {
-            title: 'ODAMIZA YAPILACAK TÜM ÖDEMELER İÇİN SİSTEMDE GERÇEKLEŞEN DEĞİŞİKLİK',
-            subtitle: 'DİKKAT! Önemli Duyuru',
-            excerpt: 'Sayın Üyelerimiz,',
-            day: '25',
-            monthYear: 'Kasım 2025',
-            image: 'https://izeko.org.tr/files/system//r5rmkQB7SatE4V5XwIPYv28307USz5Qz8NFgbtmX%20(1).png',
-            href: '#',
-        },
-        {
-            title: 'ODAMIZA YAPILACAK TÜM ÖDEMELER İÇİN SİSTEMDE GERÇEKLEŞEN DEĞİŞİKLİK',
-            subtitle: 'DİKKAT! Önemli Duyuru',
-            excerpt: 'Sayın Üyelerimiz,',
-            day: '25',
-            monthYear: 'Kasım 2025',
-            image: 'https://izeko.org.tr/files/system//r5rmkQB7SatE4V5XwIPYv28307USz5Qz8NFgbtmX%20(1).png',
-            href: '#',
-        },
-        {
-            title: 'ODAMIZA YAPILACAK TÜM ÖDEMELER İÇİN SİSTEMDE GERÇEKLEŞEN DEĞİŞİKLİK',
-            subtitle: 'DİKKAT! Önemli Duyuru',
-            excerpt: 'Sayın Üyelerimiz,',
-            day: '25',
-            monthYear: 'Kasım 2025',
-            image: 'https://izeko.org.tr/files/system//r5rmkQB7SatE4V5XwIPYv28307USz5Qz8NFgbtmX%20(1).png',
-            href: '#',
-        },
-        {
-            title: 'ODAMIZA YAPILACAK TÜM ÖDEMELER İÇİN SİSTEMDE GERÇEKLEŞEN DEĞİŞİKLİK',
-            subtitle: 'DİKKAT! Önemli Duyuru',
-            excerpt: 'Sayın Üyelerimiz,',
-            day: '25',
-            monthYear: 'Kasım 2025',
-            image: 'https://izeko.org.tr/files/system//r5rmkQB7SatE4V5XwIPYv28307USz5Qz8NFgbtmX%20(1).png',
-            href: '#',
-        },
-        {
-            title: 'ODAMIZA YAPILACAK TÜM ÖDEMELER İÇİN SİSTEMDE GERÇEKLEŞEN DEĞİŞİKLİK',
-            subtitle: 'DİKKAT! Önemli Duyuru',
-            excerpt: 'Sayın Üyelerimiz,',
-            day: '25',
-            monthYear: 'Kasım 2025',
-            image: 'https://izeko.org.tr/files/system//r5rmkQB7SatE4V5XwIPYv28307USz5Qz8NFgbtmX%20(1).png',
-            href: '#',
-        },
-        {
-            title: 'ODAMIZA YAPILACAK TÜM ÖDEMELER İÇİN SİSTEMDE GERÇEKLEŞEN DEĞİŞİKLİK',
-            subtitle: 'DİKKAT! Önemli Duyuru',
-            excerpt: 'Sayın Üyelerimiz,',
-            day: '25',
-            monthYear: 'Kasım 2025',
-            image: 'https://izeko.org.tr/files/system//r5rmkQB7SatE4V5XwIPYv28307USz5Qz8NFgbtmX%20(1).png',
-            href: '#',
-        },
-    ];
+interface DuyurularProps {
+    announcements: Announcement[];
+}
 
+const formatDay = (value: string) =>
+    new Date(value).toLocaleDateString('tr-TR', { day: '2-digit' });
+
+const formatMonthYear = (value: string) =>
+    new Date(value).toLocaleDateString('tr-TR', {
+        month: 'long',
+        year: 'numeric',
+    });
+
+export default function Duyurular({ announcements }: DuyurularProps) {
     return (
         <>
             <TopBar />
@@ -95,7 +42,7 @@ export default function Duyurular() {
                     <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
                         {announcements.map((announcement) => (
                             <article
-                                key={announcement.title}
+                                key={announcement.id}
                                 className="mx-auto w-full max-w-[520px] overflow-hidden rounded-3xl bg-white shadow-[0_18px_50px_rgba(15,23,42,0.08)] sm:mx-0 sm:max-w-none"
                             >
                                 <div className="h-56 w-full overflow-hidden bg-gray-200">
@@ -116,10 +63,12 @@ export default function Duyurular() {
                                 >
                                     <div className="flex items-center gap-4">
                                         <span className="text-5xl font-bold text-red-500">
-                                            {announcement.day}
+                                            {formatDay(announcement.date)}
                                         </span>
                                         <span className="text-lg font-semibold text-gray-500">
-                                            {announcement.monthYear}
+                                            {formatMonthYear(
+                                                announcement.date,
+                                            )}
                                         </span>
                                     </div>
 
@@ -128,14 +77,18 @@ export default function Duyurular() {
                                     </h2>
 
                                     <p className="text-lg text-gray-500">
-                                        <span className="font-semibold text-gray-700">
-                                            {announcement.subtitle}
-                                        </span>{' '}
+                                        {announcement.subtitle ? (
+                                            <>
+                                                <span className="font-semibold text-gray-700">
+                                                    {announcement.subtitle}
+                                                </span>{' '}
+                                            </>
+                                        ) : null}
                                         {announcement.excerpt}
                                     </p>
 
                                     <a
-                                        href={announcement.href}
+                                        href={announcement.link || '#'}
                                         className="inline-flex items-center gap-2 text-base font-semibold text-red-600 transition-colors hover:text-red-700"
                                     >
                                         Detayları Oku
@@ -145,6 +98,11 @@ export default function Duyurular() {
                             </article>
                         ))}
                     </div>
+                    {announcements.length === 0 && (
+                        <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center text-sm text-gray-500">
+                            Henuz duyuru eklenmedi.
+                        </div>
+                    )}
                 </div>
             </ArticleLayout>
             <Footer />
