@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\ActivityController;
+use App\Models\Activity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -51,7 +53,19 @@ Route::get('/kurumsal/oda-kayit-islemleri', function () {
 })->name('kurumsal.oda-kayit-islemleri');
 
 Route::get('/faaliyetler', function () {
-    return Inertia::render('faaliyetler');
+    $activities = Activity::orderByDesc('date')
+        ->get()
+        ->map(fn (Activity $activity) => [
+            'id' => $activity->id,
+            'title' => $activity->title,
+            'date' => optional($activity->date)->format('Y-m-d'),
+            'videoUrl' => $activity->video_url,
+            'thumbnail' => $activity->thumbnail,
+        ]);
+
+    return Inertia::render('faaliyetler', [
+        'activities' => $activities,
+    ]);
 })->name('faaliyetler');
 
 Route::get('/haberler', function () {
@@ -91,8 +105,15 @@ Route::get('/admin/login', function (Request $request) {
 
 Route::prefix('admin')->middleware('admin')->group(function () {
     Route::get('/', function () {
-        return Inertia::render('admin/dashboard');
+        return Inertia::render('admin/dashboard', [
+            'activityCount' => Activity::count(),
+        ]);
     })->name('admin.dashboard');
+
+    Route::resource('faaliyetler', ActivityController::class)
+        ->except('show')
+        ->names('admin.activities')
+        ->parameters(['faaliyetler' => 'activity']);
 });
 
 

@@ -5,34 +5,25 @@ import { Navbar } from '@/components/navbar/Navbar';
 import { Calendar } from 'lucide-react';
 
 type Activity = {
+    id: number;
     title: string;
     date: string;
     videoUrl: string;
     thumbnail: string;
 };
 
-const activities: Activity[] = [
-    {
-        title: 'Mesut GÜLEROĞLU İzmir Emlakçılar Odası 2018 - 2022 Faaliyetleri',
-        date: '25 Kasım 2025',
-        videoUrl: 'https://www.youtube.com/watch?v=ysz5S6PUM-U',
-        thumbnail: 'https://img.youtube.com/vi/ysz5S6PUM-U/hqdefault.jpg',
-    },
-    {
-        title: 'İzmir Emlakçılar Odası 1999 - 2013 Yılları Arasındaki Faaliyetleri',
-        date: '25 Kasım 2025',
-        videoUrl: 'https://www.youtube.com/watch?v=aqz-KE-bpKQ',
-        thumbnail: 'https://img.youtube.com/vi/aqz-KE-bpKQ/hqdefault.jpg',
-    },
-    {
-        title: 'İZEKO BÖLGE TEMSİLCİLERİ TOPLANTISI 2015',
-        date: '25 Kasım 2025',
-        videoUrl: 'https://www.youtube.com/watch?v=ysz5S6PUM-U',
-        thumbnail: 'https://img.youtube.com/vi/ysz5S6PUM-U/hqdefault.jpg',
-    },
-];
+interface FaaliyetlerProps {
+    activities: Activity[];
+}
 
-export default function Faaliyetler() {
+const formatDate = (value: string) =>
+    new Date(value).toLocaleDateString('tr-TR', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+    });
+
+export default function Faaliyetler({ activities }: FaaliyetlerProps) {
     return (
         <>
             <TopBar />
@@ -46,7 +37,7 @@ export default function Faaliyetler() {
                 <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
                     {activities.map((activity) => (
                         <article
-                            key={activity.title}
+                            key={activity.id}
                             className="rounded-3xl border border-gray-100 bg-white p-7 shadow-[0_18px_45px_rgba(15,23,42,0.08)]"
                         >
                             <h2 className="line-clamp-2 min-h-[3.25rem] text-xl leading-snug font-semibold text-gray-800">
@@ -74,10 +65,15 @@ export default function Faaliyetler() {
 
                             <div className="mt-5 flex items-center gap-3 text-sm font-medium text-gray-500">
                                 <Calendar className="h-4 w-4 text-gray-400" />
-                                <span>{activity.date}</span>
+                                <span>{formatDate(activity.date)}</span>
                             </div>
                         </article>
                     ))}
+                    {activities.length === 0 && (
+                        <div className="col-span-full rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center text-sm text-gray-500">
+                            Henuz faaliyet eklenmedi.
+                        </div>
+                    )}
                 </div>
             </ArticleLayout>
             <Footer />
