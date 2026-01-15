@@ -57,7 +57,7 @@ export default function Haberler({ posts }: HaberlerProps) {
                     </div>
                     {posts.length === 0 && (
                         <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center text-sm text-gray-500">
-                            Henuz haber eklenmedi.
+                            Henüz haber eklenmedi.
                         </div>
                     )}
                 </div>

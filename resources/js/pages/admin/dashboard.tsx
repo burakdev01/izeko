@@ -1,5 +1,7 @@
+import AdminQuickLink from '@/components/admin/admin-quick-link';
+import AdminStatCard from '@/components/admin/admin-stat-card';
 import AdminLayout from '@/layouts/admin-layout';
-import { Head, Link } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import { Bell, Calendar, Image, PenTool, Video } from 'lucide-react';
 
 interface AdminDashboardProps {
@@ -22,38 +24,38 @@ interface SummaryCard {
     description: string;
     href: string;
     countKey: CountKey;
-    tone: string;
+    className?: string;
 }
 
 const quickLinks = [
     {
         label: 'Faaliyetler',
         href: '/admin/faaliyetler',
-        description: 'Video ve etkinlikleri duzenleyin.',
+        description: 'Video ve etkinlikleri düzenleyin.',
         icon: Calendar,
     },
     {
         label: 'Blog & Haberler',
         href: '/admin/haberler',
-        description: 'Haberleri guncel tutun.',
+        description: 'Haberleri güncel tutun.',
         icon: PenTool,
     },
     {
-        label: 'Canli Yayinlar',
+        label: 'Canlı Yayınlar',
         href: '/admin/canli-yayinlar',
-        description: 'Yayin listelerini yonetin.',
+        description: 'Yayın listelerini yönetin.',
         icon: Video,
     },
     {
         label: 'Duyurular',
         href: '/admin/duyurular',
-        description: 'Ozel duyurulari planlayin.',
+        description: 'Özel duyuruları planlayın.',
         icon: Bell,
     },
     {
         label: 'Hero Slider',
         href: '/admin/hero-slides',
-        description: 'Ana sayfa sliderini guncelleyin.',
+        description: 'Ana sayfa sliderını güncelleyin.',
         icon: Image,
     },
 ];
@@ -64,36 +66,35 @@ const summaryCards: SummaryCard[] = [
         description: 'Kayıtlı toplam faaliyet',
         href: '/admin/faaliyetler',
         countKey: 'activityCount',
-        tone: 'from-slate-900 via-slate-900 to-slate-800',
     },
     {
         label: 'Blog & Haberler',
         description: 'Yayında olan haber',
         href: '/admin/haberler',
         countKey: 'blogCount',
-        tone: 'from-slate-900 via-slate-800 to-slate-700',
+        className: 'from-slate-900 via-slate-800 to-slate-700',
     },
     {
-        label: 'Canli Yayinlar',
+        label: 'Canlı Yayınlar',
         description: 'Planlanan yayınlar',
         href: '/admin/canli-yayinlar',
         countKey: 'liveStreamCount',
-        tone: 'from-slate-900 via-slate-800 to-slate-700',
+        className: 'from-slate-900 via-slate-800 to-slate-700',
     },
-    // {
-    //     label: 'Duyurular',
-    //     description: 'Aktif duyuru',
-    //     href: '/admin/duyurular',
-    //     countKey: 'announcementCount',
-    //     tone: 'from-slate-900 via-slate-800 to-slate-700',
-    // },
-    // {
-    //     label: 'Hero Slider',
-    //     description: 'Slide sayisi',
-    //     href: '/admin/hero-slides',
-    //     countKey: 'heroSlideCount',
-    //     tone: 'from-slate-900 via-slate-800 to-slate-700',
-    // },
+    {
+        label: 'Duyurular',
+        description: 'Aktif duyuru',
+        href: '/admin/duyurular',
+        countKey: 'announcementCount',
+        className: 'from-slate-900 via-slate-800 to-slate-700',
+    },
+    {
+        label: 'Hero Slider',
+        description: 'Slide sayısı',
+        href: '/admin/hero-slides',
+        countKey: 'heroSlideCount',
+        className: 'from-slate-900 via-slate-800 to-slate-700',
+    },
 ];
 
 export default function AdminDashboard({
@@ -114,68 +115,42 @@ export default function AdminDashboard({
     return (
         <AdminLayout
             title="Dashboard"
-            description="Yonetim paneline hos geldiniz."
+            description="Yönetim paneline hoş geldiniz."
         >
             <Head title="Admin Panel" />
             <div className="space-y-6">
                 <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                     {summaryCards.map((card) => (
-                        <div
+                        <AdminStatCard
                             key={card.href}
-                            className={`rounded-2xl bg-gradient-to-br ${card.tone} p-6 text-white shadow-lg`}
-                        >
-                            <p className="text-xs font-semibold tracking-[0.3em] text-white/60 uppercase">
-                                {card.label}
-                            </p>
-                            <p className="mt-3 text-3xl font-semibold">
-                                {countMap[card.countKey]}
-                            </p>
-                            <p className="mt-1 text-sm text-white/70">
-                                {card.description}
-                            </p>
-                            {/* <Link
-                                href={card.href}
-                                className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-red-300 hover:text-red-200"
-                            >
-                                Listeyi gor
-                            </Link> */}
-                        </div>
+                            label={card.label}
+                            count={countMap[card.countKey]}
+                            description={card.description}
+                            href={card.href}
+                            className={card.className}
+                        />
                     ))}
                 </section>
 
                 <section className="rounded-2xl border border-slate-200/80 bg-white/80 p-6 shadow-sm">
                     <div className="flex items-center justify-between">
                         <h3 className="text-sm font-semibold text-slate-700">
-                            Hizli Erisim
+                            Hızlı Erişim
                         </h3>
                         <span className="text-xs font-medium text-slate-400">
-                            Kisa yollar
+                            Kısa yollar
                         </span>
                     </div>
                     <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                        {quickLinks.map((item) => {
-                            const Icon = item.icon;
-
-                            return (
-                                <Link
-                                    key={item.href}
-                                    href={item.href}
-                                    className="group flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-red-200 hover:shadow-md"
-                                >
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-500 group-hover:bg-red-500 group-hover:text-white">
-                                        <Icon className="h-5 w-5" />
-                                    </div>
-                                    <div>
-                                        <p className="text-sm font-semibold text-slate-800">
-                                            {item.label}
-                                        </p>
-                                        <p className="mt-1 text-xs text-slate-500">
-                                            {item.description}
-                                        </p>
-                                    </div>
-                                </Link>
-                            );
-                        })}
+                        {quickLinks.map((item) => (
+                            <AdminQuickLink
+                                key={item.href}
+                                label={item.label}
+                                description={item.description}
+                                href={item.href}
+                                icon={item.icon}
+                            />
+                        ))}
                     </div>
                 </section>
             </div>

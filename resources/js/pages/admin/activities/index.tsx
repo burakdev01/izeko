@@ -1,6 +1,15 @@
-import { Button } from '@/components/ui/button';
+import {
+    AdminActionButton,
+    AdminActionLink,
+} from '@/components/admin/admin-action';
+import AdminEmptyState from '@/components/admin/admin-empty-state';
+import AdminListHeader from '@/components/admin/admin-list-header';
+import AdminMediaCard from '@/components/admin/admin-media-card';
+import AdminMediaTitle from '@/components/admin/admin-media-title';
+import AdminMetaPill from '@/components/admin/admin-meta-pill';
 import AdminLayout from '@/layouts/admin-layout';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
+import { ExternalLink } from 'lucide-react';
 
 interface Activity {
     id: number;
@@ -33,77 +42,69 @@ export default function ActivityIndex({ activities }: ActivityIndexProps) {
     return (
         <AdminLayout
             title="Faaliyetler"
-            description="Faaliyetleri ekleyin, duzenleyin ve yonetin."
+            description="Faaliyetleri ekleyin, düzenleyin ve yönetin."
         >
             <Head title="Faaliyetler" />
             <div className="space-y-4">
-                <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-sm">
-                    <div>
-                        <p className="text-xs font-semibold tracking-[0.25em] text-slate-400 uppercase">
-                            Toplam
-                        </p>
-                        <p className="text-sm font-medium text-slate-600">
-                            {activities.length} faaliyet
-                        </p>
-                    </div>
-                    <Button
-                        asChild
-                        className="bg-red-600 text-white hover:bg-red-700"
-                    >
-                        <Link href="/admin/faaliyetler/create">
-                            Yeni faaliyet
-                        </Link>
-                    </Button>
-                </div>
+                <AdminListHeader
+                    count={activities.length}
+                    label="faaliyet"
+                    actionLabel="Yeni faaliyet"
+                    actionHref="/admin/faaliyetler/create"
+                />
 
                 <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                     {activities.map((activity) => (
-                        <div
+                        <AdminMediaCard
                             key={activity.id}
-                            className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
-                        >
-                            <div className="relative aspect-[16/9] bg-slate-100">
-                                {activity.thumbnail ? (
-                                    <img
-                                        src={activity.thumbnail}
-                                        alt={activity.title}
-                                        className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                                    />
-                                ) : (
-                                    <div className="flex h-full items-center justify-center text-xs font-medium text-slate-400">
-                                        Gorsel yok
-                                    </div>
-                                )}
-                                <div className="absolute top-3 left-3 rounded-full bg-white/90 px-3 py-1 text-[11px] font-semibold text-slate-600 shadow">
+                            image={activity.thumbnail}
+                            imageAlt={activity.title}
+                            overlay={
+                                <AdminMetaPill>
                                     {formatDate(activity.date)}
-                                </div>
-                            </div>
-                            <div className="flex flex-1 flex-col p-4">
-                                <h3 className="line-clamp-2 text-sm font-semibold text-slate-900">
-                                    {activity.title}
-                                </h3>
-                            </div>
-                            <div className="flex items-center justify-between border-t border-slate-100 px-4 py-3 text-xs">
-                                <Link
-                                    href={`/admin/faaliyetler/${activity.id}/edit`}
-                                    className="font-semibold text-slate-600 transition hover:text-slate-900"
+                                </AdminMetaPill>
+                            }
+                            footer={
+                                <>
+                                    <AdminActionLink
+                                        href={`/admin/faaliyetler/${activity.id}/edit`}
+                                    >
+                                        Düzenle
+                                    </AdminActionLink>
+                                    <AdminActionButton
+                                        type="button"
+                                        onClick={() =>
+                                            handleDelete(activity.id)
+                                        }
+                                        variant="danger"
+                                    >
+                                        Sil
+                                    </AdminActionButton>
+                                </>
+                            }
+                        >
+                            <AdminMediaTitle>{activity.title}</AdminMediaTitle>
+                            <div className="mt-3 flex items-center justify-between text-xs text-slate-500">
+                                <a
+                                    href={activity.video_url}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-1 text-red-600 hover:text-red-700"
                                 >
-                                    Düzenle
-                                </Link>
-                                <button
-                                    type="button"
-                                    onClick={() => handleDelete(activity.id)}
-                                    className="font-semibold text-red-600 transition hover:text-red-700"
-                                >
-                                    Sil
-                                </button>
+                                    <ExternalLink className="h-3.5 w-3.5" />
+                                    Videoyu aç
+                                </a>
+                                <span className="rounded-full bg-red-50 px-2 py-1 text-[10px] font-semibold uppercase text-red-600">
+                                    Video
+                                </span>
                             </div>
-                        </div>
+                        </AdminMediaCard>
                     ))}
                     {activities.length === 0 && (
-                        <div className="rounded-2xl border border-dashed border-slate-200 bg-white/70 p-10 text-center text-sm text-slate-500 md:col-span-2 xl:col-span-3">
-                            Henuz faaliyet eklenmedi.
-                        </div>
+                        <AdminEmptyState
+                            message="Henüz faaliyet eklenmedi."
+                            className="md:col-span-2 xl:col-span-3"
+                        />
                     )}
                 </div>
             </div>

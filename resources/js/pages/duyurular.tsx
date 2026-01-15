@@ -100,7 +100,7 @@ export default function Duyurular({ announcements }: DuyurularProps) {
                     </div>
                     {announcements.length === 0 && (
                         <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center text-sm text-gray-500">
-                            Henuz duyuru eklenmedi.
+                            Henüz duyuru eklenmedi.
                         </div>
                     )}
                 </div>

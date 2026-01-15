@@ -21,7 +21,7 @@ const navItems = [
     { label: 'Dashboard', href: '/admin', icon: LayoutGrid },
     { label: 'Faaliyetler', href: '/admin/faaliyetler', icon: Calendar },
     { label: 'Blog & Haberler', href: '/admin/haberler', icon: PenTool },
-    { label: 'Canli Yayinlar', href: '/admin/canli-yayinlar', icon: Video },
+    { label: 'Canlı Yayınlar', href: '/admin/canli-yayinlar', icon: Video },
     { label: 'Duyurular', href: '/admin/duyurular', icon: Bell },
     { label: 'Slider', href: '/admin/hero-slides', icon: Image },
 ];
@@ -110,7 +110,7 @@ export default function AdminLayout({
                         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                             <div>
                                 <p className="text-xs font-semibold tracking-[0.3em] text-slate-400 uppercase">
-                                    Yonetim
+                                    Yönetim
                                 </p>
                                 <h1 className="mt-2 text-2xl font-semibold text-slate-900">
                                     {title}

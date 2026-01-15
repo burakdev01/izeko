@@ -21,10 +21,10 @@ export default function AdminLogin({
 }: AdminLoginProps) {
     return (
         <AuthLayout
-            title="Admin Panel Girisi"
-            description="Yonetim paneline giris yapmak icin bilgilerinizi girin."
+            title="Admin Panel Girişi"
+            description="Yönetim paneline giriş yapmak için bilgilerinizi girin."
         >
-            <Head title="Admin Girisi" />
+            <Head title="Admin Girişi" />
 
             <Form
                 {...store.form()}
@@ -51,14 +51,14 @@ export default function AdminLogin({
 
                             <div className="grid gap-2">
                                 <div className="flex items-center">
-                                <Label htmlFor="password">Sifre</Label>
+                                <Label htmlFor="password">Şifre</Label>
                                 {canResetPassword && (
                                     <TextLink
                                         href={request()}
                                         className="ml-auto text-sm"
                                         tabIndex={5}
                                     >
-                                        Sifremi unuttum
+                                        Şifremi unuttum
                                     </TextLink>
                                 )}
                                 </div>
@@ -80,7 +80,7 @@ export default function AdminLogin({
                                     name="remember"
                                     tabIndex={3}
                                 />
-                                <Label htmlFor="remember">Beni hatirla</Label>
+                                <Label htmlFor="remember">Beni hatırla</Label>
                             </div>
 
                             <Button
@@ -91,7 +91,7 @@ export default function AdminLogin({
                                 data-test="admin-login-button"
                             >
                                 {processing && <Spinner />}
-                                Giris yap
+                                Giriş yap
                             </Button>
                         </div>
                     </>

@@ -71,7 +71,7 @@ export default function CanliYayinlar({ streams }: CanliYayinlarProps) {
                     ))}
                     {streams.length === 0 && (
                         <div className="col-span-full rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center text-sm text-gray-500">
-                            Henuz canli yayin eklenmedi.
+                            Henüz canlı yayın eklenmedi.
                         </div>
                     )}
                 </div>

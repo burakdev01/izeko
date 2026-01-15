@@ -71,7 +71,7 @@ export default function Faaliyetler({ activities }: FaaliyetlerProps) {
                     ))}
                     {activities.length === 0 && (
                         <div className="col-span-full rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center text-sm text-gray-500">
-                            Henuz faaliyet eklenmedi.
+                            Henüz faaliyet eklenmedi.
                         </div>
                     )}
                 </div>
