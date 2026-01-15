@@ -167,6 +167,10 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::get('/', function () {
         return Inertia::render('admin/dashboard', [
             'activityCount' => Activity::count(),
+            'blogCount' => BlogPost::count(),
+            'liveStreamCount' => LiveStream::count(),
+            'announcementCount' => Announcement::count(),
+            'heroSlideCount' => HeroSlide::count(),
         ]);
     })->name('admin.dashboard');
 

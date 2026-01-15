@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import AdminLayout from '@/layouts/admin-layout';
 import { Head, Link, router } from '@inertiajs/react';
+import { ExternalLink } from 'lucide-react';
 
 interface HeroSlide {
     id: number;
@@ -31,108 +32,104 @@ export default function HeroSlideIndex({ slides }: HeroSlideIndexProps) {
             description="Ana sayfa slider verilerini yonetin."
         >
             <Head title="Hero Slider" />
-            <div className="flex items-center justify-between">
-                <div className="text-sm text-gray-500">
-                    Toplam {slides.length} slide
+            <div className="space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-sm">
+                    <div>
+                        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
+                            Toplam
+                        </p>
+                        <p className="text-sm font-medium text-slate-600">
+                            {slides.length} slide
+                        </p>
+                    </div>
+                    <Button
+                        asChild
+                        className="bg-red-600 text-white hover:bg-red-700"
+                    >
+                        <Link href="/admin/hero-slides/create">Yeni slide</Link>
+                    </Button>
                 </div>
-                <Button asChild>
-                    <Link href="/admin/hero-slides/create">Yeni slide</Link>
-                </Button>
-            </div>
 
-            <div className="overflow-hidden rounded-2xl bg-white shadow">
-                <table className="w-full text-left text-sm">
-                    <thead className="bg-gray-50 text-xs font-semibold uppercase text-gray-500">
-                        <tr>
-                            <th className="px-5 py-3">Baslik</th>
-                            <th className="px-5 py-3">Alt Baslik</th>
-                            <th className="px-5 py-3">Sira</th>
-                            <th className="px-5 py-3">Gorsel</th>
-                            <th className="px-5 py-3">Video</th>
-                            <th className="px-5 py-3 text-right">Islem</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                        {slides.map((slide) => {
-                            const preview =
-                                slide.image ?? slide.poster ?? null;
+                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                    {slides.map((slide) => {
+                        const preview = slide.image ?? slide.poster ?? null;
+                        const hasVideo = Boolean(slide.video);
 
-                            return (
-                                <tr key={slide.id} className="text-gray-700">
-                                    <td className="px-5 py-4">
-                                        <div className="font-medium text-gray-900">
-                                            {slide.title}
+                        return (
+                            <div
+                                key={slide.id}
+                                className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+                            >
+                                <div className="relative aspect-[16/9] bg-slate-100">
+                                    {preview ? (
+                                        <img
+                                            src={preview}
+                                            alt={slide.title}
+                                            className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                                        />
+                                    ) : (
+                                        <div className="flex h-full items-center justify-center text-xs font-medium text-slate-400">
+                                            Gorsel yok
                                         </div>
-                                    </td>
-                                    <td className="px-5 py-4 text-sm text-gray-500">
-                                        {slide.subtitle || '-'}
-                                    </td>
-                                    <td className="px-5 py-4">
-                                        {slide.sort_order ?? 0}
-                                    </td>
-                                    <td className="px-5 py-4">
-                                        {preview ? (
-                                            <img
-                                                src={preview}
-                                                alt={slide.title}
-                                                className="h-12 w-20 rounded-lg object-cover"
-                                            />
-                                        ) : (
-                                            <span className="text-xs text-gray-400">
-                                                -
-                                            </span>
-                                        )}
-                                    </td>
-                                    <td className="px-5 py-4">
-                                        {slide.video ? (
-                                            <a
-                                                href={slide.video}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                                className="text-xs font-semibold text-red-600 hover:text-red-700"
-                                            >
-                                                Videoyu ac
-                                            </a>
-                                        ) : (
-                                            <span className="text-xs text-gray-400">
-                                                -
-                                            </span>
-                                        )}
-                                    </td>
-                                    <td className="px-5 py-4 text-right">
-                                        <div className="flex justify-end gap-2">
-                                            <Link
-                                                href={`/admin/hero-slides/${slide.id}/edit`}
-                                                className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-600 transition hover:border-gray-300 hover:bg-gray-50"
-                                            >
-                                                Duzenle
-                                            </Link>
-                                            <button
-                                                type="button"
-                                                onClick={() =>
-                                                    handleDelete(slide.id)
-                                                }
-                                                className="rounded-lg border border-red-100 px-3 py-1.5 text-xs font-semibold text-red-600 transition hover:border-red-200 hover:bg-red-50"
-                                            >
-                                                Sil
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            );
-                        })}
-                        {slides.length === 0 && (
-                            <tr>
-                                <td
-                                    colSpan={6}
-                                    className="px-5 py-10 text-center text-sm text-gray-500"
-                                >
-                                    Henuz slide eklenmedi.
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
+                                    )}
+                                    <div className="absolute left-3 top-3 flex items-center gap-2">
+                                        <span className="rounded-full bg-white/90 px-3 py-1 text-[11px] font-semibold text-slate-600 shadow">
+                                            Sira {slide.sort_order ?? 0}
+                                        </span>
+                                        <span
+                                            className={`rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-wide ${
+                                                hasVideo
+                                                    ? 'bg-amber-100 text-amber-700'
+                                                    : 'bg-red-50 text-red-600'
+                                            }`}
+                                        >
+                                            {hasVideo ? 'Video' : 'Gorsel'}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="flex flex-1 flex-col gap-2 p-4">
+                                    <h3 className="line-clamp-2 text-sm font-semibold text-slate-900">
+                                        {slide.title}
+                                    </h3>
+                                    <p className="line-clamp-2 text-xs text-slate-500">
+                                        {slide.subtitle || 'Alt baslik eklenmedi.'}
+                                    </p>
+                                    {slide.video ? (
+                                        <a
+                                            href={slide.video}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-red-600 hover:text-red-700"
+                                        >
+                                            <ExternalLink className="h-3.5 w-3.5" />
+                                            Videoyu ac
+                                        </a>
+                                    ) : null}
+                                </div>
+                                <div className="flex items-center justify-between border-t border-slate-100 px-4 py-3 text-xs">
+                                    <Link
+                                        href={`/admin/hero-slides/${slide.id}/edit`}
+                                        className="font-semibold text-slate-600 transition hover:text-slate-900"
+                                    >
+                                        Duzenle
+                                    </Link>
+                                    <button
+                                        type="button"
+                                        onClick={() => handleDelete(slide.id)}
+                                        className="font-semibold text-red-600 transition hover:text-red-700"
+                                    >
+                                        Sil
+                                    </button>
+                                </div>
+                            </div>
+                        );
+                    })}
+                    {slides.length === 0 && (
+                        <div className="rounded-2xl border border-dashed border-slate-200 bg-white/70 p-10 text-center text-sm text-slate-500 md:col-span-2 xl:col-span-3">
+                            Henuz slide eklenmedi.
+                        </div>
+                    )}
+                </div>
             </div>
         </AdminLayout>
     );

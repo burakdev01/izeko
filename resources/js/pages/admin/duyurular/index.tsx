@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import AdminLayout from '@/layouts/admin-layout';
 import { Head, Link, router } from '@inertiajs/react';
+import { ExternalLink } from 'lucide-react';
 
 interface Announcement {
     id: number;
@@ -40,101 +41,95 @@ export default function AnnouncementIndex({
             description="Duyurulari ekleyin, duzenleyin ve yonetin."
         >
             <Head title="Duyurular" />
-            <div className="flex items-center justify-between">
-                <div className="text-sm text-gray-500">
-                    Toplam {announcements.length} duyuru
+            <div className="space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-sm">
+                    <div>
+                        <p className="text-xs font-semibold tracking-[0.25em] text-slate-400 uppercase">
+                            Toplam
+                        </p>
+                        <p className="text-sm font-medium text-slate-600">
+                            {announcements.length} duyuru
+                        </p>
+                    </div>
+                    <Button
+                        asChild
+                        className="bg-red-600 text-white hover:bg-red-700"
+                    >
+                        <Link href="/admin/duyurular/create">Yeni duyuru</Link>
+                    </Button>
                 </div>
-                <Button asChild>
-                    <Link href="/admin/duyurular/create">Yeni duyuru</Link>
-                </Button>
-            </div>
 
-            <div className="overflow-hidden rounded-2xl bg-white shadow">
-                <table className="w-full text-left text-sm">
-                    <thead className="bg-gray-50 text-xs font-semibold uppercase text-gray-500">
-                        <tr>
-                            <th className="px-5 py-3">Baslik</th>
-                            <th className="px-5 py-3">Tarih</th>
-                            <th className="px-5 py-3">Gorsel</th>
-                            <th className="px-5 py-3">Link</th>
-                            <th className="px-5 py-3 text-right">Islem</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                        {announcements.map((announcement) => (
-                            <tr
-                                key={announcement.id}
-                                className="text-gray-700"
-                            >
-                                <td className="px-5 py-4">
-                                    <div className="font-medium text-gray-900">
-                                        {announcement.title}
-                                    </div>
-                                    {announcement.subtitle && (
-                                        <div className="text-xs text-gray-500">
-                                            {announcement.subtitle}
-                                        </div>
-                                    )}
-                                </td>
-                                <td className="px-5 py-4">
-                                    {formatDate(announcement.date)}
-                                </td>
-                                <td className="px-5 py-4">
+                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                    {announcements.map((announcement) => (
+                        <div
+                            key={announcement.id}
+                            className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+                        >
+                            <div className="relative aspect-[16/9] bg-slate-100">
+                                {announcement.image ? (
                                     <img
                                         src={announcement.image}
                                         alt={announcement.title}
-                                        className="h-12 w-20 rounded-lg object-cover"
+                                        className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                                     />
-                                </td>
-                                <td className="px-5 py-4">
-                                    {announcement.link ? (
-                                        <a
-                                            href={announcement.link}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="text-xs font-semibold text-red-600 hover:text-red-700"
-                                        >
-                                            Linki ac
-                                        </a>
-                                    ) : (
-                                        <span className="text-xs text-gray-400">
-                                            -
-                                        </span>
-                                    )}
-                                </td>
-                                <td className="px-5 py-4 text-right">
-                                    <div className="flex justify-end gap-2">
-                                        <Link
-                                            href={`/admin/duyurular/${announcement.id}/edit`}
-                                            className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-600 transition hover:border-gray-300 hover:bg-gray-50"
-                                        >
-                                            Duzenle
-                                        </Link>
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                handleDelete(announcement.id)
-                                            }
-                                            className="rounded-lg border border-red-100 px-3 py-1.5 text-xs font-semibold text-red-600 transition hover:border-red-200 hover:bg-red-50"
-                                        >
-                                            Sil
-                                        </button>
+                                ) : (
+                                    <div className="flex h-full items-center justify-center text-xs font-medium text-slate-400">
+                                        Gorsel yok
                                     </div>
-                                </td>
-                            </tr>
-                        ))}
-                        {announcements.length === 0 && (
-                            <tr>
-                                <td
-                                    colSpan={5}
-                                    className="px-5 py-10 text-center text-sm text-gray-500"
+                                )}
+                                <div className="absolute top-3 left-3 rounded-full bg-white/90 px-3 py-1 text-[11px] font-semibold text-slate-600 shadow">
+                                    {formatDate(announcement.date)}
+                                </div>
+                            </div>
+                            <div className="flex flex-1 flex-col gap-2 p-4">
+                                {announcement.subtitle ? (
+                                    <span className="text-[10px] font-semibold tracking-[0.2em] text-red-500 uppercase">
+                                        {announcement.subtitle}
+                                    </span>
+                                ) : null}
+                                <h3 className="line-clamp-2 text-sm font-semibold text-slate-900">
+                                    {announcement.title}
+                                </h3>
+                                <p className="line-clamp-2 text-xs text-slate-500">
+                                    {announcement.excerpt}
+                                </p>
+                                {announcement.link ? (
+                                    <a
+                                        href={announcement.link}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-red-600 hover:text-red-700"
+                                    >
+                                        <ExternalLink className="h-3.5 w-3.5" />
+                                        Detaya git
+                                    </a>
+                                ) : null}
+                            </div>
+                            <div className="flex items-center justify-between border-t border-slate-100 px-4 py-3 text-xs">
+                                <Link
+                                    href={`/admin/duyurular/${announcement.id}/edit`}
+                                    className="font-semibold text-slate-600 transition hover:text-slate-900"
                                 >
-                                    Henuz duyuru eklenmedi.
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
+                                    Düzenle
+                                </Link>
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        handleDelete(announcement.id)
+                                    }
+                                    className="font-semibold text-red-600 transition hover:text-red-700"
+                                >
+                                    Sil
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                    {announcements.length === 0 && (
+                        <div className="rounded-2xl border border-dashed border-slate-200 bg-white/70 p-10 text-center text-sm text-slate-500 md:col-span-2 xl:col-span-3">
+                            Henuz duyuru eklenmedi.
+                        </div>
+                    )}
+                </div>
             </div>
         </AdminLayout>
     );

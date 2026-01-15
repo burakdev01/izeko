@@ -36,89 +36,76 @@ export default function ActivityIndex({ activities }: ActivityIndexProps) {
             description="Faaliyetleri ekleyin, duzenleyin ve yonetin."
         >
             <Head title="Faaliyetler" />
-            <div className="flex items-center justify-between">
-                <div className="text-sm text-gray-500">
-                    Toplam {activities.length} faaliyet
+            <div className="space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-sm">
+                    <div>
+                        <p className="text-xs font-semibold tracking-[0.25em] text-slate-400 uppercase">
+                            Toplam
+                        </p>
+                        <p className="text-sm font-medium text-slate-600">
+                            {activities.length} faaliyet
+                        </p>
+                    </div>
+                    <Button
+                        asChild
+                        className="bg-red-600 text-white hover:bg-red-700"
+                    >
+                        <Link href="/admin/faaliyetler/create">
+                            Yeni faaliyet
+                        </Link>
+                    </Button>
                 </div>
-                <Button asChild>
-                    <Link href="/admin/faaliyetler/create">
-                        Yeni faaliyet
-                    </Link>
-                </Button>
-            </div>
 
-            <div className="overflow-hidden rounded-2xl bg-white shadow">
-                <table className="w-full text-left text-sm">
-                    <thead className="bg-gray-50 text-xs font-semibold uppercase text-gray-500">
-                        <tr>
-                            <th className="px-5 py-3">Baslik</th>
-                            <th className="px-5 py-3">Tarih</th>
-                            <th className="px-5 py-3">Gorsel</th>
-                            <th className="px-5 py-3">Video</th>
-                            <th className="px-5 py-3 text-right">Islem</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                        {activities.map((activity) => (
-                            <tr key={activity.id} className="text-gray-700">
-                                <td className="px-5 py-4">
-                                    <div className="font-medium text-gray-900">
-                                        {activity.title}
-                                    </div>
-                                </td>
-                                <td className="px-5 py-4">
-                                    {formatDate(activity.date)}
-                                </td>
-                                <td className="px-5 py-4">
+                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                    {activities.map((activity) => (
+                        <div
+                            key={activity.id}
+                            className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+                        >
+                            <div className="relative aspect-[16/9] bg-slate-100">
+                                {activity.thumbnail ? (
                                     <img
                                         src={activity.thumbnail}
                                         alt={activity.title}
-                                        className="h-12 w-20 rounded-lg object-cover"
+                                        className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                                     />
-                                </td>
-                                <td className="px-5 py-4">
-                                    <a
-                                        href={activity.video_url}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className="text-sm font-medium text-red-600 hover:text-red-700"
-                                    >
-                                        Videoyu ac
-                                    </a>
-                                </td>
-                                <td className="px-5 py-4 text-right">
-                                    <div className="flex justify-end gap-2">
-                                        <Link
-                                            href={`/admin/faaliyetler/${activity.id}/edit`}
-                                            className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-600 transition hover:border-gray-300 hover:bg-gray-50"
-                                        >
-                                            Duzenle
-                                        </Link>
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                handleDelete(activity.id)
-                                            }
-                                            className="rounded-lg border border-red-100 px-3 py-1.5 text-xs font-semibold text-red-600 transition hover:border-red-200 hover:bg-red-50"
-                                        >
-                                            Sil
-                                        </button>
+                                ) : (
+                                    <div className="flex h-full items-center justify-center text-xs font-medium text-slate-400">
+                                        Gorsel yok
                                     </div>
-                                </td>
-                            </tr>
-                        ))}
-                        {activities.length === 0 && (
-                            <tr>
-                                <td
-                                    colSpan={5}
-                                    className="px-5 py-10 text-center text-sm text-gray-500"
+                                )}
+                                <div className="absolute top-3 left-3 rounded-full bg-white/90 px-3 py-1 text-[11px] font-semibold text-slate-600 shadow">
+                                    {formatDate(activity.date)}
+                                </div>
+                            </div>
+                            <div className="flex flex-1 flex-col p-4">
+                                <h3 className="line-clamp-2 text-sm font-semibold text-slate-900">
+                                    {activity.title}
+                                </h3>
+                            </div>
+                            <div className="flex items-center justify-between border-t border-slate-100 px-4 py-3 text-xs">
+                                <Link
+                                    href={`/admin/faaliyetler/${activity.id}/edit`}
+                                    className="font-semibold text-slate-600 transition hover:text-slate-900"
                                 >
-                                    Henuz faaliyet eklenmedi.
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
+                                    Düzenle
+                                </Link>
+                                <button
+                                    type="button"
+                                    onClick={() => handleDelete(activity.id)}
+                                    className="font-semibold text-red-600 transition hover:text-red-700"
+                                >
+                                    Sil
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                    {activities.length === 0 && (
+                        <div className="rounded-2xl border border-dashed border-slate-200 bg-white/70 p-10 text-center text-sm text-slate-500 md:col-span-2 xl:col-span-3">
+                            Henuz faaliyet eklenmedi.
+                        </div>
+                    )}
+                </div>
             </div>
         </AdminLayout>
     );

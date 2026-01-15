@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\HandlesUploads;
 use App\Http\Controllers\Controller;
 use App\Models\Announcement;
 use Illuminate\Http\Request;
@@ -9,6 +10,7 @@ use Inertia\Inertia;
 
 class AnnouncementController extends Controller
 {
+    use HandlesUploads;
     public function index()
     {
         $announcements = Announcement::orderByDesc('date')
@@ -29,6 +31,16 @@ class AnnouncementController extends Controller
     {
         $validated = $this->validateAnnouncement($request);
 
+        $image = $this->storePublicFile(
+            $request,
+            'image_file',
+            'announcements',
+        );
+
+        if ($image) {
+            $validated['image'] = $image;
+        }
+
         Announcement::create($validated);
 
         return redirect()
@@ -45,7 +57,19 @@ class AnnouncementController extends Controller
 
     public function update(Request $request, Announcement $announcement)
     {
-        $validated = $this->validateAnnouncement($request);
+        $validated = $this->validateAnnouncement($request, $announcement);
+
+        $image = $this->storePublicFile(
+            $request,
+            'image_file',
+            'announcements',
+        );
+
+        if ($image) {
+            $validated['image'] = $image;
+        } elseif (! $request->filled('image')) {
+            $validated['image'] = $announcement->image;
+        }
 
         $announcement->update($validated);
 
@@ -63,15 +87,24 @@ class AnnouncementController extends Controller
             ->with('status', 'Duyuru silindi.');
     }
 
-    private function validateAnnouncement(Request $request): array
-    {
+    private function validateAnnouncement(
+        Request $request,
+        ?Announcement $announcement = null,
+    ): array {
+        $imageRules = ['nullable', 'url', 'max:255'];
+
+        if (! $announcement || ! $announcement->image) {
+            $imageRules[] = 'required_without:image_file';
+        }
+
         return $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'subtitle' => ['nullable', 'string', 'max:255'],
             'excerpt' => ['required', 'string', 'max:1000'],
             'content' => ['required', 'string'],
-            'image' => ['required', 'url', 'max:255'],
-            'link' => ['nullable', 'string', 'max:255'],
+            'image' => $imageRules,
+            'image_file' => ['nullable', 'image', 'max:5120'],
+            'link' => ['nullable', 'url', 'max:255'],
             'date' => ['required', 'date'],
         ]);
     }

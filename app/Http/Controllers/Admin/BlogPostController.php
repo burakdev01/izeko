@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\HandlesUploads;
 use App\Http\Controllers\Controller;
 use App\Models\BlogPost;
 use Illuminate\Http\Request;
@@ -9,6 +10,7 @@ use Inertia\Inertia;
 
 class BlogPostController extends Controller
 {
+    use HandlesUploads;
     public function index()
     {
         $posts = BlogPost::orderByDesc('date')
@@ -29,6 +31,12 @@ class BlogPostController extends Controller
     {
         $validated = $this->validatePost($request);
 
+        $image = $this->storePublicFile($request, 'image_file', 'blog');
+
+        if ($image) {
+            $validated['image'] = $image;
+        }
+
         BlogPost::create($validated);
 
         return redirect()
@@ -45,7 +53,15 @@ class BlogPostController extends Controller
 
     public function update(Request $request, BlogPost $blogPost)
     {
-        $validated = $this->validatePost($request);
+        $validated = $this->validatePost($request, $blogPost);
+
+        $image = $this->storePublicFile($request, 'image_file', 'blog');
+
+        if ($image) {
+            $validated['image'] = $image;
+        } elseif (! $request->filled('image')) {
+            $validated['image'] = $blogPost->image;
+        }
 
         $blogPost->update($validated);
 
@@ -63,13 +79,22 @@ class BlogPostController extends Controller
             ->with('status', 'Haber silindi.');
     }
 
-    private function validatePost(Request $request): array
-    {
+    private function validatePost(
+        Request $request,
+        ?BlogPost $blogPost = null,
+    ): array {
+        $imageRules = ['nullable', 'url', 'max:255'];
+
+        if (! $blogPost || ! $blogPost->image) {
+            $imageRules[] = 'required_without:image_file';
+        }
+
         return $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'excerpt' => ['required', 'string', 'max:1000'],
             'content' => ['required', 'string'],
-            'image' => ['required', 'url', 'max:255'],
+            'image' => $imageRules,
+            'image_file' => ['nullable', 'image', 'max:5120'],
             'date' => ['required', 'date'],
         ]);
     }

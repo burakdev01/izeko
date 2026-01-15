@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\HandlesUploads;
 use App\Http\Controllers\Controller;
 use App\Models\Activity;
 use Illuminate\Http\Request;
@@ -9,6 +10,7 @@ use Inertia\Inertia;
 
 class ActivityController extends Controller
 {
+    use HandlesUploads;
     public function index()
     {
         $activities = Activity::orderByDesc('date')
@@ -29,6 +31,16 @@ class ActivityController extends Controller
     {
         $validated = $this->validateActivity($request);
 
+        $thumbnail = $this->storePublicFile(
+            $request,
+            'thumbnail_file',
+            'activities',
+        );
+
+        if ($thumbnail) {
+            $validated['thumbnail'] = $thumbnail;
+        }
+
         Activity::create($validated);
 
         return redirect()
@@ -45,7 +57,19 @@ class ActivityController extends Controller
 
     public function update(Request $request, Activity $activity)
     {
-        $validated = $this->validateActivity($request);
+        $validated = $this->validateActivity($request, $activity);
+
+        $thumbnail = $this->storePublicFile(
+            $request,
+            'thumbnail_file',
+            'activities',
+        );
+
+        if ($thumbnail) {
+            $validated['thumbnail'] = $thumbnail;
+        } elseif (! $request->filled('thumbnail')) {
+            $validated['thumbnail'] = $activity->thumbnail;
+        }
 
         $activity->update($validated);
 
@@ -63,13 +87,22 @@ class ActivityController extends Controller
             ->with('status', 'Faaliyet silindi.');
     }
 
-    private function validateActivity(Request $request): array
-    {
+    private function validateActivity(
+        Request $request,
+        ?Activity $activity = null,
+    ): array {
+        $thumbnailRules = ['nullable', 'url', 'max:255'];
+
+        if (! $activity || ! $activity->thumbnail) {
+            $thumbnailRules[] = 'required_without:thumbnail_file';
+        }
+
         return $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'date' => ['required', 'date'],
             'video_url' => ['required', 'url', 'max:255'],
-            'thumbnail' => ['required', 'url', 'max:255'],
+            'thumbnail' => $thumbnailRules,
+            'thumbnail_file' => ['nullable', 'image', 'max:5120'],
         ]);
     }
 
