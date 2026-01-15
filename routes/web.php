@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\Admin\ActivityController;
 use App\Http\Controllers\Admin\BlogPostController;
+use App\Http\Controllers\Admin\LiveStreamController;
 use App\Models\Activity;
 use App\Models\BlogPost;
+use App\Models\LiveStream;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -87,7 +89,19 @@ Route::get('/haberler', function () {
 })->name('haberler');
 
 Route::get('/canli-yayinlar', function () {
-    return Inertia::render('canli-yayinlar');
+    $streams = LiveStream::orderByDesc('date')
+        ->get()
+        ->map(fn (LiveStream $stream) => [
+            'id' => $stream->id,
+            'title' => $stream->title,
+            'date' => optional($stream->date)->format('Y-m-d'),
+            'videoUrl' => $stream->video_url,
+            'thumbnail' => $stream->thumbnail,
+        ]);
+
+    return Inertia::render('canli-yayinlar', [
+        'streams' => $streams,
+    ]);
 })->name('canli-yayinlar');
 
 Route::get('/duyurular', function () {
@@ -133,6 +147,11 @@ Route::prefix('admin')->middleware('admin')->group(function () {
         ->except('show')
         ->names('admin.haberler')
         ->parameters(['haberler' => 'blogPost']);
+
+    Route::resource('canli-yayinlar', LiveStreamController::class)
+        ->except('show')
+        ->names('admin.canli-yayinlar')
+        ->parameters(['canli-yayinlar' => 'liveStream']);
 });
 
 

@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Activity;
 use App\Models\BlogPost;
+use App\Models\LiveStream;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -104,6 +105,39 @@ class DatabaseSeeder extends Seeder
                 'content' => 'Musteri beklentilerini anlamak, sadakati ve memnuniyeti artirir.',
                 'image' => 'https://izeko.org.tr/files/system//TvnhOiApwmIZnPftvQH5IUBLGNh0C1eKM9KwlH5H.png',
                 'date' => '2025-11-25',
+            ]
+        );
+
+        LiveStream::firstOrCreate(
+            [
+                'title' => 'IZEKO Canli Yayin - Piyasa Degerlendirmesi',
+            ],
+            [
+                'date' => '2025-11-25',
+                'video_url' => 'https://www.youtube.com/watch?v=QH2-TGUlwu4',
+                'thumbnail' => 'https://img.youtube.com/vi/QH2-TGUlwu4/hqdefault.jpg',
+            ]
+        );
+
+        LiveStream::firstOrCreate(
+            [
+                'title' => 'Gayrimenkul Sektoru Canli Yayini 2025',
+            ],
+            [
+                'date' => '2025-11-25',
+                'video_url' => 'https://www.youtube.com/watch?v=aqz-KE-bpKQ',
+                'thumbnail' => 'https://img.youtube.com/vi/aqz-KE-bpKQ/hqdefault.jpg',
+            ]
+        );
+
+        LiveStream::firstOrCreate(
+            [
+                'title' => 'IZEKO Bolge Temsilcileri Canli Toplanti',
+            ],
+            [
+                'date' => '2025-11-25',
+                'video_url' => 'https://www.youtube.com/watch?v=ysz5S6PUM-U',
+                'thumbnail' => 'https://img.youtube.com/vi/ysz5S6PUM-U/hqdefault.jpg',
             ]
         );
     }
