@@ -13,23 +13,24 @@ class ActivityController extends Controller
     use HandlesUploads;
     public function index()
     {
-        $activities = Activity::orderByDesc('date')
+        $activities = Activity::orderByDesc('updated_at')
             ->get()
             ->map(fn (Activity $activity) => $this->mapActivity($activity));
 
-        return Inertia::render('admin/activities/index', [
+        return Inertia::render('admin/faaliyetler/index', [
             'activities' => $activities,
         ]);
     }
 
     public function create()
     {
-        return Inertia::render('admin/activities/create');
+        return Inertia::render('admin/faaliyetler/create');
     }
 
     public function store(Request $request)
     {
         $validated = $this->validateActivity($request);
+        $validated['active'] = $request->boolean('active');
 
         $thumbnail = $this->storePublicFile(
             $request,
@@ -44,13 +45,13 @@ class ActivityController extends Controller
         Activity::create($validated);
 
         return redirect()
-            ->route('admin.activities.index')
+            ->route('admin.faaliyetler.index')
             ->with('status', 'Faaliyet eklendi.');
     }
 
     public function edit(Activity $activity)
     {
-        return Inertia::render('admin/activities/edit', [
+        return Inertia::render('admin/faaliyetler/edit', [
             'activity' => $this->mapActivity($activity),
         ]);
     }
@@ -58,6 +59,7 @@ class ActivityController extends Controller
     public function update(Request $request, Activity $activity)
     {
         $validated = $this->validateActivity($request, $activity);
+        $validated['active'] = $request->boolean('active');
 
         $thumbnail = $this->storePublicFile(
             $request,
@@ -74,7 +76,7 @@ class ActivityController extends Controller
         $activity->update($validated);
 
         return redirect()
-            ->route('admin.activities.index')
+            ->route('admin.faaliyetler.index')
             ->with('status', 'Faaliyet guncellendi.');
     }
 
@@ -83,7 +85,7 @@ class ActivityController extends Controller
         $activity->delete();
 
         return redirect()
-            ->route('admin.activities.index')
+            ->route('admin.faaliyetler.index')
             ->with('status', 'Faaliyet silindi.');
     }
 
@@ -99,10 +101,10 @@ class ActivityController extends Controller
 
         return $request->validate([
             'title' => ['required', 'string', 'max:255'],
-            'date' => ['required', 'date'],
             'video_url' => ['required', 'url', 'max:255'],
             'thumbnail' => $thumbnailRules,
             'thumbnail_file' => ['nullable', 'image', 'max:5120'],
+            'active' => ['nullable', 'boolean'],
         ]);
     }
 
@@ -111,9 +113,10 @@ class ActivityController extends Controller
         return [
             'id' => $activity->id,
             'title' => $activity->title,
-            'date' => optional($activity->date)->format('Y-m-d'),
+            'date' => optional($activity->updated_at)->format('Y-m-d'),
             'video_url' => $activity->video_url,
             'thumbnail' => $activity->thumbnail,
+            'active' => $activity->active,
         ];
     }
 }

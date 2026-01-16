@@ -4,33 +4,33 @@ import AdminLayout from '@/layouts/admin-layout';
 import { Head } from '@inertiajs/react';
 import { GripVertical } from 'lucide-react';
 
-type LiveStream = {
+type Activity = {
     id: number;
     title: string;
     video_url: string;
     thumbnail?: string | null;
 };
 
-type CanliYayinlarIndexProps = {
-    streams: LiveStream[];
+type FaaliyetlerIndexProps = {
+    activities: Activity[];
 };
 
-const placeholderImage = 'https://via.placeholder.com/96?text=Yayin';
+const placeholderImage = 'https://via.placeholder.com/96?text=Faaliyet';
 
-export default function CanliYayinlarIndex({
-    streams,
-}: CanliYayinlarIndexProps) {
+export default function FaaliyetlerIndex({
+    activities,
+}: FaaliyetlerIndexProps) {
     return (
-        <AdminLayout title="Canlı Yayınlar">
-            <Head title="Canlı Yayınlar" />
+        <AdminLayout title="Faaliyetler">
+            <Head title="Faaliyetler" />
 
             <div className="space-y-6">
                 <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
                     <AdminPageHeader
-                        title="Canlı Yayın Yönetimi"
-                        description="Canlı yayın kayıtlarını yönetin ve yeni yayın ekleyin."
-                        actionLabel="Yeni Canlı Yayın"
-                        actionHref="/admin/canli-yayinlar/create"
+                        title="Faaliyet Yönetimi"
+                        description="Mevcut faaliyetleri listeleyin ve yeni faaliyet ekleyin."
+                        actionLabel="Yeni Faaliyet"
+                        actionHref="/admin/faaliyetler/create"
                     />
 
                     <div className="overflow-x-auto">
@@ -53,19 +53,19 @@ export default function CanliYayinlarIndex({
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
-                                {streams.length === 0 && (
+                                {activities.length === 0 && (
                                     <tr>
                                         <td
                                             colSpan={5}
                                             className="px-6 py-8 text-center text-gray-500"
                                         >
-                                            Henüz canlı yayın eklenmemiş
+                                            Henüz faaliyet eklenmemiş
                                         </td>
                                     </tr>
                                 )}
-                                {streams.map((stream) => (
+                                {activities.map((activity) => (
                                     <tr
-                                        key={stream.id}
+                                        key={activity.id}
                                         className="transition hover:bg-gray-50"
                                     >
                                         <td className="px-4 py-4">
@@ -74,29 +74,29 @@ export default function CanliYayinlarIndex({
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                                            {stream.title}
+                                            {activity.title}
                                         </td>
                                         <td className="hidden px-6 py-4 text-xs text-gray-600 md:table-cell">
                                             <span className="block max-w-xs truncate">
-                                                {stream.video_url}
+                                                {activity.video_url}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center justify-center">
                                                 <img
                                                     src={
-                                                        stream.thumbnail ||
+                                                        activity.thumbnail ||
                                                         placeholderImage
                                                     }
-                                                    alt={stream.title}
+                                                    alt={activity.title}
                                                     className="h-12 w-12 rounded-lg object-cover"
                                                 />
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
                                             <AdminRowActions
-                                                editHref={`/admin/canli-yayinlar/${stream.id}/edit`}
-                                                deleteHref={`/admin/canli-yayinlar/${stream.id}`}
+                                                editHref={`/admin/faaliyetler/${activity.id}/edit`}
+                                                deleteHref={`/admin/faaliyetler/${activity.id}`}
                                             />
                                         </td>
                                     </tr>

@@ -1,97 +1,135 @@
-import {
-    AdminActionButton,
-    AdminActionLink,
-} from '@/components/admin/admin-action';
-import AdminEmptyState from '@/components/admin/admin-empty-state';
-import AdminListHeader from '@/components/admin/admin-list-header';
-import AdminMediaCard from '@/components/admin/admin-media-card';
-import AdminMediaTitle from '@/components/admin/admin-media-title';
-import AdminMetaPill from '@/components/admin/admin-meta-pill';
+import AdminPageHeader from '@/components/admin/admin-page-header';
+import AdminRowActions from '@/components/admin/admin-row-actions';
 import AdminLayout from '@/layouts/admin-layout';
-import { Head, router } from '@inertiajs/react';
+import { slugify } from '@/lib/utils';
+import { Head } from '@inertiajs/react';
+import { GripVertical } from 'lucide-react';
 
-interface BlogPost {
+type BlogPost = {
     id: number;
     title: string;
-    excerpt: string;
-    image: string;
-    date: string;
-}
+    image?: string | null;
+    seo_url?: string | null;
+    active?: boolean;
+};
 
-interface BlogIndexProps {
+type HaberlerIndexProps = {
     posts: BlogPost[];
-}
+};
 
-const formatDate = (value: string) =>
-    new Date(value).toLocaleDateString('tr-TR', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric',
-    });
+const placeholderImage = 'https://via.placeholder.com/96?text=Blog';
 
-export default function BlogIndex({ posts }: BlogIndexProps) {
-    const handleDelete = (postId: number) => {
-        if (!window.confirm('Haber silinsin mi?')) {
-            return;
-        }
-
-        router.delete(`/admin/haberler/${postId}`);
-    };
-
+export default function HaberlerIndex({ posts }: HaberlerIndexProps) {
     return (
-        <AdminLayout
-            title="Blog & Haberler"
-            description="Haberleri ekleyin, düzenleyin ve yönetin."
-        >
-            <Head title="Blog & Haberler" />
-            <div className="space-y-4">
-                <AdminListHeader
-                    count={posts.length}
-                    label="haber"
-                    actionLabel="Yeni haber"
-                    actionHref="/admin/haberler/create"
-                />
+        <AdminLayout title="Blog Yönetimi">
+            <Head title="Blog Yönetimi" />
 
-                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                    {posts.map((post) => (
-                        <AdminMediaCard
-                            key={post.id}
-                            image={post.image}
-                            imageAlt={post.title}
-                            overlay={
-                                <AdminMetaPill>
-                                    {formatDate(post.date)}
-                                </AdminMetaPill>
-                            }
-                            footer={
-                                <>
-                                    <AdminActionLink
-                                        href={`/admin/haberler/${post.id}/edit`}
-                                    >
-                                        Düzenle
-                                    </AdminActionLink>
-                                    <AdminActionButton
-                                        type="button"
-                                        onClick={() => handleDelete(post.id)}
-                                        variant="danger"
-                                    >
-                                        Sil
-                                    </AdminActionButton>
-                                </>
-                            }
-                        >
-                            <AdminMediaTitle>{post.title}</AdminMediaTitle>
-                            <p className="line-clamp-2 text-xs text-slate-500">
-                                {post.excerpt}
-                            </p>
-                        </AdminMediaCard>
-                    ))}
-                    {posts.length === 0 && (
-                        <AdminEmptyState
-                            message="Henüz haber eklenmedi."
-                            className="md:col-span-2 xl:col-span-3"
-                        />
-                    )}
+            <div className="space-y-6">
+                <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
+                    <AdminPageHeader
+                        title="Blog Yönetimi"
+                        description="Mevcut blog yazılarını düzenleyebilir veya yeni yazılar ekleyebilirsiniz."
+                        actionLabel="Yeni Blog Yazısı"
+                        actionHref="/admin/haberler/create"
+                    />
+
+                    <div className="overflow-x-auto">
+                        <table className="w-full">
+                            <thead className="border-b border-gray-200 bg-gray-50">
+                                <tr>
+                                    <th className="w-12 px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500" />
+                                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                        Başlık
+                                    </th>
+                                    <th className="hidden px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 md:table-cell">
+                                        Dil
+                                    </th>
+                                    <th className="hidden px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 lg:table-cell">
+                                        SEO URL
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                        Durum
+                                    </th>
+                                    <th className="w-24 px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500">
+                                        İşlemler
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-200">
+                                {posts.length === 0 && (
+                                    <tr>
+                                        <td
+                                            colSpan={6}
+                                            className="px-6 py-8 text-center text-gray-500"
+                                        >
+                                            Henüz blog yazısı eklenmemiş
+                                        </td>
+                                    </tr>
+                                )}
+                                {posts.map((post) => {
+                                    const imageSrc =
+                                        post.image || placeholderImage;
+                                    const seoUrl =
+                                        post.seo_url ||
+                                        slugify(post.title) ||
+                                        '-';
+                                    const isActive = post.active ?? true;
+
+                                    return (
+                                        <tr
+                                            key={post.id}
+                                            className="transition hover:bg-gray-50"
+                                        >
+                                            <td className="px-4 py-4">
+                                                <div className="flex items-center justify-center text-gray-400">
+                                                    <GripVertical className="h-4 w-4" />
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center space-x-3 text-sm font-medium text-gray-900">
+                                                    <img
+                                                        src={imageSrc}
+                                                        alt={post.title}
+                                                        className="h-12 w-12 flex-shrink-0 rounded-lg object-cover"
+                                                    />
+                                                    <span>{post.title}</span>
+                                                </div>
+                                            </td>
+                                            <td className="hidden px-6 py-4 md:table-cell">
+                                                <span className="rounded-full bg-purple-100 px-2 py-1 text-xs font-medium text-purple-800">
+                                                    Türkçe
+                                                </span>
+                                            </td>
+                                            <td className="hidden px-6 py-4 lg:table-cell">
+                                                <span className="text-xs text-gray-600">
+                                                    {seoUrl}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span
+                                                    className={`rounded-full px-3 py-1 text-xs font-medium ${
+                                                        isActive
+                                                            ? 'bg-green-100 text-green-800'
+                                                            : 'bg-gray-100 text-gray-800'
+                                                    }`}
+                                                >
+                                                    {isActive
+                                                        ? 'Aktif'
+                                                        : 'Pasif'}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <AdminRowActions
+                                                    editHref={`/admin/haberler/${post.id}/edit`}
+                                                    deleteHref={`/admin/haberler/${post.id}`}
+                                                />
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </AdminLayout>

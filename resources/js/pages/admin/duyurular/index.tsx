@@ -1,122 +1,123 @@
-import {
-    AdminActionButton,
-    AdminActionLink,
-} from '@/components/admin/admin-action';
-import AdminEmptyState from '@/components/admin/admin-empty-state';
-import AdminListHeader from '@/components/admin/admin-list-header';
-import AdminMediaCard from '@/components/admin/admin-media-card';
-import AdminMediaTitle from '@/components/admin/admin-media-title';
-import AdminMetaPill from '@/components/admin/admin-meta-pill';
+import AdminPageHeader from '@/components/admin/admin-page-header';
+import AdminRowActions from '@/components/admin/admin-row-actions';
 import AdminLayout from '@/layouts/admin-layout';
-import { Head, router } from '@inertiajs/react';
-import { ExternalLink } from 'lucide-react';
+import { Head } from '@inertiajs/react';
+import { GripVertical } from 'lucide-react';
 
-interface Announcement {
+type Announcement = {
     id: number;
     title: string;
     subtitle?: string | null;
     excerpt: string;
-    image: string;
+    image?: string | null;
     link?: string | null;
-    date: string;
-}
+};
 
-interface AnnouncementIndexProps {
+type DuyurularIndexProps = {
     announcements: Announcement[];
-}
+};
 
-const formatDate = (value: string) =>
-    new Date(value).toLocaleDateString('tr-TR', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric',
-    });
+const placeholderImage = 'https://via.placeholder.com/96?text=Duyuru';
 
-export default function AnnouncementIndex({
+export default function DuyurularIndex({
     announcements,
-}: AnnouncementIndexProps) {
-    const handleDelete = (announcementId: number) => {
-        if (!window.confirm('Duyuru silinsin mi?')) {
-            return;
-        }
-
-        router.delete(`/admin/duyurular/${announcementId}`);
-    };
-
+}: DuyurularIndexProps) {
     return (
-        <AdminLayout
-            title="Duyurular"
-            description="Duyuruları ekleyin, düzenleyin ve yönetin."
-        >
+        <AdminLayout title="Duyurular">
             <Head title="Duyurular" />
-            <div className="space-y-4">
-                <AdminListHeader
-                    count={announcements.length}
-                    label="duyuru"
-                    actionLabel="Yeni duyuru"
-                    actionHref="/admin/duyurular/create"
-                />
 
-                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                    {announcements.map((announcement) => (
-                        <AdminMediaCard
-                            key={announcement.id}
-                            image={announcement.image}
-                            imageAlt={announcement.title}
-                            overlay={
-                                <AdminMetaPill>
-                                    {formatDate(announcement.date)}
-                                </AdminMetaPill>
-                            }
-                            footer={
-                                <>
-                                    <AdminActionLink
-                                        href={`/admin/duyurular/${announcement.id}/edit`}
+            <div className="space-y-6">
+                <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
+                    <AdminPageHeader
+                        title="Duyuru Yönetimi"
+                        description="Duyuru içeriklerini yönetin ve yeni duyuru ekleyin."
+                        actionLabel="Yeni Duyuru"
+                        actionHref="/admin/duyurular/create"
+                    />
+
+                    <div className="overflow-x-auto">
+                        <table className="w-full">
+                            <thead className="border-b border-gray-200 bg-gray-50">
+                                <tr>
+                                    <th className="w-12 px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500" />
+                                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                        Başlık
+                                    </th>
+                                    <th className="hidden px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 lg:table-cell">
+                                        Link
+                                    </th>
+                                    <th className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500">
+                                        Görsel
+                                    </th>
+                                    <th className="w-24 px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500">
+                                        İşlemler
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-200">
+                                {announcements.length === 0 && (
+                                    <tr>
+                                        <td
+                                            colSpan={5}
+                                            className="px-6 py-8 text-center text-gray-500"
+                                        >
+                                            Henüz duyuru eklenmemiş
+                                        </td>
+                                    </tr>
+                                )}
+                                {announcements.map((announcement) => (
+                                    <tr
+                                        key={announcement.id}
+                                        className="transition hover:bg-gray-50"
                                     >
-                                        Düzenle
-                                    </AdminActionLink>
-                                    <AdminActionButton
-                                        type="button"
-                                        onClick={() =>
-                                            handleDelete(announcement.id)
-                                        }
-                                        variant="danger"
-                                    >
-                                        Sil
-                                    </AdminActionButton>
-                                </>
-                            }
-                        >
-                            {announcement.subtitle ? (
-                                <span className="text-[10px] font-semibold tracking-[0.2em] text-red-500 uppercase">
-                                    {announcement.subtitle}
-                                </span>
-                            ) : null}
-                            <AdminMediaTitle>
-                                {announcement.title}
-                            </AdminMediaTitle>
-                            <p className="line-clamp-2 text-xs text-slate-500">
-                                {announcement.excerpt}
-                            </p>
-                            {announcement.link ? (
-                                <a
-                                    href={announcement.link}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-red-600 hover:text-red-700"
-                                >
-                                    <ExternalLink className="h-3.5 w-3.5" />
-                                    Detaya git
-                                </a>
-                            ) : null}
-                        </AdminMediaCard>
-                    ))}
-                    {announcements.length === 0 && (
-                        <AdminEmptyState
-                            message="Henüz duyuru eklenmedi."
-                            className="md:col-span-2 xl:col-span-3"
-                        />
-                    )}
+                                        <td className="px-4 py-4">
+                                            <div className="flex items-center justify-center text-gray-400">
+                                                <GripVertical className="h-4 w-4" />
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-gray-900">
+                                            <div className="flex flex-col">
+                                                <span className="font-medium">
+                                                    {announcement.title}
+                                                </span>
+                                                {announcement.subtitle && (
+                                                    <span className="text-xs text-gray-500">
+                                                        {announcement.subtitle}
+                                                    </span>
+                                                )}
+                                                <span className="max-w-xs truncate text-xs text-gray-500">
+                                                    {announcement.excerpt}
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td className="hidden px-6 py-4 text-xs text-gray-600 lg:table-cell">
+                                            <span className="block max-w-xs truncate">
+                                                {announcement.link || '-'}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center justify-center">
+                                                <img
+                                                    src={
+                                                        announcement.image ||
+                                                        placeholderImage
+                                                    }
+                                                    alt={announcement.title}
+                                                    className="h-12 w-12 rounded-lg object-cover"
+                                                />
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <AdminRowActions
+                                                editHref={`/admin/duyurular/${announcement.id}/edit`}
+                                                deleteHref={`/admin/duyurular/${announcement.id}`}
+                                            />
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </AdminLayout>

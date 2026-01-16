@@ -16,9 +16,9 @@ class LiveStream extends Model
      */
     protected $fillable = [
         'title',
-        'date',
         'video_url',
         'thumbnail',
+        'active',
     ];
 
     /**
@@ -29,7 +29,7 @@ class LiveStream extends Model
     protected function casts(): array
     {
         return [
-            'date' => 'date',
+            'active' => 'boolean',
         ];
     }
 }

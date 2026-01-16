@@ -13,7 +13,7 @@ class AnnouncementController extends Controller
     use HandlesUploads;
     public function index()
     {
-        $announcements = Announcement::orderByDesc('date')
+        $announcements = Announcement::orderByDesc('updated_at')
             ->get()
             ->map(fn (Announcement $announcement) => $this->mapAnnouncement($announcement));
 
@@ -30,6 +30,7 @@ class AnnouncementController extends Controller
     public function store(Request $request)
     {
         $validated = $this->validateAnnouncement($request);
+        $validated['active'] = $request->boolean('active');
 
         $image = $this->storePublicFile(
             $request,
@@ -58,6 +59,7 @@ class AnnouncementController extends Controller
     public function update(Request $request, Announcement $announcement)
     {
         $validated = $this->validateAnnouncement($request, $announcement);
+        $validated['active'] = $request->boolean('active');
 
         $image = $this->storePublicFile(
             $request,
@@ -105,7 +107,7 @@ class AnnouncementController extends Controller
             'image' => $imageRules,
             'image_file' => ['nullable', 'image', 'max:5120'],
             'link' => ['nullable', 'url', 'max:255'],
-            'date' => ['required', 'date'],
+            'active' => ['nullable', 'boolean'],
         ]);
     }
 
@@ -119,7 +121,8 @@ class AnnouncementController extends Controller
             'content' => $announcement->content,
             'image' => $announcement->image,
             'link' => $announcement->link,
-            'date' => optional($announcement->date)->format('Y-m-d'),
+            'date' => optional($announcement->updated_at)->format('Y-m-d'),
+            'active' => $announcement->active,
         ];
     }
 }

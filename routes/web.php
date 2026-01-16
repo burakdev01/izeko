@@ -3,7 +3,6 @@
 use App\Http\Controllers\Admin\ActivityController;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\BlogPostController;
-use App\Http\Controllers\Admin\HeroSlideController;
 use App\Http\Controllers\Admin\LiveStreamController;
 use App\Models\Activity;
 use App\Models\Announcement;
@@ -75,12 +74,13 @@ Route::get('/kurumsal/oda-kayit-islemleri', function () {
 })->name('kurumsal.oda-kayit-islemleri');
 
 Route::get('/faaliyetler', function () {
-    $activities = Activity::orderByDesc('date')
+    $activities = Activity::where('active', true)
+        ->orderByDesc('updated_at')
         ->get()
         ->map(fn (Activity $activity) => [
             'id' => $activity->id,
             'title' => $activity->title,
-            'date' => optional($activity->date)->format('Y-m-d'),
+            'date' => optional($activity->updated_at)->format('Y-m-d'),
             'videoUrl' => $activity->video_url,
             'thumbnail' => $activity->thumbnail,
         ]);
@@ -91,14 +91,15 @@ Route::get('/faaliyetler', function () {
 })->name('faaliyetler');
 
 Route::get('/haberler', function () {
-    $posts = BlogPost::orderByDesc('date')
+    $posts = BlogPost::where('active', true)
+        ->orderByDesc('updated_at')
         ->get()
         ->map(fn (BlogPost $post) => [
             'id' => $post->id,
             'image' => $post->image,
             'title' => $post->title,
             'excerpt' => $post->excerpt,
-            'date' => optional($post->date)->format('Y-m-d'),
+            'date' => optional($post->updated_at)->format('Y-m-d'),
         ]);
 
     return Inertia::render('haberler', [
@@ -107,12 +108,13 @@ Route::get('/haberler', function () {
 })->name('haberler');
 
 Route::get('/canli-yayinlar', function () {
-    $streams = LiveStream::orderByDesc('date')
+    $streams = LiveStream::where('active', true)
+        ->orderByDesc('updated_at')
         ->get()
         ->map(fn (LiveStream $stream) => [
             'id' => $stream->id,
             'title' => $stream->title,
-            'date' => optional($stream->date)->format('Y-m-d'),
+            'date' => optional($stream->updated_at)->format('Y-m-d'),
             'videoUrl' => $stream->video_url,
             'thumbnail' => $stream->thumbnail,
         ]);
@@ -123,7 +125,8 @@ Route::get('/canli-yayinlar', function () {
 })->name('canli-yayinlar');
 
 Route::get('/duyurular', function () {
-    $announcements = Announcement::orderByDesc('date')
+    $announcements = Announcement::where('active', true)
+        ->orderByDesc('updated_at')
         ->get()
         ->map(fn (Announcement $announcement) => [
             'id' => $announcement->id,
@@ -132,7 +135,7 @@ Route::get('/duyurular', function () {
             'excerpt' => $announcement->excerpt,
             'image' => $announcement->image,
             'link' => $announcement->link,
-            'date' => optional($announcement->date)->format('Y-m-d'),
+            'date' => optional($announcement->updated_at)->format('Y-m-d'),
         ]);
 
     return Inertia::render('duyurular', [
@@ -163,43 +166,28 @@ Route::get('/admin/login', function (Request $request) {
     ]);
 })->name('admin.login');
 
-Route::prefix('admin')->middleware('admin')->group(function () {
-    Route::get('/', function () {
-        return Inertia::render('admin/dashboard', [
-            'activityCount' => Activity::count(),
-            'blogCount' => BlogPost::count(),
-            'liveStreamCount' => LiveStream::count(),
-            'announcementCount' => Announcement::count(),
-            'heroSlideCount' => HeroSlide::count(),
-        ]);
-    })->name('admin.dashboard');
+Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
+    function () {
+        Route::get('/', function () {
+            return Inertia::render('admin/dashboard', [
+                'stats' => [
+                    'activities' => Activity::count(),
+                    'streams' => LiveStream::count(),
+                    'posts' => BlogPost::count(),
+                ],
+            ]);
+        })->name('dashboard');
 
-    Route::resource('faaliyetler', ActivityController::class)
-        ->except('show')
-        ->names('admin.activities')
-        ->parameters(['faaliyetler' => 'activity']);
-
-    Route::resource('haberler', BlogPostController::class)
-        ->except('show')
-        ->names('admin.haberler')
-        ->parameters(['haberler' => 'blogPost']);
-
-    Route::resource('canli-yayinlar', LiveStreamController::class)
-        ->except('show')
-        ->names('admin.canli-yayinlar')
-        ->parameters(['canli-yayinlar' => 'liveStream']);
-
-    Route::resource('duyurular', AnnouncementController::class)
-        ->except('show')
-        ->names('admin.duyurular')
-        ->parameters(['duyurular' => 'announcement']);
-
-    Route::resource('hero-slides', HeroSlideController::class)
-        ->except('show')
-        ->names('admin.hero-slides')
-        ->parameters(['hero-slides' => 'heroSlide']);
-});
-
+        Route::resource('haberler', BlogPostController::class)
+            ->parameters(['haberler' => 'blogPost']);
+        Route::resource('faaliyetler', ActivityController::class)
+            ->parameters(['faaliyetler' => 'activity']);
+        Route::resource('canli-yayinlar', LiveStreamController::class)
+            ->parameters(['canli-yayinlar' => 'liveStream']);
+        Route::resource('duyurular', AnnouncementController::class)
+            ->parameters(['duyurular' => 'announcement']);
+    },
+);
 
 
 // Route::middleware(['auth', 'verified'])->group(function () {

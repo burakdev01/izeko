@@ -13,7 +13,7 @@ class BlogPostController extends Controller
     use HandlesUploads;
     public function index()
     {
-        $posts = BlogPost::orderByDesc('date')
+        $posts = BlogPost::orderByDesc('updated_at')
             ->get()
             ->map(fn (BlogPost $post) => $this->mapPost($post));
 
@@ -30,6 +30,7 @@ class BlogPostController extends Controller
     public function store(Request $request)
     {
         $validated = $this->validatePost($request);
+        $validated['active'] = $request->boolean('active');
 
         $image = $this->storePublicFile($request, 'image_file', 'blog');
 
@@ -54,6 +55,7 @@ class BlogPostController extends Controller
     public function update(Request $request, BlogPost $blogPost)
     {
         $validated = $this->validatePost($request, $blogPost);
+        $validated['active'] = $request->boolean('active');
 
         $image = $this->storePublicFile($request, 'image_file', 'blog');
 
@@ -95,7 +97,10 @@ class BlogPostController extends Controller
             'content' => ['required', 'string'],
             'image' => $imageRules,
             'image_file' => ['nullable', 'image', 'max:5120'],
-            'date' => ['required', 'date'],
+            'active' => ['nullable', 'boolean'],
+            'seo_title' => ['nullable', 'string', 'max:255'],
+            'seo_description' => ['nullable', 'string', 'max:1000'],
+            'seo_url' => ['nullable', 'string', 'max:255'],
         ]);
     }
 
@@ -107,7 +112,11 @@ class BlogPostController extends Controller
             'excerpt' => $post->excerpt,
             'content' => $post->content,
             'image' => $post->image,
-            'date' => optional($post->date)->format('Y-m-d'),
+            'active' => $post->active,
+            'seo_title' => $post->seo_title,
+            'seo_description' => $post->seo_description,
+            'seo_url' => $post->seo_url,
+            'date' => optional($post->updated_at)->format('Y-m-d'),
         ];
     }
 }

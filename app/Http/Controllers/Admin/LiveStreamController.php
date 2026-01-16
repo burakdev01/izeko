@@ -13,7 +13,7 @@ class LiveStreamController extends Controller
     use HandlesUploads;
     public function index()
     {
-        $streams = LiveStream::orderByDesc('date')
+        $streams = LiveStream::orderByDesc('updated_at')
             ->get()
             ->map(fn (LiveStream $stream) => $this->mapStream($stream));
 
@@ -30,6 +30,7 @@ class LiveStreamController extends Controller
     public function store(Request $request)
     {
         $validated = $this->validateStream($request);
+        $validated['active'] = $request->boolean('active');
 
         $thumbnail = $this->storePublicFile(
             $request,
@@ -58,6 +59,7 @@ class LiveStreamController extends Controller
     public function update(Request $request, LiveStream $liveStream)
     {
         $validated = $this->validateStream($request, $liveStream);
+        $validated['active'] = $request->boolean('active');
 
         $thumbnail = $this->storePublicFile(
             $request,
@@ -99,10 +101,10 @@ class LiveStreamController extends Controller
 
         return $request->validate([
             'title' => ['required', 'string', 'max:255'],
-            'date' => ['required', 'date'],
             'video_url' => ['required', 'url', 'max:255'],
             'thumbnail' => $thumbnailRules,
             'thumbnail_file' => ['nullable', 'image', 'max:5120'],
+            'active' => ['nullable', 'boolean'],
         ]);
     }
 
@@ -111,9 +113,10 @@ class LiveStreamController extends Controller
         return [
             'id' => $stream->id,
             'title' => $stream->title,
-            'date' => optional($stream->date)->format('Y-m-d'),
+            'date' => optional($stream->updated_at)->format('Y-m-d'),
             'video_url' => $stream->video_url,
             'thumbnail' => $stream->thumbnail,
+            'active' => $stream->active,
         ];
     }
 }

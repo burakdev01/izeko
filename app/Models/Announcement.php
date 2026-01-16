@@ -21,7 +21,7 @@ class Announcement extends Model
         'content',
         'image',
         'link',
-        'date',
+        'active',
     ];
 
     /**
@@ -32,7 +32,7 @@ class Announcement extends Model
     protected function casts(): array
     {
         return [
-            'date' => 'date',
+            'active' => 'boolean',
         ];
     }
 }

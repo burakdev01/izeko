@@ -19,7 +19,10 @@ class BlogPost extends Model
         'excerpt',
         'content',
         'image',
-        'date',
+        'active',
+        'seo_title',
+        'seo_description',
+        'seo_url',
     ];
 
     /**
@@ -30,7 +33,7 @@ class BlogPost extends Model
     protected function casts(): array
     {
         return [
-            'date' => 'date',
+            'active' => 'boolean',
         ];
     }
 }
