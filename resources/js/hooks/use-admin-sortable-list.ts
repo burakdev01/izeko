@@ -44,6 +44,14 @@ export const useAdminSortableList = <T extends SortableItem>({
             setDraggedId(id);
             event.dataTransfer.effectAllowed = 'move';
             event.dataTransfer.setData('text/plain', String(id));
+
+            const row = event.currentTarget.closest('tr');
+            if (row) {
+                const rect = row.getBoundingClientRect();
+                const offsetX = event.clientX - rect.left;
+                const offsetY = event.clientY - rect.top;
+                event.dataTransfer.setDragImage(row, offsetX, offsetY);
+            }
         };
 
     const handleDragEnd = () => {
