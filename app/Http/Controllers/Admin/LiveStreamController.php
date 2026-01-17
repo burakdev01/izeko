@@ -13,7 +13,8 @@ class LiveStreamController extends Controller
     use HandlesUploads;
     public function index()
     {
-        $streams = LiveStream::orderByDesc('updated_at')
+        $streams = LiveStream::orderBy('sort_order')
+            ->orderByDesc('updated_at')
             ->get()
             ->map(fn (LiveStream $stream) => $this->mapStream($stream));
 
@@ -31,6 +32,7 @@ class LiveStreamController extends Controller
     {
         $validated = $this->validateStream($request);
         $validated['active'] = $request->boolean('active');
+        $validated['sort_order'] = (LiveStream::max('sort_order') ?? 0) + 1;
 
         $thumbnail = $this->storePublicFile(
             $request,
@@ -46,7 +48,7 @@ class LiveStreamController extends Controller
 
         return redirect()
             ->route('admin.canli-yayinlar.index')
-            ->with('status', 'Canli yayin eklendi.');
+            ->with('status', "Canl\u{0131} yay\u{0131}n eklendi.");
     }
 
     public function edit(LiveStream $liveStream)
@@ -77,7 +79,7 @@ class LiveStreamController extends Controller
 
         return redirect()
             ->route('admin.canli-yayinlar.index')
-            ->with('status', 'Canli yayin guncellendi.');
+            ->with('status', "Canl\u{0131} yay\u{0131}n g\u{00FC}ncellendi.");
     }
 
     public function destroy(LiveStream $liveStream)
@@ -86,7 +88,23 @@ class LiveStreamController extends Controller
 
         return redirect()
             ->route('admin.canli-yayinlar.index')
-            ->with('status', 'Canli yayin silindi.');
+            ->with('status', "Canl\u{0131} yay\u{0131}n silindi.");
+    }
+
+    public function reorder(Request $request)
+    {
+        $validated = $request->validate([
+            'order' => ['required', 'array'],
+            'order.*' => ['integer', 'exists:live_streams,id'],
+        ]);
+
+        foreach ($validated['order'] as $index => $id) {
+            LiveStream::whereKey($id)->update(['sort_order' => $index + 1]);
+        }
+
+        return redirect()
+            ->route('admin.canli-yayinlar.index')
+            ->with('status', "S\u{0131}ralama g\u{00FC}ncellendi.");
     }
 
     private function validateStream(
@@ -117,6 +135,7 @@ class LiveStreamController extends Controller
             'video_url' => $stream->video_url,
             'thumbnail' => $stream->thumbnail,
             'active' => $stream->active,
+            'sort_order' => $stream->sort_order,
         ];
     }
 }

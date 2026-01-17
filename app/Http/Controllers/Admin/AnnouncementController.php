@@ -13,7 +13,8 @@ class AnnouncementController extends Controller
     use HandlesUploads;
     public function index()
     {
-        $announcements = Announcement::orderByDesc('updated_at')
+        $announcements = Announcement::orderBy('sort_order')
+            ->orderByDesc('updated_at')
             ->get()
             ->map(fn (Announcement $announcement) => $this->mapAnnouncement($announcement));
 
@@ -31,6 +32,7 @@ class AnnouncementController extends Controller
     {
         $validated = $this->validateAnnouncement($request);
         $validated['active'] = $request->boolean('active');
+        $validated['sort_order'] = (Announcement::max('sort_order') ?? 0) + 1;
 
         $image = $this->storePublicFile(
             $request,
@@ -77,7 +79,7 @@ class AnnouncementController extends Controller
 
         return redirect()
             ->route('admin.duyurular.index')
-            ->with('status', 'Duyuru guncellendi.');
+            ->with('status', "Duyuru g\u{00FC}ncellendi.");
     }
 
     public function destroy(Announcement $announcement)
@@ -87,6 +89,22 @@ class AnnouncementController extends Controller
         return redirect()
             ->route('admin.duyurular.index')
             ->with('status', 'Duyuru silindi.');
+    }
+
+    public function reorder(Request $request)
+    {
+        $validated = $request->validate([
+            'order' => ['required', 'array'],
+            'order.*' => ['integer', 'exists:announcements,id'],
+        ]);
+
+        foreach ($validated['order'] as $index => $id) {
+            Announcement::whereKey($id)->update(['sort_order' => $index + 1]);
+        }
+
+        return redirect()
+            ->route('admin.duyurular.index')
+            ->with('status', "S\u{0131}ralama g\u{00FC}ncellendi.");
     }
 
     private function validateAnnouncement(
@@ -123,6 +141,7 @@ class AnnouncementController extends Controller
             'link' => $announcement->link,
             'date' => optional($announcement->updated_at)->format('Y-m-d'),
             'active' => $announcement->active,
+            'sort_order' => $announcement->sort_order,
         ];
     }
 }

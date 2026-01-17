@@ -92,7 +92,7 @@ class HeroSlideController extends Controller
 
         return redirect()
             ->route('admin.hero-slides.index')
-            ->with('status', 'Slide guncellendi.');
+            ->with('status', "Slayt g\u{00FC}ncellendi.");
     }
 
     public function destroy(HeroSlide $heroSlide)

@@ -1,5 +1,6 @@
 import AdminPageHeader from '@/components/admin/admin-page-header';
 import AdminRowActions from '@/components/admin/admin-row-actions';
+import { useAdminSortableList } from '@/hooks/use-admin-sortable-list';
 import AdminLayout from '@/layouts/admin-layout';
 import { Head } from '@inertiajs/react';
 import { GripVertical } from 'lucide-react';
@@ -20,6 +21,18 @@ const placeholderImage = 'https://via.placeholder.com/96?text=Yayin';
 export default function CanliYayinlarIndex({
     streams,
 }: CanliYayinlarIndexProps) {
+    const {
+        orderedItems,
+        draggedId,
+        handleDragStart,
+        handleDragEnd,
+        handleDragOver,
+        handleDrop,
+    } = useAdminSortableList({
+        items: streams,
+        reorderUrl: '/admin/canli-yayinlar/reorder',
+    });
+
     return (
         <AdminLayout title="Canlı Yayınlar">
             <Head title="Canlı Yayınlar" />
@@ -53,7 +66,7 @@ export default function CanliYayinlarIndex({
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
-                                {streams.length === 0 && (
+                                {orderedItems.length === 0 && (
                                     <tr>
                                         <td
                                             colSpan={5}
@@ -63,13 +76,26 @@ export default function CanliYayinlarIndex({
                                         </td>
                                     </tr>
                                 )}
-                                {streams.map((stream) => (
+                                {orderedItems.map((stream) => (
                                     <tr
                                         key={stream.id}
-                                        className="transition hover:bg-gray-50"
+                                        onDragOver={handleDragOver}
+                                        onDrop={handleDrop(stream.id)}
+                                        className={`transition ${
+                                            draggedId === stream.id
+                                                ? 'bg-blue-50'
+                                                : 'hover:bg-gray-50'
+                                        }`}
                                     >
                                         <td className="px-4 py-4">
-                                            <div className="flex items-center justify-center text-gray-400">
+                                            <div
+                                                className="flex items-center justify-center text-gray-400 cursor-grab active:cursor-grabbing"
+                                                draggable
+                                                onDragStart={handleDragStart(
+                                                    stream.id,
+                                                )}
+                                                onDragEnd={handleDragEnd}
+                                            >
                                                 <GripVertical className="h-4 w-4" />
                                             </div>
                                         </td>

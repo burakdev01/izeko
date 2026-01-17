@@ -23,6 +23,7 @@ class BlogPost extends Model
         'seo_title',
         'seo_description',
         'seo_url',
+        'sort_order',
     ];
 
     /**
@@ -34,6 +35,7 @@ class BlogPost extends Model
     {
         return [
             'active' => 'boolean',
+            'sort_order' => 'integer',
         ];
     }
 }

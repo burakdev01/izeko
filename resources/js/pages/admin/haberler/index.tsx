@@ -1,5 +1,6 @@
 import AdminPageHeader from '@/components/admin/admin-page-header';
 import AdminRowActions from '@/components/admin/admin-row-actions';
+import { useAdminSortableList } from '@/hooks/use-admin-sortable-list';
 import AdminLayout from '@/layouts/admin-layout';
 import { slugify } from '@/lib/utils';
 import { Head } from '@inertiajs/react';
@@ -20,6 +21,18 @@ type HaberlerIndexProps = {
 const placeholderImage = 'https://via.placeholder.com/96?text=Blog';
 
 export default function HaberlerIndex({ posts }: HaberlerIndexProps) {
+    const {
+        orderedItems,
+        draggedId,
+        handleDragStart,
+        handleDragEnd,
+        handleDragOver,
+        handleDrop,
+    } = useAdminSortableList({
+        items: posts,
+        reorderUrl: '/admin/haberler/reorder',
+    });
+
     return (
         <AdminLayout title="Blog Yönetimi">
             <Head title="Blog Yönetimi" />
@@ -37,26 +50,26 @@ export default function HaberlerIndex({ posts }: HaberlerIndexProps) {
                         <table className="w-full">
                             <thead className="border-b border-gray-200 bg-gray-50">
                                 <tr>
-                                    <th className="w-12 px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500" />
-                                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                    <th className="w-12 px-4 py-3 text-center text-xs font-medium tracking-wider text-gray-500 uppercase" />
+                                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                                         Başlık
                                     </th>
-                                    <th className="hidden px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 md:table-cell">
+                                    <th className="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase md:table-cell">
                                         Dil
                                     </th>
-                                    <th className="hidden px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 lg:table-cell">
+                                    <th className="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase lg:table-cell">
                                         SEO URL
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                                         Durum
                                     </th>
-                                    <th className="w-24 px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500">
+                                    <th className="w-24 px-6 py-3 text-center text-xs font-medium tracking-wider text-gray-500 uppercase">
                                         İşlemler
                                     </th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
-                                {posts.length === 0 && (
+                                {orderedItems.length === 0 && (
                                     <tr>
                                         <td
                                             colSpan={6}
@@ -66,7 +79,7 @@ export default function HaberlerIndex({ posts }: HaberlerIndexProps) {
                                         </td>
                                     </tr>
                                 )}
-                                {posts.map((post) => {
+                                {orderedItems.map((post) => {
                                     const imageSrc =
                                         post.image || placeholderImage;
                                     const seoUrl =
@@ -78,10 +91,23 @@ export default function HaberlerIndex({ posts }: HaberlerIndexProps) {
                                     return (
                                         <tr
                                             key={post.id}
-                                            className="transition hover:bg-gray-50"
+                                            onDragOver={handleDragOver}
+                                            onDrop={handleDrop(post.id)}
+                                            className={`transition ${
+                                                draggedId === post.id
+                                                    ? 'bg-blue-50'
+                                                    : 'hover:bg-gray-50'
+                                            }`}
                                         >
                                             <td className="px-4 py-4">
-                                                <div className="flex items-center justify-center text-gray-400">
+                                                <div
+                                                    className="flex items-center justify-center text-gray-400 cursor-grab active:cursor-grabbing"
+                                                    draggable
+                                                    onDragStart={handleDragStart(
+                                                        post.id,
+                                                    )}
+                                                    onDragEnd={handleDragEnd}
+                                                >
                                                     <GripVertical className="h-4 w-4" />
                                                 </div>
                                             </td>

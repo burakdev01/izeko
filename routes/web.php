@@ -75,6 +75,7 @@ Route::get('/kurumsal/oda-kayit-islemleri', function () {
 
 Route::get('/faaliyetler', function () {
     $activities = Activity::where('active', true)
+        ->orderBy('sort_order')
         ->orderByDesc('updated_at')
         ->get()
         ->map(fn (Activity $activity) => [
@@ -92,6 +93,7 @@ Route::get('/faaliyetler', function () {
 
 Route::get('/haberler', function () {
     $posts = BlogPost::where('active', true)
+        ->orderBy('sort_order')
         ->orderByDesc('updated_at')
         ->get()
         ->map(fn (BlogPost $post) => [
@@ -109,6 +111,7 @@ Route::get('/haberler', function () {
 
 Route::get('/canli-yayinlar', function () {
     $streams = LiveStream::where('active', true)
+        ->orderBy('sort_order')
         ->orderByDesc('updated_at')
         ->get()
         ->map(fn (LiveStream $stream) => [
@@ -126,6 +129,7 @@ Route::get('/canli-yayinlar', function () {
 
 Route::get('/duyurular', function () {
     $announcements = Announcement::where('active', true)
+        ->orderBy('sort_order')
         ->orderByDesc('updated_at')
         ->get()
         ->map(fn (Announcement $announcement) => [
@@ -177,6 +181,15 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
                 ],
             ]);
         })->name('dashboard');
+
+        Route::patch('haberler/reorder', [BlogPostController::class, 'reorder'])
+            ->name('haberler.reorder');
+        Route::patch('faaliyetler/reorder', [ActivityController::class, 'reorder'])
+            ->name('faaliyetler.reorder');
+        Route::patch('canli-yayinlar/reorder', [LiveStreamController::class, 'reorder'])
+            ->name('canli-yayinlar.reorder');
+        Route::patch('duyurular/reorder', [AnnouncementController::class, 'reorder'])
+            ->name('duyurular.reorder');
 
         Route::resource('haberler', BlogPostController::class)
             ->parameters(['haberler' => 'blogPost']);

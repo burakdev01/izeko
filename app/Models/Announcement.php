@@ -22,6 +22,7 @@ class Announcement extends Model
         'image',
         'link',
         'active',
+        'sort_order',
     ];
 
     /**
@@ -33,6 +34,7 @@ class Announcement extends Model
     {
         return [
             'active' => 'boolean',
+            'sort_order' => 'integer',
         ];
     }
 }

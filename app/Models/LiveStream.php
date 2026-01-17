@@ -19,6 +19,7 @@ class LiveStream extends Model
         'video_url',
         'thumbnail',
         'active',
+        'sort_order',
     ];
 
     /**
@@ -30,6 +31,7 @@ class LiveStream extends Model
     {
         return [
             'active' => 'boolean',
+            'sort_order' => 'integer',
         ];
     }
 }

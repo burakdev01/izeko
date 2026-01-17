@@ -13,7 +13,8 @@ class BlogPostController extends Controller
     use HandlesUploads;
     public function index()
     {
-        $posts = BlogPost::orderByDesc('updated_at')
+        $posts = BlogPost::orderBy('sort_order')
+            ->orderByDesc('updated_at')
             ->get()
             ->map(fn (BlogPost $post) => $this->mapPost($post));
 
@@ -31,6 +32,7 @@ class BlogPostController extends Controller
     {
         $validated = $this->validatePost($request);
         $validated['active'] = $request->boolean('active');
+        $validated['sort_order'] = (BlogPost::max('sort_order') ?? 0) + 1;
 
         $image = $this->storePublicFile($request, 'image_file', 'blog');
 
@@ -69,7 +71,7 @@ class BlogPostController extends Controller
 
         return redirect()
             ->route('admin.haberler.index')
-            ->with('status', 'Haber guncellendi.');
+            ->with('status', "Haber g\u{00FC}ncellendi.");
     }
 
     public function destroy(BlogPost $blogPost)
@@ -79,6 +81,22 @@ class BlogPostController extends Controller
         return redirect()
             ->route('admin.haberler.index')
             ->with('status', 'Haber silindi.');
+    }
+
+    public function reorder(Request $request)
+    {
+        $validated = $request->validate([
+            'order' => ['required', 'array'],
+            'order.*' => ['integer', 'exists:blog_posts,id'],
+        ]);
+
+        foreach ($validated['order'] as $index => $id) {
+            BlogPost::whereKey($id)->update(['sort_order' => $index + 1]);
+        }
+
+        return redirect()
+            ->route('admin.haberler.index')
+            ->with('status', "S\u{0131}ralama g\u{00FC}ncellendi.");
     }
 
     private function validatePost(
@@ -117,6 +135,7 @@ class BlogPostController extends Controller
             'seo_description' => $post->seo_description,
             'seo_url' => $post->seo_url,
             'date' => optional($post->updated_at)->format('Y-m-d'),
+            'sort_order' => $post->sort_order,
         ];
     }
 }

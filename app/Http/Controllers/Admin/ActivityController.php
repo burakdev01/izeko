@@ -13,7 +13,8 @@ class ActivityController extends Controller
     use HandlesUploads;
     public function index()
     {
-        $activities = Activity::orderByDesc('updated_at')
+        $activities = Activity::orderBy('sort_order')
+            ->orderByDesc('updated_at')
             ->get()
             ->map(fn (Activity $activity) => $this->mapActivity($activity));
 
@@ -31,6 +32,7 @@ class ActivityController extends Controller
     {
         $validated = $this->validateActivity($request);
         $validated['active'] = $request->boolean('active');
+        $validated['sort_order'] = (Activity::max('sort_order') ?? 0) + 1;
 
         $thumbnail = $this->storePublicFile(
             $request,
@@ -77,7 +79,7 @@ class ActivityController extends Controller
 
         return redirect()
             ->route('admin.faaliyetler.index')
-            ->with('status', 'Faaliyet guncellendi.');
+            ->with('status', "Faaliyet g\u{00FC}ncellendi.");
     }
 
     public function destroy(Activity $activity)
@@ -87,6 +89,22 @@ class ActivityController extends Controller
         return redirect()
             ->route('admin.faaliyetler.index')
             ->with('status', 'Faaliyet silindi.');
+    }
+
+    public function reorder(Request $request)
+    {
+        $validated = $request->validate([
+            'order' => ['required', 'array'],
+            'order.*' => ['integer', 'exists:activities,id'],
+        ]);
+
+        foreach ($validated['order'] as $index => $id) {
+            Activity::whereKey($id)->update(['sort_order' => $index + 1]);
+        }
+
+        return redirect()
+            ->route('admin.faaliyetler.index')
+            ->with('status', "S\u{0131}ralama g\u{00FC}ncellendi.");
     }
 
     private function validateActivity(
@@ -117,6 +135,7 @@ class ActivityController extends Controller
             'video_url' => $activity->video_url,
             'thumbnail' => $activity->thumbnail,
             'active' => $activity->active,
+            'sort_order' => $activity->sort_order,
         ];
     }
 }
