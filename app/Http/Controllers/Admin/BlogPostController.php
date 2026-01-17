@@ -111,7 +111,6 @@ class BlogPostController extends Controller
 
         return $request->validate([
             'title' => ['required', 'string', 'max:255'],
-            'excerpt' => ['required', 'string', 'max:1000'],
             'content' => ['required', 'string'],
             'image' => $imageRules,
             'image_file' => ['nullable', 'image', 'max:5120'],
@@ -127,7 +126,6 @@ class BlogPostController extends Controller
         return [
             'id' => $post->id,
             'title' => $post->title,
-            'excerpt' => $post->excerpt,
             'content' => $post->content,
             'image' => $post->image,
             'active' => $post->active,

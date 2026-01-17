@@ -8,7 +8,6 @@ type BlogPost = {
     id: number;
     image: string;
     title: string;
-    excerpt: string;
     date: string;
 };
 
@@ -50,7 +49,6 @@ export default function Haberler({ posts }: HaberlerProps) {
                                 key={post.id}
                                 image={post.image}
                                 title={post.title}
-                                excerpt={post.excerpt}
                                 date={formatDate(post.date)}
                             />
                         ))}

@@ -9,7 +9,6 @@ import { useState } from 'react';
 type BlogPost = {
     id?: number;
     title: string;
-    excerpt: string;
     content: string;
     image?: string | null;
     active?: boolean;
@@ -38,7 +37,6 @@ export default function BlogPostForm({
     cancelHref = '/admin/haberler',
 }: BlogPostFormProps) {
     const [titleValue, setTitleValue] = useState(post?.title ?? '');
-    const [excerpt, setExcerpt] = useState(post?.excerpt ?? '');
     const [content, setContent] = useState(post?.content ?? '');
     const [active, setActive] = useState(post?.active ?? true);
     const [seoTitle, setSeoTitle] = useState(post?.seo_title ?? '');
@@ -47,7 +45,7 @@ export default function BlogPostForm({
     );
     const seoUrlValue = slugify(titleValue);
     const previewTitle = seoTitle || titleValue || 'Başlık';
-    const previewDescription = seoDescription || excerpt || 'Açıklama';
+    const previewDescription = seoDescription || content || 'Açıklama';
     const previewSlug = seoUrlValue || 'seo-url';
 
     return (
@@ -91,28 +89,6 @@ export default function BlogPostForm({
                                             <InputError
                                                 className="mt-2"
                                                 message={errors.title}
-                                            />
-                                        </div>
-
-                                        <div>
-                                            <label className="mb-2 block text-sm font-medium text-gray-700">
-                                                Özet:
-                                            </label>
-                                            <textarea
-                                                name="excerpt"
-                                                rows={3}
-                                                value={excerpt}
-                                                onChange={(event) =>
-                                                    setExcerpt(
-                                                        event.target.value,
-                                                    )
-                                                }
-                                                placeholder="Kısa açıklama yazın"
-                                                className="w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500"
-                                            />
-                                            <InputError
-                                                className="mt-2"
-                                                message={errors.excerpt}
                                             />
                                         </div>
 

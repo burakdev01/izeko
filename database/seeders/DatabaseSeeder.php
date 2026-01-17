@@ -79,7 +79,6 @@ class DatabaseSeeder extends Seeder
                 'title' => 'WE ARE SOCIAL 2021 TURKIYE RAPORU',
             ],
             [
-                'excerpt' => "Dijital verilerle 2021'e bakis: We Are Social ve Hootsuite raporu.",
                 'content' => '2021 raporu, dijital dunyada guncel trendleri ve istatistikleri ele aliyor.',
                 'image' => 'https://izeko.org.tr/files/system//t99qo9ZTQBRLIUY8lWmR22fuoAwLuwGA6StWhjLp.png',
                 'sort_order' => 1,
@@ -91,7 +90,6 @@ class DatabaseSeeder extends Seeder
                 'title' => 'WE ARE SOCIAL 2020 TURKIYE RAPORU',
             ],
             [
-                'excerpt' => '2020 raporu: Emlak sektorunde dijital gelecegin esigindeyiz.',
                 'content' => 'Sektorde dijital donusum, online pazarlama ve veri odakli yaklasimlar ele aliniyor.',
                 'image' => 'https://izeko.org.tr/files/system//f7JWqwrGCjEsAvbZR9s02uRbVRLKmjnisNYP0Nsg.png',
                 'sort_order' => 2,
@@ -103,7 +101,6 @@ class DatabaseSeeder extends Seeder
                 'title' => 'MUSTERIMI NEDEN TANIMALIYIM?',
             ],
             [
-                'excerpt' => 'Musterinizi tanimak neden onemlidir? Kisisellestirilmis deneyimlerin gucu.',
                 'content' => 'Musteri beklentilerini anlamak, sadakati ve memnuniyeti artirir.',
                 'image' => 'https://izeko.org.tr/files/system//TvnhOiApwmIZnPftvQH5IUBLGNh0C1eKM9KwlH5H.png',
                 'sort_order' => 3,

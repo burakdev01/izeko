@@ -22,6 +22,15 @@ export default function AdminRowActions({
                 href={deleteHref}
                 method="delete"
                 as="button"
+                onClick={(event) => {
+                    if (
+                        !window.confirm(
+                            "Silmek istedi\u{011F}inize emin misiniz?",
+                        )
+                    ) {
+                        event.preventDefault();
+                    }
+                }}
                 className="text-red-600 transition hover:text-red-800"
             >
                 <Trash2 className="h-4 w-4" />

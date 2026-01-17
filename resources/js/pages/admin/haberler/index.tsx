@@ -54,9 +54,6 @@ export default function HaberlerIndex({ posts }: HaberlerIndexProps) {
                                     <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                                         Başlık
                                     </th>
-                                    <th className="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase md:table-cell">
-                                        Dil
-                                    </th>
                                     <th className="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase lg:table-cell">
                                         SEO URL
                                     </th>
@@ -72,7 +69,7 @@ export default function HaberlerIndex({ posts }: HaberlerIndexProps) {
                                 {orderedItems.length === 0 && (
                                     <tr>
                                         <td
-                                            colSpan={6}
+                                            colSpan={5}
                                             className="px-6 py-8 text-center text-gray-500"
                                         >
                                             Henüz blog yazısı eklenmemiş
@@ -120,11 +117,6 @@ export default function HaberlerIndex({ posts }: HaberlerIndexProps) {
                                                     />
                                                     <span>{post.title}</span>
                                                 </div>
-                                            </td>
-                                            <td className="hidden px-6 py-4 md:table-cell">
-                                                <span className="rounded-full bg-purple-100 px-2 py-1 text-xs font-medium text-purple-800">
-                                                    Türkçe
-                                                </span>
                                             </td>
                                             <td className="hidden px-6 py-4 lg:table-cell">
                                                 <span className="text-xs text-gray-600">

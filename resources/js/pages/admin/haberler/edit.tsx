@@ -5,7 +5,6 @@ import { Head } from '@inertiajs/react';
 type BlogPost = {
     id: number;
     title: string;
-    excerpt: string;
     content: string;
     image?: string | null;
     active?: boolean;

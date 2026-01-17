@@ -100,7 +100,6 @@ Route::get('/haberler', function () {
             'id' => $post->id,
             'image' => $post->image,
             'title' => $post->title,
-            'excerpt' => $post->excerpt,
             'date' => optional($post->updated_at)->format('Y-m-d'),
         ]);
 
