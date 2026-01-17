@@ -25,29 +25,39 @@ export function MobileMenu({ items, isOpen }: Props) {
 
                     return (
                         <li key={item.id}>
-                            <button
-                                onClick={() =>
-                                    item.submenu
-                                        ? setOpenId(opened ? null : item.id)
-                                        : null
-                                }
-                                className="flex w-full items-center justify-between px-5 py-4"
-                            >
-                                <div className="flex items-center gap-4">
-                                    {iconMap[item.icon]}
-                                    <span className="text-base font-medium text-gray-700">
-                                        {item.label}
-                                    </span>
-                                </div>
+                            {item.submenu ? (
+                                <button
+                                    onClick={() =>
+                                        setOpenId(opened ? null : item.id)
+                                    }
+                                    className="flex w-full items-center justify-between px-5 py-4"
+                                >
+                                    <div className="flex items-center gap-4">
+                                        {iconMap[item.icon]}
+                                        <span className="text-base font-medium text-gray-700">
+                                            {item.label}
+                                        </span>
+                                    </div>
 
-                                {item.submenu && (
                                     <ChevronDown
                                         className={`h-5 w-5 transition-transform ${
                                             opened ? 'rotate-180' : ''
                                         }`}
                                     />
-                                )}
-                            </button>
+                                </button>
+                            ) : (
+                                <a
+                                    href={item.path}
+                                    className="flex w-full items-center justify-between px-5 py-4"
+                                >
+                                    <div className="flex items-center gap-4">
+                                        {iconMap[item.icon]}
+                                        <span className="text-base font-medium text-gray-700">
+                                            {item.label}
+                                        </span>
+                                    </div>
+                                </a>
+                            )}
 
                             {item.submenu && opened && (
                                 <MobileSubmenu items={item.submenu} />
