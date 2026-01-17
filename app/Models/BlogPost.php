@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\LogsAdminRequestContext;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class BlogPost extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity, LogsAdminRequestContext;
 
     /**
      * The attributes that are mass assignable.
@@ -36,5 +40,19 @@ class BlogPost extends Model
             'active' => 'boolean',
             'sort_order' => 'integer',
         ];
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('blog_posts')
+            ->logOnly(['title', 'active', 'seo_url', 'image'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
+
+    public function shouldLogActivity(): bool
+    {
+        return Auth::check() && Auth::user()?->is_admin;
     }
 }

@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\LogsAdminRequestContext;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class HeroSlide extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity, LogsAdminRequestContext;
 
     /**
      * The attributes that are mass assignable.
@@ -33,5 +37,19 @@ class HeroSlide extends Model
         return [
             'sort_order' => 'integer',
         ];
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('hero_slides')
+            ->logOnly(['title', 'subtitle', 'image', 'video', 'poster'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
+
+    public function shouldLogActivity(): bool
+    {
+        return Auth::check() && Auth::user()?->is_admin;
     }
 }
