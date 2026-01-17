@@ -10,6 +10,7 @@ use App\Models\BlogPost;
 use App\Models\HeroSlide;
 use App\Models\LiveStream;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -100,6 +101,7 @@ Route::get('/haberler', function () {
             'id' => $post->id,
             'image' => $post->image,
             'title' => $post->title,
+            'slug' => $post->seo_url ?? Str::slug($post->title),
             'date' => optional($post->updated_at)->format('Y-m-d'),
         ]);
 
@@ -107,6 +109,34 @@ Route::get('/haberler', function () {
         'posts' => $posts,
     ]);
 })->name('haberler');
+
+Route::get('/haberler/{slug}', function (string $slug) {
+    $post = BlogPost::where('active', true)
+        ->where('seo_url', $slug)
+        ->first();
+
+    if (! $post) {
+        $post = BlogPost::where('active', true)
+            ->whereNull('seo_url')
+            ->get()
+            ->first(fn (BlogPost $item) => Str::slug($item->title) === $slug);
+    }
+
+    abort_unless($post, 404);
+
+    return Inertia::render('haberler-detay', [
+        'post' => [
+            'id' => $post->id,
+            'title' => $post->title,
+            'image' => $post->image,
+            'content' => $post->content,
+            'seo_title' => $post->seo_title,
+            'seo_description' => $post->seo_description,
+            'slug' => $post->seo_url ?? Str::slug($post->title),
+            'date' => optional($post->updated_at)->format('Y-m-d'),
+        ],
+    ]);
+})->name('haberler.show');
 
 Route::get('/canli-yayinlar', function () {
     $streams = LiveStream::where('active', true)
