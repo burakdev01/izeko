@@ -10,9 +10,9 @@ use App\Models\BlogPost;
 use App\Models\HeroSlide;
 use App\Models\LiveStream;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
@@ -180,6 +180,10 @@ Route::get('/ilanlar', function () {
     return Inertia::render('ilanlar');
 })->name('ilanlar');
 
+Route::get('/ilanlar/{slug}', function (string $slug) {
+    return Inertia::render('ilanlar-detay');
+})->name('ilanlar.show');
+
 Route::get('/admin/login', function (Request $request) {
     $user = $request->user();
 
@@ -230,7 +234,6 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
             ->parameters(['duyurular' => 'announcement']);
     },
 );
-
 
 // Route::middleware(['auth', 'verified'])->group(function () {
 //     Route::get('dashboard', function () {

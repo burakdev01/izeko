@@ -344,7 +344,7 @@ const getListingClasses = (viewType: ViewType): ListingClasses => ({
     content:
         viewType === 'gallery'
             ? 'p-[15px] flex flex-1 flex-col'
-            : 'p-5 flex flex-1 flex-col max-[480px]:p-[15px]',
+            : 'flex flex-1 flex-col max-[480px]:p-[15px]',
     title:
         viewType === 'gallery'
             ? 'text-sm text-[#d92025] font-semibold mb-2 leading-[1.4] overflow-hidden'
@@ -641,12 +641,12 @@ function ListingControls({
 function ListingCard({ listing, classes }: ListingCardProps) {
     return (
         <div
-            className={`cursor-pointer overflow-hidden rounded-lg bg-white shadow-[0_2px_8px_rgba(0,0,0,0.1)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] ${classes.card}`}
+            className={`cursor-pointer gap-3 overflow-hidden rounded-lg bg-white p-3 shadow-[0_2px_8px_rgba(0,0,0,0.1)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] ${classes.card}`}
         >
             <img
                 src={listing.image}
                 alt="Emlak"
-                className={`shrink-0 object-cover ${classes.image}`}
+                className={`shrink-0 rounded-md object-cover ${classes.image}`}
             />
             <div className={classes.content}>
                 <div className={classes.title}>{listing.title}</div>
