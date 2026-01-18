@@ -5,13 +5,14 @@ namespace App\Models;
 use App\Models\Concerns\LogsAdminRequestContext;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class Activity extends Model
 {
-    use HasFactory, LogsActivity, LogsAdminRequestContext;
+    use HasFactory, LogsActivity, LogsAdminRequestContext, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.

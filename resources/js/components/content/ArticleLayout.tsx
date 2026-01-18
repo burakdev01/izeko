@@ -97,7 +97,7 @@ export function ArticleLayout({
                 </div>
             </header>
 
-            <section className="min-h-screen bg-gray-50">
+            <section className="min-h-screen">
                 <div className="mx-auto max-w-7xl px-4 py-8">
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                         <div
@@ -105,7 +105,7 @@ export function ArticleLayout({
                                 hasSidebar ? 'lg:col-span-2' : 'lg:col-span-3'
                             }
                         >
-                            <div className="rounded-lg bg-white p-8 shadow-sm">
+                            <div className="rounded-lg bg-white">
                                 <article className="">{children}</article>
                             </div>
                         </div>
