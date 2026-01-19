@@ -41,8 +41,7 @@ class DatabaseSeeder extends Seeder
 
         Activity::firstOrCreate(
             [
-                'title' =>
-                    'Mesut GULEROGLU Izmir Emlakcilar Odasi 2018 - 2022 Faaliyetleri',
+                'title' => 'Mesut GULEROGLU Izmir Emlakcilar Odasi 2018 - 2022 Faaliyetleri',
             ],
             [
                 'video_url' => 'https://www.youtube.com/watch?v=ysz5S6PUM-U',
@@ -53,8 +52,7 @@ class DatabaseSeeder extends Seeder
 
         Activity::firstOrCreate(
             [
-                'title' =>
-                    'Izmir Emlakcilar Odasi 1999 - 2013 Yillari Arasindaki Faaliyetleri',
+                'title' => 'Izmir Emlakcilar Odasi 1999 - 2013 Yillari Arasindaki Faaliyetleri',
             ],
             [
                 'video_url' => 'https://www.youtube.com/watch?v=aqz-KE-bpKQ',
@@ -142,14 +140,12 @@ class DatabaseSeeder extends Seeder
 
         Announcement::firstOrCreate(
             [
-                'title' =>
-                    'ODAMIZA YAPILACAK TUM ODEMELER ICIN SISTEMDE GERCEKLESEN DEGISIKLIK',
+                'title' => 'ODAMIZA YAPILACAK TUM ODEMELER ICIN SISTEMDE GERCEKLESEN DEGISIKLIK',
             ],
             [
                 'subtitle' => 'DIKKAT! Onemli Duyuru',
                 'excerpt' => 'Sayin Uyelerimiz,',
-                'content' =>
-                    'Odemeler sisteminde yapilan degisiklikler hakkinda bilgilendirme.',
+                'content' => 'Odemeler sisteminde yapilan degisiklikler hakkinda bilgilendirme.',
                 'image' => 'https://izeko.org.tr/files/system//r5rmkQB7SatE4V5XwIPYv28307USz5Qz8NFgbtmX%20(1).png',
                 'link' => null,
                 'sort_order' => 1,
@@ -163,8 +159,7 @@ class DatabaseSeeder extends Seeder
             [
                 'subtitle' => 'Bilgilendirme',
                 'excerpt' => 'Uyelerimizin dikkatine,',
-                'content' =>
-                    'Aidat odemelerinde yeni hatirlatma sistemi devreye alinmistir.',
+                'content' => 'Aidat odemelerinde yeni hatirlatma sistemi devreye alinmistir.',
                 'image' => 'https://izeko.org.tr/files/system//r5rmkQB7SatE4V5XwIPYv28307USz5Qz8NFgbtmX%20(1).png',
                 'link' => null,
                 'sort_order' => 2,
@@ -176,8 +171,7 @@ class DatabaseSeeder extends Seeder
                 'title' => "Izmir'de Yasam Bir Ayricaliktir....",
             ],
             [
-                'subtitle' =>
-                    'Gayrimenkul yatirimlariniz icin yetkili danismanlarla calisin.',
+                'subtitle' => 'Gayrimenkul yatirimlariniz icin yetkili danismanlarla calisin.',
                 'image' => 'https://izeko.org.tr/files/system//xT6wJAV6qGwtCDMVtAneKKAg4PiizuGjXQII0lM7.png',
                 'video' => null,
                 'poster' => null,
@@ -190,13 +184,14 @@ class DatabaseSeeder extends Seeder
                 'title' => 'IZEKO CRM NEDIR?',
             ],
             [
-                'subtitle' =>
-                    "Turkiye'nin ilk ve tek esnaf odasi ozel CRM cozumu!",
+                'subtitle' => "Turkiye'nin ilk ve tek esnaf odasi ozel CRM cozumu!",
                 'image' => null,
                 'video' => 'https://izeko.org.tr/files/system//IOFaZiyIqP3i62Z4BUZN2auVlcWSYqrrDg0x3jTk.mp4',
                 'poster' => null,
                 'sort_order' => 2,
             ]
         );
+
+        $this->call(FaqSeeder::class);
     }
 }

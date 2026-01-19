@@ -1,16 +1,22 @@
 <?php
 
 use App\Models\BlogPost;
+use App\Models\Faq;
 use Illuminate\Support\Str;
 use Inertia\Testing\AssertableInertia as Assert;
 
 test('home page renders', function () {
+    Faq::factory()->count(2)->create([
+        'active' => true,
+        'sort_order' => 1,
+    ]);
+
     $this->get(route('home'))
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->component('Home')
             ->has('quickAccessItems', 6)
-            ->has('faqItems', 4)
+            ->has('faqItems', 2)
         );
 });
 
