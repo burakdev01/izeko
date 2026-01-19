@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { type CSSProperties } from 'react';
 
-type FaqIconName =
+type QuickAccessIconName =
     | 'info'
     | 'globe'
     | 'user-plus'
@@ -19,20 +19,20 @@ type FaqIconName =
     | 'check-square'
     | 'map-pin';
 
-export type FaqItem = {
+export type QuickAccessItem = {
     id: number | string;
-    icon: FaqIconName;
+    icon: QuickAccessIconName;
     title: string;
     description: string;
     href: string;
     external?: boolean;
 };
 
-type FaqSectionProps = {
-    items?: FaqItem[];
+type QuickAccessSectionProps = {
+    items?: QuickAccessItem[];
 };
 
-const iconMap: Record<FaqIconName, LucideIcon> = {
+const iconMap: Record<QuickAccessIconName, LucideIcon> = {
     info: Info,
     globe: Globe,
     'user-plus': UserPlus,
@@ -76,7 +76,9 @@ const ActionLink = ({
     );
 };
 
-export default function FaqSection({ items = [] }: FaqSectionProps) {
+export default function QuickAccessSection({
+    items = [],
+}: QuickAccessSectionProps) {
     if (items.length === 0) {
         return null;
     }
@@ -90,7 +92,7 @@ export default function FaqSection({ items = [] }: FaqSectionProps) {
 
     return (
         <section
-            className="relative overflow-hidden bg-gradient-to-b from-slate-50 via-white to-red-50 py-16"
+            className="relative overflow-hidden bg-gradient-to-b from-slate-50 via-white to-red-50 py-6"
             style={sectionStyle}
         >
             <div className="pointer-events-none absolute -top-24 right-0 h-64 w-64 rounded-full bg-[color:var(--faq-glow-1)] blur-3xl" />
@@ -99,16 +101,9 @@ export default function FaqSection({ items = [] }: FaqSectionProps) {
             <div className="relative mx-auto max-w-7xl px-4">
                 <div className="flex flex-col gap-10">
                     <div className="mx-auto flex max-w-3xl flex-col gap-4 text-center">
-                        <span className="text-xs font-semibold uppercase tracking-[0.35em] text-[color:var(--faq-accent)]">
-                            Sıkça Sorulan Sorular
-                        </span>
                         <h2 className="text-3xl font-bold text-gray-900 md:text-4xl">
-                            En Çok Merak Edilen Konular
+                            Hızlı Bağlantılar
                         </h2>
-                        <p className="text-sm leading-relaxed text-gray-600 md:text-base">
-                            Üyelik işlemleri, hizmetler ve kurum hakkında hızlı
-                            cevaplara buradan ulaşabilirsiniz.
-                        </p>
                     </div>
 
                     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

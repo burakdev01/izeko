@@ -61,7 +61,7 @@ Route::get('/', function () {
             'date' => optional($announcement->updated_at)->format('Y-m-d'),
         ]);
 
-    $faqItems = [
+    $quickAccessItems = [
         [
             'id' => 'neden-emlak',
             'icon' => 'info',
@@ -112,7 +112,7 @@ Route::get('/', function () {
         'heroSlides' => $slides,
         'blogPosts' => $blogPosts,
         'announcements' => $announcements,
-        'faqItems' => $faqItems,
+        'quickAccessItems' => $quickAccessItems,
     ]);
 })->name('home');
 
