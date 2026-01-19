@@ -3,6 +3,7 @@ import {
     Bell,
     BookOpen,
     CalendarCheck,
+    HelpCircle,
     Home,
     LogOut,
     Megaphone,
@@ -49,6 +50,11 @@ const navItems = [
         href: '/admin/duyurular',
         label: 'Duyurular',
         icon: Megaphone,
+    },
+    {
+        href: '/admin/sss',
+        label: 'SSS',
+        icon: HelpCircle,
     },
 ];
 

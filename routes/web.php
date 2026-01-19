@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ActivityController;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\BlogPostController;
+use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\HeroSlideController;
 use App\Http\Controllers\Admin\LiveStreamController;
 use App\Models\Activity;
@@ -342,6 +343,8 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
             ->name('duyurular.reorder');
         Route::patch('hero-slides/reorder', [HeroSlideController::class, 'reorder'])
             ->name('hero-slides.reorder');
+        Route::patch('sss/reorder', [FaqController::class, 'reorder'])
+            ->name('sss.reorder');
 
         Route::resource('haberler', BlogPostController::class)
             ->parameters(['haberler' => 'blogPost']);
@@ -353,6 +356,8 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
             ->parameters(['duyurular' => 'announcement']);
         Route::resource('hero-slides', HeroSlideController::class)
             ->parameters(['hero-slides' => 'heroSlide']);
+        Route::resource('sss', FaqController::class)
+            ->parameters(['sss' => 'faq']);
     },
 );
 
