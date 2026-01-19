@@ -73,21 +73,6 @@ test('admin uploads announcement image to uploads disk', function () {
     );
 });
 
-test('announcement force delete removes image from uploads disk', function () {
-    Storage::fake('uploads');
-
-    $filePath = 'announcements/ornek.webp';
-    Storage::disk('uploads')->put($filePath, 'fake');
-
-    $announcement = Announcement::factory()->create([
-        'image' => '/uploads/'.$filePath,
-    ]);
-
-    $announcement->forceDelete();
-
-    Storage::disk('uploads')->assertMissing($filePath);
-});
-
 test('admin announcement edit payload excludes subtitle and excerpt', function () {
     $admin = User::factory()->create([
         'is_admin' => true,

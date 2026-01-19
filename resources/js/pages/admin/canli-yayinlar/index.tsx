@@ -9,14 +9,11 @@ type LiveStream = {
     id: number;
     title: string;
     video_url: string;
-    thumbnail?: string | null;
 };
 
 type CanliYayinlarIndexProps = {
     streams: LiveStream[];
 };
-
-const placeholderImage = 'https://via.placeholder.com/96?text=Yayin';
 
 export default function CanliYayinlarIndex({
     streams,
@@ -57,9 +54,6 @@ export default function CanliYayinlarIndex({
                                     <th className="hidden px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 md:table-cell">
                                         Video URL
                                     </th>
-                                    <th className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500">
-                                        Görsel
-                                    </th>
                                     <th className="w-24 px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500">
                                         İşlemler
                                     </th>
@@ -69,7 +63,7 @@ export default function CanliYayinlarIndex({
                                 {orderedItems.length === 0 && (
                                     <tr>
                                         <td
-                                            colSpan={5}
+                                            colSpan={4}
                                             className="px-6 py-8 text-center text-gray-500"
                                         >
                                             Henüz canlı yayın eklenmemiş
@@ -106,18 +100,6 @@ export default function CanliYayinlarIndex({
                                             <span className="block max-w-xs truncate">
                                                 {stream.video_url}
                                             </span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center justify-center">
-                                                <img
-                                                    src={
-                                                        stream.thumbnail ||
-                                                        placeholderImage
-                                                    }
-                                                    alt={stream.title}
-                                                    className="h-12 w-12 rounded-lg object-cover"
-                                                />
-                                            </div>
                                         </td>
                                         <td className="px-6 py-4">
                                             <AdminRowActions
