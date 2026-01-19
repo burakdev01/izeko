@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ActivityController;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\BlogPostController;
+use App\Http\Controllers\Admin\HeroSlideController;
 use App\Http\Controllers\Admin\LiveStreamController;
 use App\Models\Activity;
 use App\Models\Announcement;
@@ -24,9 +25,9 @@ Route::get('/', function () {
             'id' => $slide->id,
             'title' => $slide->title,
             'subtitle' => $slide->subtitle ?? '',
-            'image' => $slide->image,
-            'video' => $slide->video,
-            'poster' => $slide->poster,
+            'image' => $slide->mediaUrl($slide->image),
+            'video' => $slide->mediaUrl($slide->video),
+            'poster' => $slide->mediaUrl($slide->poster),
         ]);
 
     return Inertia::render('Home', [
@@ -223,6 +224,8 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
             ->name('canli-yayinlar.reorder');
         Route::patch('duyurular/reorder', [AnnouncementController::class, 'reorder'])
             ->name('duyurular.reorder');
+        Route::patch('hero-slides/reorder', [HeroSlideController::class, 'reorder'])
+            ->name('hero-slides.reorder');
 
         Route::resource('haberler', BlogPostController::class)
             ->parameters(['haberler' => 'blogPost']);
@@ -232,6 +235,8 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
             ->parameters(['canli-yayinlar' => 'liveStream']);
         Route::resource('duyurular', AnnouncementController::class)
             ->parameters(['duyurular' => 'announcement']);
+        Route::resource('hero-slides', HeroSlideController::class)
+            ->parameters(['hero-slides' => 'heroSlide']);
     },
 );
 

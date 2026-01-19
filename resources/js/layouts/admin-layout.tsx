@@ -9,6 +9,7 @@ import {
     Menu,
     Radio,
     Settings,
+    SlidersHorizontal,
     X,
 } from 'lucide-react';
 import { type ReactNode, useMemo, useState } from 'react';
@@ -23,6 +24,11 @@ const navItems = [
         href: '/admin',
         label: 'Ana Sayfa',
         icon: Home,
+    },
+    {
+        href: '/admin/hero-slides',
+        label: 'Slider Yönetimi',
+        icon: SlidersHorizontal,
     },
     {
         href: '/admin/haberler',

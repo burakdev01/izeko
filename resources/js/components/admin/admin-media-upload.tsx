@@ -8,6 +8,10 @@ type AdminMediaUploadProps = {
     initialPreview?: string | null;
     helperText?: string;
     error?: string;
+    accept?: string;
+    previewType?: 'image' | 'video';
+    ctaLabel?: string;
+    removeName?: string;
 };
 
 export default function AdminMediaUpload({
@@ -16,13 +20,19 @@ export default function AdminMediaUpload({
     initialPreview = null,
     helperText = '',
     error,
+    accept = 'image/*',
+    previewType = 'image',
+    ctaLabel = 'Görsel Seç',
+    removeName,
 }: AdminMediaUploadProps) {
     const inputId = useId();
     const [preview, setPreview] = useState<string | null>(initialPreview);
+    const [isRemoved, setIsRemoved] = useState(false);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     useEffect(() => {
         setPreview(initialPreview);
+        setIsRemoved(false);
     }, [initialPreview]);
 
     useEffect(() => {
@@ -43,10 +53,12 @@ export default function AdminMediaUpload({
 
         const nextPreview = URL.createObjectURL(file);
         setPreview(nextPreview);
+        setIsRemoved(false);
     };
 
     const handleRemove = () => {
         setPreview(null);
+        setIsRemoved(true);
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
         }
@@ -65,23 +77,39 @@ export default function AdminMediaUpload({
                     name={name}
                     id={inputId}
                     className="hidden"
-                    accept="image/*"
+                    accept={accept}
                     onChange={handleFileChange}
                 />
+                {removeName ? (
+                    <input
+                        type="hidden"
+                        name={removeName}
+                        value={isRemoved ? '1' : '0'}
+                    />
+                ) : null}
                 <label htmlFor={inputId} className="block cursor-pointer">
                     <div className="mb-4 flex justify-center">
                         {preview ? (
-                            <img
-                                src={preview}
-                                alt="Seçilen görsel"
-                                className="h-28 w-28 rounded-xl object-cover"
-                            />
+                            previewType === 'video' ? (
+                                <video
+                                    src={preview}
+                                    className="h-28 w-28 rounded-xl object-cover"
+                                    controls
+                                    preload="metadata"
+                                />
+                            ) : (
+                                <img
+                                    src={preview}
+                                    alt="Seçilen görsel"
+                                    className="h-28 w-28 rounded-xl object-cover"
+                                />
+                            )
                         ) : (
                             <Image className="h-12 w-12 text-gray-400" />
                         )}
                     </div>
                     <p className="mb-1 text-sm font-medium text-blue-500">
-                        Görsel Seça
+                        {ctaLabel}
                     </p>
                     <p className="text-xs text-gray-500">
                         veya sürükleyip bırakın

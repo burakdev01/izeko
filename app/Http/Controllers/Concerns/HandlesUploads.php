@@ -11,13 +11,35 @@ trait HandlesUploads
         Request $request,
         string $field,
         string $directory,
+        string $disk = 'public',
     ): ?string {
         if (! $request->hasFile($field)) {
             return null;
         }
 
-        $path = $request->file($field)->store($directory, 'public');
+        $path = $request->file($field)->store($directory, $disk);
 
-        return Storage::disk('public')->url($path);
+        $baseUrl = config("filesystems.disks.{$disk}.url");
+
+        if (is_string($baseUrl) && $baseUrl !== '') {
+            return rtrim($baseUrl, '/').'/'.$path;
+        }
+
+        return Storage::disk($disk)->url($path);
+    }
+
+    protected function storePublicFileName(
+        Request $request,
+        string $field,
+        string $directory,
+        string $disk = 'public',
+    ): ?string {
+        if (! $request->hasFile($field)) {
+            return null;
+        }
+
+        $path = $request->file($field)->store($directory, $disk);
+
+        return basename($path);
     }
 }

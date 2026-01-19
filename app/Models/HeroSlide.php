@@ -53,4 +53,33 @@ class HeroSlide extends Model
     {
         return Auth::check() && Auth::user()?->is_admin;
     }
+
+    public function mediaUrl(?string $value): ?string
+    {
+        if (! $value) {
+            return null;
+        }
+
+        if (
+            str_starts_with($value, 'http://') ||
+            str_starts_with($value, 'https://') ||
+            str_starts_with($value, '/')
+        ) {
+            return $value;
+        }
+
+        $uploadsUrl = config('filesystems.disks.uploads.url');
+
+        if (! is_string($uploadsUrl) || $uploadsUrl === '') {
+            return $value;
+        }
+
+        $path = ltrim($value, '/');
+
+        if (! str_starts_with($path, 'hero-slides/')) {
+            $path = 'hero-slides/'.$path;
+        }
+
+        return rtrim($uploadsUrl, '/').'/'.$path;
+    }
 }
