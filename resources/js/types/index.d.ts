@@ -27,6 +27,23 @@ export interface SharedData {
     quote: { message: string; author: string };
     auth: Auth;
     sidebarOpen: boolean;
+    articleSidebar?: {
+        announcements?: {
+            id: number | string;
+            title: string;
+            subtitle?: string | null;
+            description?: string | null;
+            date: string;
+        }[];
+        news?: {
+            id: number | string;
+            title: string;
+            date: string;
+            image: string;
+        }[];
+        announcementsActionHref?: string;
+        newsActionHref?: string;
+    };
     [key: string]: unknown;
 }
 

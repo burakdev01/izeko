@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Announcement;
+use App\Models\BlogPost;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -46,6 +48,37 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'articleSidebar' => fn () => [
+                'announcements' => Announcement::where('active', true)
+                    ->orderBy('sort_order')
+                    ->orderByDesc('updated_at')
+                    ->limit(3)
+                    ->get()
+                    ->map(fn (Announcement $announcement) => [
+                        'id' => $announcement->id,
+                        'title' => $announcement->title,
+                        'subtitle' => $announcement->subtitle ?: null,
+                        'description' => $announcement->excerpt ?: null,
+                        'date' => $announcement->updated_at?->locale('tr')
+                            ->translatedFormat('d F') ?? '',
+                    ])
+                    ->values(),
+                'news' => BlogPost::where('active', true)
+                    ->orderBy('sort_order')
+                    ->orderByDesc('updated_at')
+                    ->limit(3)
+                    ->get()
+                    ->map(fn (BlogPost $post) => [
+                        'id' => $post->id,
+                        'title' => $post->title,
+                        'date' => $post->updated_at?->locale('tr')
+                            ->translatedFormat('d F Y') ?? '',
+                        'image' => $post->image,
+                    ])
+                    ->values(),
+                'announcementsActionHref' => route('duyurular', [], false),
+                'newsActionHref' => route('haberler', [], false),
+            ],
         ];
     }
 }

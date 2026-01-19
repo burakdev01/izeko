@@ -1,28 +1,19 @@
-import { announcements as announcementsData } from '@/components/announcements/announcements.data';
-import { slides as spotlightSlides } from '@/components/spotlight-carousel/data';
+import { type SharedData } from '@/types';
 import { ChevronRight, Home } from 'lucide-react';
 import { type ReactNode } from 'react';
+import { usePage } from '@inertiajs/react';
 import {
     ArticleSidebar,
     type AnnouncementItem,
     type NewsItem,
 } from './ArticleSidebar';
 
-const sidebarAnnouncements: AnnouncementItem[] = announcementsData
-    .slice(0, 3)
-    .map((item) => ({
-        id: item.id,
-        title: item.title,
-        description: item.description,
-        date: `${item.date.day} ${item.date.month}`,
-    }));
-
-const sidebarNews: NewsItem[] = spotlightSlides.slice(0, 3).map((slide) => ({
-    id: slide.id,
-    title: slide.title,
-    date: slide.date,
-    image: slide.image,
-}));
+type ArticleSidebarData = {
+    announcements?: AnnouncementItem[];
+    news?: NewsItem[];
+    announcementsActionHref?: string;
+    newsActionHref?: string;
+};
 
 interface ArticleLayoutProps {
     title: string;
@@ -45,6 +36,13 @@ export function ArticleLayout({
     showSidebar = true,
     children,
 }: ArticleLayoutProps) {
+    const { articleSidebar } = usePage<SharedData>().props;
+    const sidebarData = articleSidebar as ArticleSidebarData | undefined;
+    const sidebarAnnouncements = sidebarData?.announcements ?? [];
+    const sidebarNews = sidebarData?.news ?? [];
+    const announcementsActionHref =
+        sidebarData?.announcementsActionHref ?? '/duyurular';
+    const newsActionHref = sidebarData?.newsActionHref ?? '/haberler';
     const breadcrumbText = breadcrumbLabel ?? title;
     const hasSidebar =
         showSidebar &&
@@ -115,6 +113,10 @@ export function ArticleLayout({
                                 <ArticleSidebar
                                     announcements={sidebarAnnouncements}
                                     news={sidebarNews}
+                                    announcementsActionHref={
+                                        announcementsActionHref
+                                    }
+                                    newsActionHref={newsActionHref}
                                 />
                             </aside>
                         ) : null}
