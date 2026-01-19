@@ -86,7 +86,7 @@ const listingsData: Listing[] = [
         location: 'Tekirdağ Marmara',
         city: 'Tekirdağ',
         image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400',
-        badges: ['premium', 'sahibinden'],
+        badges: ['premium'],
     },
     {
         id: 2,
@@ -112,7 +112,7 @@ const listingsData: Listing[] = [
         location: 'İstanbul Kağıthane',
         city: 'İstanbul',
         image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400',
-        badges: ['premium', 'sahibinden'],
+        badges: ['premium'],
     },
     {
         id: 4,
@@ -151,7 +151,7 @@ const listingsData: Listing[] = [
         location: 'Ankara Çankaya',
         city: 'Ankara',
         image: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400',
-        badges: ['premium', 'sahibinden'],
+        badges: ['premium'],
     },
 ];
 
@@ -835,7 +835,7 @@ export default function Ilanlar() {
 
                         <main className="flex-1">
                             <ListingsHeader
-                                title='"Satılık Ev" aramanızda 649.241 ilan bulundu.'
+                                title=""
                                 tabs={tabs}
                                 activeTab={currentFilter}
                                 onSelect={setCurrentFilter}

@@ -43,9 +43,28 @@ Route::get('/', function () {
             'date' => optional($post->updated_at)->format('Y-m-d'),
         ]);
 
+    $announcements = Announcement::where('active', true)
+        ->orderBy('sort_order')
+        ->orderByDesc('updated_at')
+        ->limit(3)
+        ->get()
+        ->map(fn (Announcement $announcement) => [
+            'id' => $announcement->id,
+            'title' => $announcement->title,
+            'image' => $announcement->image,
+            'link' => $announcement->link,
+            'detail_url' => route(
+                'duyurular.show',
+                ['slug' => Str::slug($announcement->title)],
+                false,
+            ),
+            'date' => optional($announcement->updated_at)->format('Y-m-d'),
+        ]);
+
     return Inertia::render('Home', [
         'heroSlides' => $slides,
         'blogPosts' => $blogPosts,
+        'announcements' => $announcements,
     ]);
 })->name('home');
 
@@ -179,10 +198,13 @@ Route::get('/duyurular', function () {
         ->map(fn (Announcement $announcement) => [
             'id' => $announcement->id,
             'title' => $announcement->title,
-            'subtitle' => $announcement->subtitle,
-            'excerpt' => $announcement->excerpt,
             'image' => $announcement->image,
             'link' => $announcement->link,
+            'detail_url' => route(
+                'duyurular.show',
+                ['slug' => Str::slug($announcement->title)],
+                false,
+            ),
             'date' => optional($announcement->updated_at)->format('Y-m-d'),
         ]);
 
@@ -190,6 +212,26 @@ Route::get('/duyurular', function () {
         'announcements' => $announcements,
     ]);
 })->name('duyurular');
+
+Route::get('/duyurular/{slug}', function (string $slug) {
+    $announcement = Announcement::where('active', true)->get()->first(
+        fn (Announcement $item) => Str::slug($item->title) === $slug,
+    );
+
+    abort_unless($announcement, 404);
+
+    return Inertia::render('duyurular-detay', [
+        'announcement' => [
+            'id' => $announcement->id,
+            'title' => $announcement->title,
+            'content' => $announcement->content,
+            'image' => $announcement->image,
+            'link' => $announcement->link,
+            'slug' => Str::slug($announcement->title),
+            'date' => optional($announcement->updated_at)->format('Y-m-d'),
+        ],
+    ]);
+})->name('duyurular.show');
 
 Route::get('/ilanlar', function () {
     return Inertia::render('ilanlar');

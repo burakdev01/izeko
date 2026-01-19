@@ -5,8 +5,6 @@ import { Head } from '@inertiajs/react';
 type Announcement = {
     id: number;
     title: string;
-    subtitle?: string | null;
-    excerpt: string;
     content: string;
     image?: string | null;
     link?: string | null;

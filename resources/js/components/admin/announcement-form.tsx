@@ -8,11 +8,8 @@ import { useState } from 'react';
 type Announcement = {
     id?: number;
     title: string;
-    subtitle?: string | null;
-    excerpt: string;
     content: string;
     image?: string | null;
-    link?: string | null;
     active?: boolean;
 };
 
@@ -36,10 +33,7 @@ export default function AnnouncementForm({
     announcement,
 }: AnnouncementFormProps) {
     const [titleValue, setTitleValue] = useState(announcement?.title ?? '');
-    const [subtitle, setSubtitle] = useState(announcement?.subtitle ?? '');
-    const [excerpt, setExcerpt] = useState(announcement?.excerpt ?? '');
     const [content, setContent] = useState(announcement?.content ?? '');
-    const [link, setLink] = useState(announcement?.link ?? '');
     const [active, setActive] = useState(announcement?.active ?? true);
 
     return (
@@ -87,50 +81,6 @@ export default function AnnouncementForm({
 
                                     <div>
                                         <label className="mb-2 block text-sm font-medium text-gray-700">
-                                            Alt Başlık
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="subtitle"
-                                            value={subtitle}
-                                            onChange={(event) =>
-                                                setSubtitle(
-                                                    event.target.value,
-                                                )
-                                            }
-                                            placeholder="Alt başlık"
-                                            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 outline-none transition focus:border-transparent focus:ring-2 focus:ring-blue-500"
-                                        />
-                                        <InputError
-                                            className="mt-2"
-                                            message={errors.subtitle}
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="mb-2 block text-sm font-medium text-gray-700">
-                                            Özet
-                                        </label>
-                                        <textarea
-                                            name="excerpt"
-                                            rows={3}
-                                            value={excerpt}
-                                            onChange={(event) =>
-                                                setExcerpt(
-                                                    event.target.value,
-                                                )
-                                            }
-                                            placeholder="Kısa açıklama yazın"
-                                            className="w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 outline-none transition focus:border-transparent focus:ring-2 focus:ring-blue-500"
-                                        />
-                                        <InputError
-                                            className="mt-2"
-                                            message={errors.excerpt}
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="mb-2 block text-sm font-medium text-gray-700">
                                             İçerik
                                         </label>
                                         <textarea
@@ -151,27 +101,6 @@ export default function AnnouncementForm({
                                         />
                                     </div>
 
-                                    <div>
-                                        <label className="mb-2 block text-sm font-medium text-gray-700">
-                                            Link (opsiyonel)
-                                        </label>
-                                        <input
-                                            type="url"
-                                            name="link"
-                                            value={link}
-                                            onChange={(event) =>
-                                                setLink(
-                                                    event.target.value,
-                                                )
-                                            }
-                                            placeholder="https://"
-                                            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 outline-none transition focus:border-transparent focus:ring-2 focus:ring-blue-500"
-                                        />
-                                        <InputError
-                                            className="mt-2"
-                                            message={errors.link}
-                                        />
-                                    </div>
                                 </div>
                             </div>
                         </div>

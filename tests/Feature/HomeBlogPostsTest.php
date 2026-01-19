@@ -4,6 +4,12 @@ use App\Models\BlogPost;
 use Illuminate\Support\Str;
 use Inertia\Testing\AssertableInertia as Assert;
 
+test('home page renders', function () {
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page->component('Home'));
+});
+
 test('home page includes active blog posts', function () {
     $first = BlogPost::factory()->create([
         'title' => 'Ilk Yazi',

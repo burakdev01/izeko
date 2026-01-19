@@ -11,6 +11,7 @@ use Inertia\Inertia;
 class AnnouncementController extends Controller
 {
     use HandlesUploads;
+
     public function index()
     {
         $announcements = Announcement::orderBy('sort_order')
@@ -33,11 +34,13 @@ class AnnouncementController extends Controller
         $validated = $this->validateAnnouncement($request);
         $validated['active'] = $request->boolean('active');
         $validated['sort_order'] = (Announcement::max('sort_order') ?? 0) + 1;
+        $validated['excerpt'] = '';
 
-        $image = $this->storePublicFile(
+        $image = $this->storePublicImageAsWebp(
             $request,
             'image_file',
             'announcements',
+            'uploads',
         );
 
         if ($image) {
@@ -63,10 +66,11 @@ class AnnouncementController extends Controller
         $validated = $this->validateAnnouncement($request, $announcement);
         $validated['active'] = $request->boolean('active');
 
-        $image = $this->storePublicFile(
+        $image = $this->storePublicImageAsWebp(
             $request,
             'image_file',
             'announcements',
+            'uploads',
         );
 
         if ($image) {
@@ -119,8 +123,6 @@ class AnnouncementController extends Controller
 
         return $request->validate([
             'title' => ['required', 'string', 'max:255'],
-            'subtitle' => ['nullable', 'string', 'max:255'],
-            'excerpt' => ['required', 'string', 'max:1000'],
             'content' => ['required', 'string'],
             'image' => $imageRules,
             'image_file' => ['nullable', 'image', 'max:5120'],
@@ -134,8 +136,6 @@ class AnnouncementController extends Controller
         return [
             'id' => $announcement->id,
             'title' => $announcement->title,
-            'subtitle' => $announcement->subtitle,
-            'excerpt' => $announcement->excerpt,
             'content' => $announcement->content,
             'image' => $announcement->image,
             'link' => $announcement->link,

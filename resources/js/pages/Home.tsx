@@ -18,11 +18,20 @@ interface HomeProps {
         slug: string;
         date: string;
     }[];
+    announcements?: {
+        id: number;
+        title: string;
+        image: string;
+        link?: string | null;
+        detail_url: string;
+        date: string;
+    }[];
 }
 
 export default function HomeComponent({
     heroSlides = [],
     blogPosts = [],
+    announcements = [],
 }: HomeProps) {
     return (
         <>
@@ -39,7 +48,7 @@ export default function HomeComponent({
             />
             <SpotlightCarousel />
             <MembershipSection />
-            <AnnouncementsSection />
+            <AnnouncementsSection announcements={announcements} />
             <BlogSection posts={blogPosts} />
             <Footer />
         </>

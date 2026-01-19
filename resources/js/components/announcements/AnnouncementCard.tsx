@@ -1,3 +1,5 @@
+import { Link } from '@inertiajs/react';
+
 type AnnouncementCardProps = {
     image: string;
     date: {
@@ -6,17 +8,22 @@ type AnnouncementCardProps = {
         year: string;
     };
     title: string;
-    description: string;
+    href?: string;
 };
 
 const AnnouncementCard = ({
     image,
     date,
     title,
-    description,
+    href,
 }: AnnouncementCardProps) => {
-    return (
-        <div className="flex h-full flex-col rounded-xl border border-gray-200 bg-white">
+    const isExternal = href?.startsWith('http');
+    const actionLabel = 'Detayları Oku →';
+    const cardClasses =
+        'flex h-full flex-col rounded-xl border border-gray-200 bg-white transition hover:border-gray-300';
+
+    const content = (
+        <>
             <div className="h-48 overflow-hidden rounded-t-xl">
                 <img
                     src={image}
@@ -39,19 +46,35 @@ const AnnouncementCard = ({
                     {title}
                 </h3>
 
-                <p className="mb-4 line-clamp-2 text-sm text-gray-500">
-                    {description}
-                </p>
-
-                <a
-                    href="#"
-                    className="mt-auto text-sm font-medium text-gray-700 transition hover:text-red-600"
-                >
-                    Detayları Oku →
-                </a>
+                <span className="mt-auto text-sm font-medium text-gray-700 transition group-hover:text-red-600">
+                    {actionLabel}
+                </span>
             </div>
-        </div>
+        </>
     );
+
+    if (href && isExternal) {
+        return (
+            <a
+                href={href}
+                className={`${cardClasses} group`}
+                target="_blank"
+                rel="noreferrer"
+            >
+                {content}
+            </a>
+        );
+    }
+
+    if (href) {
+        return (
+            <Link href={href} className={`${cardClasses} group`}>
+                {content}
+            </Link>
+        );
+    }
+
+    return <div className={cardClasses}>{content}</div>;
 };
 
 export default AnnouncementCard;

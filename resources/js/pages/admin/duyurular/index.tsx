@@ -8,10 +8,7 @@ import { GripVertical } from 'lucide-react';
 type Announcement = {
     id: number;
     title: string;
-    subtitle?: string | null;
-    excerpt: string;
     image?: string | null;
-    link?: string | null;
 };
 
 type DuyurularIndexProps = {
@@ -56,9 +53,6 @@ export default function DuyurularIndex({
                                     <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                                         Başlık
                                     </th>
-                                    <th className="hidden px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 lg:table-cell">
-                                        Link
-                                    </th>
                                     <th className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500">
                                         Görsel
                                     </th>
@@ -71,7 +65,7 @@ export default function DuyurularIndex({
                                 {orderedItems.length === 0 && (
                                     <tr>
                                         <td
-                                            colSpan={5}
+                                            colSpan={4}
                                             className="px-6 py-8 text-center text-gray-500"
                                         >
                                             Henüz duyuru eklenmemiş
@@ -106,20 +100,7 @@ export default function DuyurularIndex({
                                                 <span className="font-medium">
                                                     {announcement.title}
                                                 </span>
-                                                {announcement.subtitle && (
-                                                    <span className="text-xs text-gray-500">
-                                                        {announcement.subtitle}
-                                                    </span>
-                                                )}
-                                                <span className="max-w-xs truncate text-xs text-gray-500">
-                                                    {announcement.excerpt}
-                                                </span>
                                             </div>
-                                        </td>
-                                        <td className="hidden px-6 py-4 text-xs text-gray-600 lg:table-cell">
-                                            <span className="block max-w-xs truncate">
-                                                {announcement.link || '-'}
-                                            </span>
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center justify-center">
