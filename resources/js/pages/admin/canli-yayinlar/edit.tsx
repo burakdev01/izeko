@@ -27,10 +27,10 @@ export default function CanliYayinEdit({ stream }: CanliYayinEditProps) {
                 submitLabel="Güncelle"
                 cancelHref="/admin/canli-yayinlar"
                 content={stream}
+                showThumbnail={false}
                 labels={{
                     title: 'Başlık',
                     video: 'Video URL',
-                    image: 'Kapak Görseli',
                 }}
             />
         </AdminLayout>

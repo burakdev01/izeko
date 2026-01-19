@@ -11,10 +11,10 @@ export default function CanliYayinCreate() {
                 description="Yeni canlı yayın bilgilerini girin."
                 action="/admin/canli-yayinlar"
                 cancelHref="/admin/canli-yayinlar"
+                showThumbnail={false}
                 labels={{
                     title: 'Başlık',
                     video: 'Video URL',
-                    image: 'Kapak Görseli',
                 }}
             />
         </AdminLayout>

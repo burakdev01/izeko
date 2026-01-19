@@ -11,6 +11,7 @@ use Inertia\Inertia;
 class LiveStreamController extends Controller
 {
     use HandlesUploads;
+
     public function index()
     {
         $streams = LiveStream::orderBy('sort_order')
@@ -42,6 +43,11 @@ class LiveStreamController extends Controller
 
         if ($thumbnail) {
             $validated['thumbnail'] = $thumbnail;
+        } elseif (
+            ! array_key_exists('thumbnail', $validated) ||
+            ! $validated['thumbnail']
+        ) {
+            $validated['thumbnail'] = '';
         }
 
         LiveStream::create($validated);
@@ -72,7 +78,7 @@ class LiveStreamController extends Controller
         if ($thumbnail) {
             $validated['thumbnail'] = $thumbnail;
         } elseif (! $request->filled('thumbnail')) {
-            $validated['thumbnail'] = $liveStream->thumbnail;
+            $validated['thumbnail'] = $liveStream->thumbnail ?? '';
         }
 
         $liveStream->update($validated);
@@ -112,10 +118,6 @@ class LiveStreamController extends Controller
         ?LiveStream $liveStream = null,
     ): array {
         $thumbnailRules = ['nullable', 'url', 'max:255'];
-
-        if (! $liveStream || ! $liveStream->thumbnail) {
-            $thumbnailRules[] = 'required_without:thumbnail_file';
-        }
 
         return $request->validate([
             'title' => ['required', 'string', 'max:255'],
