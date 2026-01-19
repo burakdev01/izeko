@@ -10,6 +10,7 @@ test('home page renders', function () {
         ->assertInertia(fn (Assert $page) => $page
             ->component('Home')
             ->has('quickAccessItems', 6)
+            ->has('faqItems', 4)
         );
 });
 

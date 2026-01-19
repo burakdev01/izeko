@@ -1,6 +1,7 @@
 import AnnouncementsSection from '@/components/announcements/AnnouncementsSection';
 import BlogSection from '@/components/blog/BlogSection';
 import TopBar from '@/components/contact-header';
+import FaqSection, { type FaqItem } from '@/components/faq/FaqSection';
 import QuickAccessSection, {
     type QuickAccessItem,
 } from '@/components/quick-access/QuickAccessSection';
@@ -30,6 +31,7 @@ interface HomeProps {
         date: string;
     }[];
     quickAccessItems?: QuickAccessItem[];
+    faqItems?: FaqItem[];
 }
 
 export default function HomeComponent({
@@ -37,6 +39,7 @@ export default function HomeComponent({
     blogPosts = [],
     announcements = [],
     quickAccessItems = [],
+    faqItems = [],
 }: HomeProps) {
     return (
         <>
@@ -56,6 +59,7 @@ export default function HomeComponent({
             <AnnouncementsSection announcements={announcements} />
             <BlogSection posts={blogPosts} />
             <QuickAccessSection items={quickAccessItems} />
+            <FaqSection items={faqItems} />
             <Footer />
         </>
     );
