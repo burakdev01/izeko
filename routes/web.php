@@ -294,6 +294,46 @@ Route::get('/duyurular/{slug}', function (string $slug) {
     ]);
 })->name('duyurular.show');
 
+Route::get('/ofisler', function () {
+    return Inertia::render('ofisler');
+})->name('ofisler');
+
+Route::get('/iletisim', function () {
+    return Inertia::render('iletisim');
+})->name('iletisim');
+
+Route::get('/kullanim-kosullari', function () {
+    return Inertia::render('kullanim-kosullari');
+})->name('kullanim-kosullari');
+
+Route::get('/hukuki-sartlar', function () {
+    return Inertia::render('hukuki-sartlar');
+})->name('hukuki-sartlar');
+
+Route::get('/gizlilik-sozlesmesi', function () {
+    return Inertia::render('gizlilik-sozlesmesi');
+})->name('gizlilik-sozlesmesi');
+
+Route::get('/sss', function () {
+    $faqItems = Faq::where('active', true)
+        ->orderBy('sort_order')
+        ->orderByDesc('updated_at')
+        ->get()
+        ->map(fn (Faq $faq) => [
+            'question' => $faq->question,
+            'answer' => $faq->answer,
+        ])
+        ->values();
+
+    return Inertia::render('sss', [
+        'faqItems' => $faqItems,
+    ]);
+})->name('sss');
+
+Route::get('/mevzuat', function () {
+    return redirect()->route('duyurular');
+})->name('mevzuat');
+
 Route::get('/ilanlar', function () {
     return Inertia::render('ilanlar');
 })->name('ilanlar');

@@ -1,7 +1,7 @@
 import { type SharedData } from '@/types';
+import { usePage } from '@inertiajs/react';
 import { ChevronRight, Home } from 'lucide-react';
 import { type ReactNode } from 'react';
-import { usePage } from '@inertiajs/react';
 import {
     ArticleSidebar,
     type AnnouncementItem,
@@ -49,7 +49,7 @@ export function ArticleLayout({
         (sidebarAnnouncements.length > 0 || sidebarNews.length > 0);
 
     return (
-        <main className="bg-[#F3F4F6]a">
+        <main className="bg-[#F3F4F6]">
             <header className="relative h-64 overflow-hidden bg-slate-900">
                 <div className="absolute inset-0">
                     {heroImage ? (

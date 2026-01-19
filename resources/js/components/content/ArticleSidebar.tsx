@@ -59,7 +59,7 @@ export function ArticleSidebar({
     const showNews = news.length > 0;
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 bg-white">
             {showAnnouncements ? (
                 <div className="overflow-hidden rounded-lg bg-white shadow-sm">
                     <div className="flex items-center justify-between border-b border-gray-200 bg-white p-4">

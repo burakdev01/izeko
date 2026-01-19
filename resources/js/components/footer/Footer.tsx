@@ -1,13 +1,7 @@
-import {
-    Clock,
-    Facebook,
-    Instagram,
-    Mail,
-    MapPin,
-    Phone,
-    Youtube,
-} from 'lucide-react';
+import { Link } from '@inertiajs/react';
+import { Clock, Mail, MapPin, Phone } from 'lucide-react';
 import React from 'react';
+const publicUrl = import.meta.env.VITE_PUBLIC_URL;
 
 interface FooterLinkProps {
     icon: React.ReactNode;
@@ -15,17 +9,35 @@ interface FooterLinkProps {
     href?: string;
 }
 
-const FooterLink: React.FC<FooterLinkProps> = ({ icon, text, href = '#' }) => (
-    <a
-        href={href}
-        className="group mb-3 flex items-center gap-3 text-gray-300 transition-colors hover:text-red-500"
-    >
-        <span className="text-red-500 transition-transform group-hover:scale-110">
-            {icon}
-        </span>
-        <span className="text-sm md:text-base">{text}</span>
-    </a>
-);
+const isInternalHref = (href: string) =>
+    href.startsWith('/') && !href.startsWith('//');
+
+const FooterLink: React.FC<FooterLinkProps> = ({ icon, text, href = '#' }) => {
+    const className =
+        'group mb-3 flex items-center gap-3 text-gray-300 transition-colors hover:text-red-500';
+    const content = (
+        <>
+            <span className="text-red-500 transition-transform group-hover:scale-110">
+                {icon}
+            </span>
+            <span className="text-sm md:text-base">{text}</span>
+        </>
+    );
+
+    if (isInternalHref(href)) {
+        return (
+            <Link href={href} className={className}>
+                {content}
+            </Link>
+        );
+    }
+
+    return (
+        <a href={href} className={className}>
+            {content}
+        </a>
+    );
+};
 
 const Footer: React.FC = () => {
     return (
@@ -57,21 +69,33 @@ const Footer: React.FC = () => {
                         <div className="flex gap-4">
                             <a
                                 href="#"
-                                className="group flex h-12 w-12 items-center justify-center rounded-lg bg-[#1a2332] transition-colors hover:bg-red-500"
+                                className="group flex h-12 w-12 items-center justify-center rounded-lg bg-[#1a2332] bg-white transition-colors hover:bg-red-500"
                             >
-                                <Facebook className="h-5 w-5 text-gray-400 group-hover:text-white" />
+                                <img
+                                    src={`${publicUrl}/images/facebook.png`}
+                                    className="h-4 w-4"
+                                    alt=""
+                                />
                             </a>
                             <a
                                 href="#"
-                                className="group flex h-12 w-12 items-center justify-center rounded-lg bg-[#1a2332] transition-colors hover:bg-red-500"
+                                className="group flex h-12 w-12 items-center justify-center rounded-lg bg-white transition-colors hover:bg-red-500"
                             >
-                                <Instagram className="h-5 w-5 text-gray-400 group-hover:text-white" />
+                                <img
+                                    src={`${publicUrl}/images/instagram.png`}
+                                    className="h-4 w-4"
+                                    alt=""
+                                />
                             </a>
                             <a
                                 href="#"
-                                className="group flex h-12 w-12 items-center justify-center rounded-lg bg-[#1a2332] transition-colors hover:bg-red-500"
+                                className="group flex h-12 w-12 items-center justify-center rounded-lg bg-white transition-colors hover:bg-red-500"
                             >
-                                <Youtube className="h-5 w-5 text-gray-400 group-hover:text-white" />
+                                <img
+                                    src={`${publicUrl}/images/youtube.png`}
+                                    className="h-4 w-4"
+                                    alt=""
+                                />
                             </a>
                         </div>
                     </div>
@@ -106,6 +130,7 @@ const Footer: React.FC = () => {
                                     </svg>
                                 }
                                 text="Anasayfa"
+                                href="/"
                             />
                             <FooterLink
                                 icon={
@@ -123,6 +148,7 @@ const Footer: React.FC = () => {
                                     </svg>
                                 }
                                 text="Ofisler"
+                                href="/ofisler"
                             />
                             <FooterLink
                                 icon={
@@ -140,6 +166,7 @@ const Footer: React.FC = () => {
                                     </svg>
                                 }
                                 text="Haberler"
+                                href="/haberler"
                             />
                             <FooterLink
                                 icon={
@@ -156,10 +183,12 @@ const Footer: React.FC = () => {
                                     </svg>
                                 }
                                 text="Blog & Makale"
+                                href="/haberler"
                             />
                             <FooterLink
                                 icon={<Mail className="h-5 w-5" />}
                                 text="İletişim"
+                                href="/iletisim"
                             />
                         </nav>
                     </div>
@@ -193,6 +222,7 @@ const Footer: React.FC = () => {
                                     </svg>
                                 }
                                 text="Mevzuat"
+                                href="/duyurular"
                             />
                             <FooterLink
                                 icon={
@@ -209,6 +239,7 @@ const Footer: React.FC = () => {
                                     </svg>
                                 }
                                 text="Kullanım Koşulları"
+                                href="/kullanim-kosullari"
                             />
                             <FooterLink
                                 icon={
@@ -225,6 +256,7 @@ const Footer: React.FC = () => {
                                     </svg>
                                 }
                                 text="Hukuki Şartlar"
+                                href="/hukuki-sartlar"
                             />
                             <FooterLink
                                 icon={
@@ -241,6 +273,7 @@ const Footer: React.FC = () => {
                                     </svg>
                                 }
                                 text="Gizlilik Sözleşmesi"
+                                href="/gizlilik-sozlesmesi"
                             />
                             <FooterLink
                                 icon={
@@ -257,6 +290,7 @@ const Footer: React.FC = () => {
                                     </svg>
                                 }
                                 text="SSS"
+                                href="/sss"
                             />
                         </nav>
                     </div>
