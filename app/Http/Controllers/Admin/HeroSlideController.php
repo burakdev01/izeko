@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\HeroSlide;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class HeroSlideController extends Controller
@@ -42,7 +43,7 @@ class HeroSlideController extends Controller
                 (HeroSlide::max('sort_order') ?? 0) + 1;
         }
 
-        $image = $this->storePublicFileName(
+        $image = $this->storePublicImageNameAsWebp(
             $request,
             'image_file',
             'hero-slides',
@@ -54,7 +55,7 @@ class HeroSlideController extends Controller
             'hero-slides',
             'uploads',
         );
-        $poster = $this->storePublicFileName(
+        $poster = $this->storePublicImageNameAsWebp(
             $request,
             'poster_file',
             'hero-slides',
@@ -94,7 +95,7 @@ class HeroSlideController extends Controller
         $removeImage = $request->boolean('remove_image');
         $removeVideo = $request->boolean('remove_video');
 
-        $image = $this->storePublicFileName(
+        $image = $this->storePublicImageNameAsWebp(
             $request,
             'image_file',
             'hero-slides',
@@ -106,7 +107,7 @@ class HeroSlideController extends Controller
             'hero-slides',
             'uploads',
         );
-        $poster = $this->storePublicFileName(
+        $poster = $this->storePublicImageNameAsWebp(
             $request,
             'poster_file',
             'hero-slides',
@@ -167,12 +168,7 @@ class HeroSlideController extends Controller
         ];
         $posterFileRules = ['nullable', 'image', 'max:5120'];
 
-        if (! $heroSlide || (! $heroSlide->image && ! $heroSlide->video)) {
-            $imageFileRules[] = 'required_without:video_file';
-            $videoFileRules[] = 'required_without:image_file';
-        }
-
-        return $request->validate([
+        $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'subtitle' => ['nullable', 'string', 'max:255'],
             'image_file' => $imageFileRules,
@@ -181,6 +177,25 @@ class HeroSlideController extends Controller
             'remove_image' => ['nullable', 'boolean'],
             'remove_video' => ['nullable', 'boolean'],
         ]);
+
+        $hasImageFile = $request->hasFile('image_file');
+        $hasVideoFile = $request->hasFile('video_file');
+        $hasExistingImage = (bool) $heroSlide?->image;
+        $hasExistingVideo = (bool) $heroSlide?->video;
+
+        $removeImage = $request->boolean('remove_image');
+        $removeVideo = $request->boolean('remove_video');
+
+        $finalHasImage = $hasImageFile || ($hasExistingImage && ! $removeImage);
+        $finalHasVideo = $hasVideoFile || ($hasExistingVideo && ! $removeVideo);
+
+        if (! $finalHasImage && ! $finalHasVideo) {
+            throw ValidationException::withMessages([
+                'image_file' => 'Görsel veya video yüklemelisiniz.',
+            ]);
+        }
+
+        return $validated;
     }
 
     private function mapSlide(HeroSlide $slide): array

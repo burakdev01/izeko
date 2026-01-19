@@ -30,8 +30,22 @@ Route::get('/', function () {
             'poster' => $slide->mediaUrl($slide->poster),
         ]);
 
+    $blogPosts = BlogPost::where('active', true)
+        ->orderBy('sort_order')
+        ->orderByDesc('updated_at')
+        ->limit(3)
+        ->get()
+        ->map(fn (BlogPost $post) => [
+            'id' => $post->id,
+            'image' => $post->image,
+            'title' => $post->title,
+            'slug' => $post->seo_url ?? Str::slug($post->title),
+            'date' => optional($post->updated_at)->format('Y-m-d'),
+        ]);
+
     return Inertia::render('Home', [
         'heroSlides' => $slides,
+        'blogPosts' => $blogPosts,
     ]);
 })->name('home');
 
@@ -84,8 +98,8 @@ Route::get('/faaliyetler', function () {
             'id' => $activity->id,
             'title' => $activity->title,
             'date' => optional($activity->updated_at)->format('Y-m-d'),
-            'videoUrl' => $activity->video_url,
-            'thumbnail' => $activity->thumbnail,
+            'videoUrl' => $activity->youtubeUrl() ?? $activity->video_url,
+            'thumbnail' => $activity->thumbnail ?: $activity->youtubeThumbnail(),
         ]);
 
     return Inertia::render('faaliyetler', [

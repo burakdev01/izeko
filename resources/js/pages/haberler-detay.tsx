@@ -43,12 +43,7 @@ export default function HaberlerDetay({ post }: BlogDetailProps) {
                 heroPosition="center 30%"
                 breadcrumbLabel={post.title}
             >
-                <div className="space-y-6">
-                    <div className="flex items-center gap-3 text-sm text-gray-500">
-                        <Calendar className="h-4 w-4 text-gray-400" />
-                        <span>{formatDate(post.date)}</span>
-                    </div>
-
+                <div className="space-y-6 rounded-lg bg-white p-4">
                     {post.image ? (
                         <img
                             src={post.image}
@@ -57,7 +52,12 @@ export default function HaberlerDetay({ post }: BlogDetailProps) {
                         />
                     ) : null}
 
-                    <div className="text-base leading-relaxed whitespace-pre-line text-gray-700">
+                    <div className="flex items-center gap-3 text-sm text-gray-500">
+                        <Calendar className="h-4 w-4 text-gray-400" />
+                        <span>{formatDate(post.date)}</span>
+                    </div>
+
+                    <div className="text-base leading-6 leading-relaxed font-normal whitespace-pre-line text-gray-700">
                         {post.content}
                     </div>
                 </div>

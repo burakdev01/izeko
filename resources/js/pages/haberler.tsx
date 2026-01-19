@@ -6,7 +6,7 @@ import { Navbar } from '@/components/navbar/Navbar';
 
 type BlogPost = {
     id: number;
-    image: string;
+    image?: string | null;
     title: string;
     slug: string;
     date: string;

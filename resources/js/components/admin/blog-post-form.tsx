@@ -221,6 +221,7 @@ export default function BlogPostForm({
                                 label="Kapak Görseli"
                                 name="image_file"
                                 initialPreview={post?.image ?? null}
+                                removeName="remove_image"
                                 error={
                                     errors.image ||
                                     errors.image_file ||

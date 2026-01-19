@@ -53,4 +53,48 @@ class Activity extends Model
     {
         return Auth::check() && Auth::user()?->is_admin;
     }
+
+    public function youtubeId(): ?string
+    {
+        $value = $this->video_url;
+
+        if (! $value) {
+            return null;
+        }
+
+        if (preg_match('/^[A-Za-z0-9_-]{11}$/', $value)) {
+            return $value;
+        }
+
+        $pattern =
+            '%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?|shorts)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i';
+
+        if (preg_match($pattern, $value, $matches)) {
+            return $matches[1];
+        }
+
+        return null;
+    }
+
+    public function youtubeUrl(): ?string
+    {
+        $id = $this->youtubeId();
+
+        if (! $id) {
+            return null;
+        }
+
+        return $id;
+    }
+
+    public function youtubeThumbnail(): ?string
+    {
+        $id = $this->youtubeId();
+
+        if (! $id) {
+            return null;
+        }
+
+        return 'https://img.youtube.com/vi/'.$id.'/hqdefault.jpg';
+    }
 }

@@ -27,10 +27,10 @@ export default function FaaliyetEdit({ activity }: FaaliyetEditProps) {
                 submitLabel="Güncelle"
                 cancelHref="/admin/faaliyetler"
                 content={activity}
+                showThumbnail={false}
                 labels={{
                     title: 'Başlık',
                     video: 'Video URL',
-                    image: 'Kapak Görseli',
                 }}
             />
         </AdminLayout>

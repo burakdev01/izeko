@@ -1,7 +1,7 @@
 import { Link } from '@inertiajs/react';
 
 type BlogCardProps = {
-    image: string;
+    image?: string | null;
     title: string;
     date: string;
     href?: string;
@@ -11,13 +11,16 @@ const BlogCard = ({ image, title, date, href }: BlogCardProps) => {
     const content = (
         <>
             <div className="h-56 overflow-hidden">
-                <img
-                    src={image}
-                    alt={title}
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
+                {image ? (
+                    <img
+                        src={image}
+                        alt={title}
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                ) : (
+                    <div className="h-full w-full bg-gray-100" />
+                )}
             </div>
-
             <div className="flex flex-1 flex-col p-6">
                 <h3 className="mb-3 line-clamp-2 text-lg font-semibold text-gray-900">
                     {title}

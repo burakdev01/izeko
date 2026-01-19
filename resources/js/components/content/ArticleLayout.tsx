@@ -51,7 +51,7 @@ export function ArticleLayout({
         (sidebarAnnouncements.length > 0 || sidebarNews.length > 0);
 
     return (
-        <main>
+        <main className="bg-[#F3F4F6]a">
             <header className="relative h-64 overflow-hidden bg-slate-900">
                 <div className="absolute inset-0">
                     {heroImage ? (

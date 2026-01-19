@@ -11,9 +11,19 @@ import { SpotlightCarousel } from '@/components/spotlight-carousel/SpotlightCaro
 
 interface HomeProps {
     heroSlides?: HeroSlideData[];
+    blogPosts?: {
+        id: number;
+        image?: string | null;
+        title: string;
+        slug: string;
+        date: string;
+    }[];
 }
 
-export default function HomeComponent({ heroSlides = [] }: HomeProps) {
+export default function HomeComponent({
+    heroSlides = [],
+    blogPosts = [],
+}: HomeProps) {
     return (
         <>
             <TopBar />
@@ -30,7 +40,7 @@ export default function HomeComponent({ heroSlides = [] }: HomeProps) {
             <SpotlightCarousel />
             <MembershipSection />
             <AnnouncementsSection />
-            <BlogSection />
+            <BlogSection posts={blogPosts} />
             <Footer />
         </>
     );

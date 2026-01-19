@@ -11,6 +11,7 @@ use Inertia\Inertia;
 class BlogPostController extends Controller
 {
     use HandlesUploads;
+
     public function index()
     {
         $posts = BlogPost::orderBy('sort_order')
@@ -34,7 +35,12 @@ class BlogPostController extends Controller
         $validated['active'] = $request->boolean('active');
         $validated['sort_order'] = (BlogPost::max('sort_order') ?? 0) + 1;
 
-        $image = $this->storePublicFile($request, 'image_file', 'blog');
+        $image = $this->storePublicImageAsWebp(
+            $request,
+            'image_file',
+            'blogs',
+            'uploads',
+        );
 
         if ($image) {
             $validated['image'] = $image;
@@ -59,11 +65,19 @@ class BlogPostController extends Controller
         $validated = $this->validatePost($request, $blogPost);
         $validated['active'] = $request->boolean('active');
 
-        $image = $this->storePublicFile($request, 'image_file', 'blog');
+        $removeImage = $request->boolean('remove_image');
+        $image = $this->storePublicImageAsWebp(
+            $request,
+            'image_file',
+            'blogs',
+            'uploads',
+        );
 
-        if ($image) {
+        if ($removeImage) {
+            $validated['image'] = '';
+        } elseif ($image) {
             $validated['image'] = $image;
-        } elseif (! $request->filled('image')) {
+        } else {
             $validated['image'] = $blogPost->image;
         }
 
@@ -105,7 +119,7 @@ class BlogPostController extends Controller
     ): array {
         $imageRules = ['nullable', 'url', 'max:255'];
 
-        if (! $blogPost || ! $blogPost->image) {
+        if (! $blogPost) {
             $imageRules[] = 'required_without:image_file';
         }
 
@@ -114,6 +128,7 @@ class BlogPostController extends Controller
             'content' => ['required', 'string'],
             'image' => $imageRules,
             'image_file' => ['nullable', 'image', 'max:5120'],
+            'remove_image' => ['nullable', 'boolean'],
             'active' => ['nullable', 'boolean'],
             'seo_title' => ['nullable', 'string', 'max:255'],
             'seo_description' => ['nullable', 'string', 'max:1000'],

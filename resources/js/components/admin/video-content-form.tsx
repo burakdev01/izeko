@@ -21,6 +21,7 @@ type VideoContentFormProps = {
     submitLabel?: string;
     cancelHref?: string;
     content?: VideoContent;
+    showThumbnail?: boolean;
     labels?: {
         title?: string;
         video?: string;
@@ -36,6 +37,7 @@ export default function VideoContentForm({
     submitLabel = 'Kaydet',
     cancelHref = '/admin',
     content,
+    showThumbnail = true,
     labels,
 }: VideoContentFormProps) {
     const [titleValue, setTitleValue] = useState(content?.title ?? '');
@@ -111,19 +113,21 @@ export default function VideoContentForm({
                         </div>
 
                         <div className="w-full max-w-xl space-y-6">
-                            <AdminMediaUpload
-                                label={
-                                    labels?.image ??
-                                    'Kapak Görseli (Maks. 4MB)'
-                                }
-                                name="thumbnail_file"
-                                initialPreview={content?.thumbnail ?? null}
-                                error={
-                                    errors.thumbnail ||
-                                    errors.thumbnail_file ||
-                                    undefined
-                                }
-                            />
+                            {showThumbnail ? (
+                                <AdminMediaUpload
+                                    label={
+                                        labels?.image ??
+                                        'Kapak Görseli (Maks. 4MB)'
+                                    }
+                                    name="thumbnail_file"
+                                    initialPreview={content?.thumbnail ?? null}
+                                    error={
+                                        errors.thumbnail ||
+                                        errors.thumbnail_file ||
+                                        undefined
+                                    }
+                                />
+                            ) : null}
                             <AdminStatusToggle
                                 checked={active}
                                 onChange={setActive}

@@ -71,6 +71,7 @@ test('admin can remove hero slide image', function () {
     $slide = HeroSlide::create([
         'title' => 'Silinecek Görsel',
         'image' => 'ornek.jpg',
+        'video' => 'ornek.mp4',
         'sort_order' => 1,
     ]);
 
@@ -108,8 +109,38 @@ test('admin can store hero slides with uploads', function () {
     expect($slide?->image)->not->toBeNull();
     expect($slide?->image)->not->toContain('/');
     expect($slide?->image)->not->toContain('http');
+    expect($slide?->image)->toEndWith('.webp');
 
     Storage::disk('uploads')->assertExists('hero-slides/'.$slide?->image);
+});
+
+test('admin can store hero slides with video only', function () {
+    Storage::fake('uploads');
+    config([
+        'filesystems.disks.uploads.url' => config('app.url').'/uploads',
+    ]);
+
+    $admin = User::factory()->create([
+        'is_admin' => true,
+    ]);
+
+    $this->actingAs($admin)
+        ->post(route('admin.hero-slides.store'), [
+            'title' => 'Video Slayt',
+            'video_file' => UploadedFile::fake()->create(
+                'slide.mp4',
+                1024,
+                'video/mp4',
+            ),
+        ])
+        ->assertRedirect(route('admin.hero-slides.index'))
+        ->assertSessionHasNoErrors();
+
+    $slide = HeroSlide::query()->first();
+
+    expect($slide)->not->toBeNull();
+    expect($slide?->video)->not->toBeNull();
+    expect($slide?->image)->toBeNull();
 });
 
 test('admin can reorder hero slides', function () {

@@ -11,10 +11,10 @@ export default function FaaliyetCreate() {
                 description="Yeni faaliyet bilgilerini girin."
                 action="/admin/faaliyetler"
                 cancelHref="/admin/faaliyetler"
+                showThumbnail={false}
                 labels={{
                     title: 'Başlık',
                     video: 'Video URL',
-                    image: 'Kapak Görseli',
                 }}
             />
         </AdminLayout>

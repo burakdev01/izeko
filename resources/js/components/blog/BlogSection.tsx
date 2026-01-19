@@ -1,7 +1,26 @@
+import { Link } from '@inertiajs/react';
 import BlogCard from './BlogCard';
-import { blogPosts } from './blog.data';
 
-const BlogSection = () => {
+type BlogPostSummary = {
+    id: number;
+    image?: string | null;
+    title: string;
+    slug: string;
+    date: string;
+};
+
+type BlogSectionProps = {
+    posts: BlogPostSummary[];
+};
+
+const formatDate = (value: string) =>
+    new Date(value).toLocaleDateString('tr-TR', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+    });
+
+const BlogSection = ({ posts }: BlogSectionProps) => {
     return (
         <section className="bg-white py-16">
             <div className="mx-auto max-w-7xl px-4">
@@ -11,20 +30,32 @@ const BlogSection = () => {
                         Blog & Makaleler
                     </h2>
 
-                    <a
-                        href="#"
+                    <Link
+                        href="/haberler"
                         className="flex items-center gap-1 text-sm font-medium text-red-600"
                     >
                         Tüm Yazılar →
-                    </a>
+                    </Link>
                 </div>
 
                 {/* GRID */}
-                <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-                    {blogPosts.map((post, index) => (
-                        <BlogCard key={index} {...post} />
-                    ))}
-                </div>
+                {posts.length > 0 ? (
+                    <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+                        {posts.map((post) => (
+                            <BlogCard
+                                key={post.id}
+                                image={post.image}
+                                title={post.title}
+                                date={formatDate(post.date)}
+                                href={`/haberler/${post.slug}`}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center text-sm text-gray-500">
+                        Henüz makale eklenmedi.
+                    </div>
+                )}
             </div>
         </section>
     );

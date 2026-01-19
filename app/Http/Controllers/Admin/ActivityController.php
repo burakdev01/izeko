@@ -6,11 +6,13 @@ use App\Http\Controllers\Concerns\HandlesUploads;
 use App\Http\Controllers\Controller;
 use App\Models\Activity;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class ActivityController extends Controller
 {
     use HandlesUploads;
+
     public function index()
     {
         $activities = Activity::orderBy('sort_order')
@@ -34,6 +36,16 @@ class ActivityController extends Controller
         $validated['active'] = $request->boolean('active');
         $validated['sort_order'] = (Activity::max('sort_order') ?? 0) + 1;
 
+        $videoId = $this->getYouTubeId($validated['video_url']);
+
+        if (! $videoId) {
+            throw ValidationException::withMessages([
+                'video_url' => 'Geçerli bir YouTube bağlantısı girin.',
+            ]);
+        }
+
+        $validated['video_url'] = $videoId;
+
         $thumbnail = $this->storePublicFile(
             $request,
             'thumbnail_file',
@@ -42,6 +54,8 @@ class ActivityController extends Controller
 
         if ($thumbnail) {
             $validated['thumbnail'] = $thumbnail;
+        } else {
+            $validated['thumbnail'] = $this->youtubeThumbnailUrl($videoId);
         }
 
         Activity::create($validated);
@@ -63,6 +77,16 @@ class ActivityController extends Controller
         $validated = $this->validateActivity($request, $activity);
         $validated['active'] = $request->boolean('active');
 
+        $videoId = $this->getYouTubeId($validated['video_url']);
+
+        if (! $videoId) {
+            throw ValidationException::withMessages([
+                'video_url' => 'Geçerli bir YouTube bağlantısı girin.',
+            ]);
+        }
+
+        $validated['video_url'] = $videoId;
+
         $thumbnail = $this->storePublicFile(
             $request,
             'thumbnail_file',
@@ -71,8 +95,14 @@ class ActivityController extends Controller
 
         if ($thumbnail) {
             $validated['thumbnail'] = $thumbnail;
-        } elseif (! $request->filled('thumbnail')) {
-            $validated['thumbnail'] = $activity->thumbnail;
+        } else {
+            $currentVideoId = $activity->youtubeId();
+
+            if (! $activity->thumbnail || $currentVideoId !== $videoId) {
+                $validated['thumbnail'] = $this->youtubeThumbnailUrl($videoId);
+            } else {
+                $validated['thumbnail'] = $activity->thumbnail;
+            }
         }
 
         $activity->update($validated);
@@ -113,10 +143,6 @@ class ActivityController extends Controller
     ): array {
         $thumbnailRules = ['nullable', 'url', 'max:255'];
 
-        if (! $activity || ! $activity->thumbnail) {
-            $thumbnailRules[] = 'required_without:thumbnail_file';
-        }
-
         return $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'video_url' => ['required', 'url', 'max:255'],
@@ -132,10 +158,27 @@ class ActivityController extends Controller
             'id' => $activity->id,
             'title' => $activity->title,
             'date' => optional($activity->updated_at)->format('Y-m-d'),
-            'video_url' => $activity->video_url,
-            'thumbnail' => $activity->thumbnail,
+            'video_url' => $activity->youtubeUrl() ?? $activity->video_url,
+            'thumbnail' => $activity->thumbnail ?: $activity->youtubeThumbnail(),
             'active' => $activity->active,
             'sort_order' => $activity->sort_order,
         ];
+    }
+
+    private function getYouTubeId(string $url): ?string
+    {
+        $pattern =
+            '%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?|shorts)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i';
+
+        if (preg_match($pattern, $url, $matches)) {
+            return $matches[1];
+        }
+
+        return null;
+    }
+
+    private function youtubeThumbnailUrl(string $videoId): string
+    {
+        return 'https://img.youtube.com/vi/'.$videoId.'/hqdefault.jpg';
     }
 }
