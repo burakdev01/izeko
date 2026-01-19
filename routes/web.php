@@ -61,10 +61,58 @@ Route::get('/', function () {
             'date' => optional($announcement->updated_at)->format('Y-m-d'),
         ]);
 
+    $faqItems = [
+        [
+            'id' => 'neden-emlak',
+            'icon' => 'info',
+            'title' => 'Neden Emlak Ofisiyle Çalışmalısınız?',
+            'description' => 'Profesyonel desteğin avantajları',
+            'href' => route('kurumsal.neden-emlak-ofisi', [], false),
+        ],
+        [
+            'id' => 'izeko-nedir',
+            'icon' => 'globe',
+            'title' => 'izeko.org.tr Nedir?',
+            'description' => 'Web sitemiz hakkında detaylı bilgi',
+            'href' => route('kurumsal.izeko-nedir', [], false),
+        ],
+        [
+            'id' => 'oda-kayit',
+            'icon' => 'user-plus',
+            'title' => 'Oda Kayıt İşlemleri',
+            'description' => 'Üyelik başvuruları ve kayıt prosedürleri',
+            'href' => route('kurumsal.oda-kayit-islemleri', [], false),
+        ],
+        [
+            'id' => 'hesap-numaralari',
+            'icon' => 'building',
+            'title' => 'Oda Hesap Numaralarımız',
+            'description' => 'Banka ve ödeme bilgilerimiz',
+            'href' => route('kurumsal.oda-hesap-numaralari', [], false),
+        ],
+        [
+            'id' => 'expertiz',
+            'icon' => 'check-square',
+            'title' => 'Expertiz Talep Edin!',
+            'description' => 'Güvenilir gayrimenkul değerleme hizmeti',
+            'href' => 'mailto:info@izeko.org.tr',
+            'external' => true,
+        ],
+        [
+            'id' => 'tkgm',
+            'icon' => 'map-pin',
+            'title' => 'TKGM Parsel Sorgulama',
+            'description' => 'Tapu ve Kadastro Genel Müdürlüğü parsel sorgulama servisi',
+            'href' => 'https://parselsorgu.tkgm.gov.tr/',
+            'external' => true,
+        ],
+    ];
+
     return Inertia::render('Home', [
         'heroSlides' => $slides,
         'blogPosts' => $blogPosts,
         'announcements' => $announcements,
+        'faqItems' => $faqItems,
     ]);
 })->name('home');
 

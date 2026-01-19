@@ -7,7 +7,10 @@ use Inertia\Testing\AssertableInertia as Assert;
 test('home page renders', function () {
     $this->get(route('home'))
         ->assertOk()
-        ->assertInertia(fn (Assert $page) => $page->component('Home'));
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('Home')
+            ->has('faqItems', 6)
+        );
 });
 
 test('home page includes active blog posts', function () {

@@ -1,6 +1,7 @@
 import AnnouncementsSection from '@/components/announcements/AnnouncementsSection';
 import BlogSection from '@/components/blog/BlogSection';
 import TopBar from '@/components/contact-header';
+import FaqSection, { type FaqItem } from '@/components/faq/FaqSection';
 import Footer from '@/components/footer/Footer';
 import { HeroSlider } from '@/components/hero/HeroSlider';
 import { type HeroSlideData } from '@/components/hero/types';
@@ -26,12 +27,14 @@ interface HomeProps {
         detail_url: string;
         date: string;
     }[];
+    faqItems?: FaqItem[];
 }
 
 export default function HomeComponent({
     heroSlides = [],
     blogPosts = [],
     announcements = [],
+    faqItems = [],
 }: HomeProps) {
     return (
         <>
@@ -50,6 +53,7 @@ export default function HomeComponent({
             <MembershipSection />
             <AnnouncementsSection announcements={announcements} />
             <BlogSection posts={blogPosts} />
+            <FaqSection items={faqItems} />
             <Footer />
         </>
     );
