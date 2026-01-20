@@ -116,7 +116,7 @@ const SidebarItem = ({
             <div className="mb-1">
                 <button
                     onClick={() => setIsOpen(!isOpen)}
-                    className="flex w-full items-center justify-between rounded-lg px-4 py-2 text-gray-700 transition hover:bg-[#FCE9EA] hover:text-[#da1f25]"
+                    className="flex w-full items-center justify-between rounded-lg px-4 py-2 transition hover:bg-[#FCE9EA] hover:text-[#da1f25]"
                 >
                     <div className="flex items-center space-x-3">
                         <Icon className="h-5 w-5" />
@@ -137,7 +137,7 @@ const SidebarItem = ({
                                 className={`flex items-center space-x-3 rounded-lg px-4 py-2 text-sm transition ${
                                     isActive(child.href!)
                                         ? 'bg-[#FCE9EA] text-[#da1f25]'
-                                        : 'text-gray-600 hover:bg-[#FCE9EA] hover:text-[#da1f25]'
+                                        : 'hover:bg-[#FCE9EA] hover:text-[#da1f25]'
                                 }`}
                                 onClick={onMobileClick}
                             >
@@ -161,7 +161,7 @@ const SidebarItem = ({
             className={`mb-1 flex items-center space-x-3 rounded-lg px-4 py-2 transition ${
                 active
                     ? 'bg-[#FCE9EA] text-[#da1f25]'
-                    : 'text-gray-700 hover:bg-[#FCE9EA] hover:text-[#da1f25]'
+                    : 'hover:bg-[#FCE9EA] hover:text-[#da1f25]'
             }`}
             onClick={onMobileClick}
         >
