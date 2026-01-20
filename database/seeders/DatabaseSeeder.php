@@ -192,6 +192,10 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        $this->call(FaqSeeder::class);
+        $this->call([
+            OfficeSeeder::class,
+            ListingSeeder::class,
+            FaqSeeder::class,
+        ]);
     }
 }

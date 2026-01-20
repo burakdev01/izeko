@@ -57,4 +57,8 @@ class User extends Authenticatable
             'is_active' => 'boolean',
         ];
     }
+    public function offices()
+    {
+        return $this->belongsToMany(Office::class, 'user_offices');
+    }
 }

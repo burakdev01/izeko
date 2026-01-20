@@ -32,7 +32,7 @@ export default function AdminFormHeader({
                 <button
                     type="submit"
                     disabled={processing}
-                    className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-70"
+                    className="inline-flex items-center gap-2 rounded-lg bg-[#da1f25] px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-[#b0181d] disabled:cursor-not-allowed disabled:opacity-70"
                 >
                     {submitLabel}
                     <Plus className="h-4 w-4" />

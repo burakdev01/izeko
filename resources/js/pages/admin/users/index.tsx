@@ -50,8 +50,6 @@ export default function UsersIndex({ users, filters }: UsersIndexProps) {
                 <AdminPageHeader
                     title={getPageTitle()}
                     description="Kullanıcıları listeleyin, düzenleyin veya silin."
-                    actionHref={undefined} // No create button for now as per design
-                    actionText="Yeni Ekle"
                 />
 
                 <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
@@ -62,13 +60,13 @@ export default function UsersIndex({ users, filters }: UsersIndexProps) {
                                     <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                                         Ad Soyad
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                    <th className="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase md:table-cell">
                                         E-posta
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                    <th className="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase lg:table-cell">
                                         Telefon
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                    <th className="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase xl:table-cell">
                                         Kayıt Tarihi
                                     </th>
                                     <th className="px-6 py-3 text-center text-xs font-medium tracking-wider text-gray-500 uppercase">
@@ -86,15 +84,23 @@ export default function UsersIndex({ users, filters }: UsersIndexProps) {
                                         className="transition-colors hover:bg-gray-50"
                                     >
                                         <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                                            {user.name} {user.surname}
+                                            <div>
+                                                {user.name} {user.surname}
+                                            </div>
+                                            <div className="mt-1 flex flex-col space-y-1 text-xs text-gray-500 md:hidden">
+                                                <span>{user.email}</span>
+                                                <span className="lg:hidden">
+                                                    {user.phone_number || '-'}
+                                                </span>
+                                            </div>
                                         </td>
-                                        <td className="px-6 py-4 text-sm text-gray-600">
+                                        <td className="hidden px-6 py-4 text-sm text-gray-600 md:table-cell">
                                             {user.email}
                                         </td>
-                                        <td className="px-6 py-4 text-sm text-gray-600">
+                                        <td className="hidden px-6 py-4 text-sm text-gray-600 lg:table-cell">
                                             {user.phone_number || '-'}
                                         </td>
-                                        <td className="px-6 py-4 text-sm text-gray-600">
+                                        <td className="hidden px-6 py-4 text-sm text-gray-600 xl:table-cell">
                                             {new Date(
                                                 user.created_at,
                                             ).toLocaleDateString('tr-TR')}

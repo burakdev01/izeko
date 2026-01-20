@@ -14,7 +14,7 @@ export default function AdminRowActions({
         <div className="flex items-center justify-center space-x-2">
             <Link
                 href={editHref}
-                className="text-blue-600 transition hover:text-blue-800"
+                className="text-[#da1f25] transition hover:text-[#b0181d]"
             >
                 <Pencil className="h-4 w-4" />
             </Link>
@@ -25,7 +25,7 @@ export default function AdminRowActions({
                 onClick={(event) => {
                     if (
                         !window.confirm(
-                            "Silmek istedi\u{011F}inize emin misiniz?",
+                            'Silmek istedi\u{011F}inize emin misiniz?',
                         )
                     ) {
                         event.preventDefault();

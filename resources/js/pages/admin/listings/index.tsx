@@ -95,17 +95,17 @@ export default function ListingsIndex({
                         <table className="w-full">
                             <thead className="border-b border-gray-200 bg-gray-50">
                                 <tr>
-                                    <th className="w-12 px-4 py-3 text-center text-xs font-medium tracking-wider text-gray-500 uppercase" />
+                                    <th className="hidden w-12 px-4 py-3 text-center text-xs font-medium tracking-wider text-gray-500 uppercase md:table-cell" />
                                     <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                                         İlan Adı
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                    <th className="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase lg:table-cell">
                                         Ofis ID
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                    <th className="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase md:table-cell">
                                         Fiyat
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                    <th className="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase xl:table-cell">
                                         Görüntülenme
                                     </th>
                                     <th className="px-6 py-3 text-center text-xs font-medium tracking-wider text-gray-500 uppercase">
@@ -138,7 +138,7 @@ export default function ListingsIndex({
                                                 : 'hover:bg-gray-50'
                                         }`}
                                     >
-                                        <td className="px-4 py-4">
+                                        <td className="hidden px-4 py-4 md:table-cell">
                                             <div
                                                 className="flex cursor-grab items-center justify-center text-gray-400 active:cursor-grabbing"
                                                 draggable
@@ -151,18 +151,34 @@ export default function ListingsIndex({
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                                            {listing.title}
+                                            <div className="line-clamp-2 md:line-clamp-none">
+                                                {listing.title}
+                                            </div>
+                                            <div className="mt-1 flex flex-col space-y-1 text-xs text-gray-500 md:hidden">
+                                                <span>
+                                                    {new Intl.NumberFormat(
+                                                        'tr-TR',
+                                                        {
+                                                            style: 'currency',
+                                                            currency: 'TRY',
+                                                        },
+                                                    ).format(listing.price)}
+                                                </span>
+                                                <span className="lg:hidden">
+                                                    Ofis: #{listing.office_id}
+                                                </span>
+                                            </div>
                                         </td>
-                                        <td className="px-6 py-4 text-sm text-gray-600">
+                                        <td className="hidden px-6 py-4 text-sm text-gray-600 lg:table-cell">
                                             #{listing.office_id}
                                         </td>
-                                        <td className="px-6 py-4 text-sm text-gray-600">
+                                        <td className="hidden px-6 py-4 text-sm text-gray-600 md:table-cell">
                                             {new Intl.NumberFormat('tr-TR', {
                                                 style: 'currency',
                                                 currency: 'TRY',
                                             }).format(listing.price)}
                                         </td>
-                                        <td className="px-6 py-4 text-sm text-gray-600">
+                                        <td className="hidden px-6 py-4 text-sm text-gray-600 xl:table-cell">
                                             {listing.visit_count}
                                         </td>
                                         <td className="px-6 py-4 text-center">

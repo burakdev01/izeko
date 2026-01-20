@@ -78,17 +78,7 @@ export default function AdminDashboard({ stats }: DashboardProps) {
             <Head title="Dashboard" />
 
             <div className="space-y-6">
-                <div className="rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 p-6 text-white">
-                    <h1 className="mb-2 text-2xl font-bold md:text-3xl">
-                        Hoş Geldiniz, {userName}!
-                    </h1>
-                    <p className="text-blue-100">
-                        Yönetim paneline hoş geldiniz. Güncel durumu buradan
-                        takip edebilirsiniz.
-                    </p>
-                </div>
-
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-3">
                     {cards.map((card) => {
                         const Icon = card.icon;
                         const styles = statStyles[card.tone];

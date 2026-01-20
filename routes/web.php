@@ -409,6 +409,23 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
 
         Route::resource('kullanicilar', UserController::class)
             ->parameters(['kullanicilar' => 'user']);
+
+        Route::resource('ofisler', \App\Http\Controllers\Admin\OfficeController::class)
+            ->parameters(['ofisler' => 'office']);
+
+        Route::get('bildirimler/email', [\App\Http\Controllers\Admin\NotificationController::class, 'emailIndex'])
+            ->name('notifications.email');
+        Route::get('bildirimler/email/yeni', [\App\Http\Controllers\Admin\NotificationController::class, 'emailCreate'])
+            ->name('notifications.email.create');
+        Route::post('bildirimler/email', [\App\Http\Controllers\Admin\NotificationController::class, 'emailStore'])
+            ->name('notifications.email.store');
+
+        Route::get('bildirimler/sms', [\App\Http\Controllers\Admin\NotificationController::class, 'smsIndex'])
+            ->name('notifications.sms');
+        Route::get('bildirimler/sms/yeni', [\App\Http\Controllers\Admin\NotificationController::class, 'smsCreate'])
+            ->name('notifications.sms.create');
+        Route::post('bildirimler/sms', [\App\Http\Controllers\Admin\NotificationController::class, 'smsStore'])
+            ->name('notifications.sms.store');
     },
 );
 

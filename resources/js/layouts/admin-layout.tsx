@@ -1,18 +1,25 @@
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import { Link, usePage } from '@inertiajs/react';
 import {
     Bell,
     BookOpen,
+    Building,
     CalendarCheck,
     CheckCircle,
     ChevronDown,
-    ChevronRight,
     ClipboardList,
     HelpCircle,
     Home,
     List,
     LogOut,
+    Mail,
     Megaphone,
     Menu,
+    MessageSquare,
     Radio,
     Settings,
     SlidersHorizontal,
@@ -58,6 +65,27 @@ const navItems: NavItem[] = [
                 href: '/admin/ilanlar',
                 label: 'Tüm İlanlar',
                 icon: List,
+            },
+        ],
+    },
+    {
+        href: '/admin/ofisler',
+        label: 'Ofis Yönetimi',
+        icon: Building,
+    },
+    {
+        label: 'Bildirim Sistemi',
+        icon: Megaphone,
+        children: [
+            {
+                href: '/admin/bildirimler/email',
+                label: 'Email Bildirimleri',
+                icon: Mail,
+            },
+            {
+                href: '/admin/bildirimler/sms',
+                label: 'SMS Bildirimleri',
+                icon: MessageSquare,
             },
         ],
     },
@@ -133,22 +161,21 @@ const SidebarItem = ({
 
     if (item.children) {
         return (
-            <div className="mb-1">
-                <button
-                    onClick={onToggle}
-                    className="flex w-full items-center justify-between rounded-lg px-4 py-2 text-gray-700 transition hover:bg-[#FCE9EA] hover:text-[#da1f25]"
-                >
-                    <div className="flex items-center space-x-3">
-                        <Icon className="h-5 w-5" />
-                        <span className="text-base">{item.label}</span>
-                    </div>
-                    {isOpen ? (
-                        <ChevronDown className="h-4 w-4" />
-                    ) : (
-                        <ChevronRight className="h-4 w-4" />
-                    )}
-                </button>
-                {isOpen && (
+            <Collapsible open={isOpen} onOpenChange={onToggle} className="mb-1">
+                <CollapsibleTrigger asChild>
+                    <button className="flex w-full items-center justify-between rounded-lg px-4 py-2 transition hover:bg-[#FCE9EA] hover:text-[#da1f25]">
+                        <div className="flex items-center space-x-3">
+                            <Icon className="h-5 w-5" />
+                            <span className="text-base">{item.label}</span>
+                        </div>
+                        <ChevronDown
+                            className={`h-4 w-4 transition-transform duration-200 ${
+                                isOpen ? 'rotate-180' : ''
+                            }`}
+                        />
+                    </button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
                     <div className="mt-1 ml-4 space-y-1 border-l-2 border-gray-100 pl-2">
                         {item.children.map((child) => (
                             <Link
@@ -168,8 +195,8 @@ const SidebarItem = ({
                             </Link>
                         ))}
                     </div>
-                )}
-            </div>
+                </CollapsibleContent>
+            </Collapsible>
         );
     }
 
@@ -239,19 +266,13 @@ export default function AdminLayout({
         <div className="min-h-screen bg-gray-50 font-sans text-black">
             <div className="flex min-h-screen overflow-hidden">
                 <aside className="hidden border-r border-gray-200 bg-white lg:flex lg:w-64 lg:flex-col">
-                    <div className="flex h-16 items-center justify-center border-b border-gray-200 px-6">
+                    <div className="flex items-center justify-center border-b border-gray-200 px-6">
                         <div className="flex items-center space-x-3">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-400 to-blue-600">
-                                <span className="text-xl font-bold text-white">
-                                    İZ
-                                </span>
-                            </div>
-                            <div>
-                                <h1 className="text-lg font-bold text-black">
-                                    İZEKO
-                                </h1>
-                                <p className="text-xs text-gray-500">Yönetim</p>
-                            </div>
+                            <img
+                                src="https://izeko.deniz-web.com/public/themes/default/assets/images/izeko-logo.png"
+                                alt=""
+                                className="h-26"
+                            />
                         </div>
                     </div>
 
@@ -281,19 +302,13 @@ export default function AdminLayout({
                         mobileOpen ? 'translate-x-0' : '-translate-x-full'
                     }`}
                 >
-                    <div className="flex h-16 items-center justify-between border-b border-gray-200 px-6">
+                    <div className="flex items-center justify-between border-b border-gray-200 px-6">
                         <div className="flex items-center space-x-3">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-400 to-blue-600">
-                                <span className="text-xl font-bold text-white">
-                                    İZ
-                                </span>
-                            </div>
-                            <div>
-                                <h1 className="text-lg font-bold text-black">
-                                    İZEKO
-                                </h1>
-                                <p className="text-xs text-gray-500">Yönetim</p>
-                            </div>
+                            <img
+                                src="https://izeko.deniz-web.com/public/themes/default/assets/images/izeko-logo.png"
+                                alt=""
+                                className="h-26"
+                            />
                         </div>
                         <button
                             type="button"
