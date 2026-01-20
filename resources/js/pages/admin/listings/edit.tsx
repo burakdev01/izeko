@@ -6,11 +6,11 @@ import { Head, useForm } from '@inertiajs/react';
 type Listing = {
     id: number;
     title: string;
-    office: string;
+    description: string;
+    office_id: number;
+    user_id: number;
     price: number | string;
-    date: string;
-    city: string;
-    status: 'pending' | 'active' | 'passive';
+    listing_status: 'pending' | 'active' | 'inactive';
 };
 
 type ListingEditProps = {
@@ -20,11 +20,11 @@ type ListingEditProps = {
 export default function ListingEdit({ listing }: ListingEditProps) {
     const { data, setData, put, processing, errors } = useForm({
         title: listing.title,
-        office: listing.office,
+        description: listing.description,
+        office_id: listing.office_id,
+        user_id: listing.user_id,
         price: listing.price,
-        date: listing.date,
-        city: listing.city,
-        status: listing.status,
+        listing_status: listing.listing_status,
     });
 
     const submit = (e: React.FormEvent) => {
@@ -65,39 +65,57 @@ export default function ListingEdit({ listing }: ListingEditProps) {
                             />
                         </div>
 
-                        <div>
+                        <div className="col-span-1 md:col-span-2">
                             <label className="mb-2 block text-sm font-medium text-gray-700">
-                                Ofis
+                                Açıklama
                             </label>
-                            <input
-                                type="text"
-                                value={data.office}
+                            <textarea
+                                value={data.description}
                                 onChange={(e) =>
-                                    setData('office', e.target.value)
+                                    setData('description', e.target.value)
                                 }
+                                rows={4}
                                 className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500"
                             />
                             <InputError
                                 className="mt-2"
-                                message={errors.office}
+                                message={errors.description}
                             />
                         </div>
 
                         <div>
                             <label className="mb-2 block text-sm font-medium text-gray-700">
-                                Şehir
+                                Ofis ID
                             </label>
                             <input
-                                type="text"
-                                value={data.city}
+                                type="number"
+                                value={data.office_id}
                                 onChange={(e) =>
-                                    setData('city', e.target.value)
+                                    setData('office_id', Number(e.target.value))
                                 }
                                 className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500"
                             />
                             <InputError
                                 className="mt-2"
-                                message={errors.city}
+                                message={errors.office_id}
+                            />
+                        </div>
+
+                        <div>
+                            <label className="mb-2 block text-sm font-medium text-gray-700">
+                                Kullanıcı ID
+                            </label>
+                            <input
+                                type="number"
+                                value={data.user_id}
+                                onChange={(e) =>
+                                    setData('user_id', Number(e.target.value))
+                                }
+                                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                            />
+                            <InputError
+                                className="mt-2"
+                                message={errors.user_id}
                             />
                         </div>
 
@@ -120,31 +138,13 @@ export default function ListingEdit({ listing }: ListingEditProps) {
                             />
                         </div>
 
-                        <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">
-                                Tarih
-                            </label>
-                            <input
-                                type="date"
-                                value={data.date}
-                                onChange={(e) =>
-                                    setData('date', e.target.value)
-                                }
-                                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500"
-                            />
-                            <InputError
-                                className="mt-2"
-                                message={errors.date}
-                            />
-                        </div>
-
                         <div className="col-span-1 md:col-span-2">
                             <label className="mb-2 block text-sm font-medium text-gray-700">
                                 Durum
                             </label>
                             <div className="flex space-x-4">
                                 {(
-                                    ['pending', 'active', 'passive'] as const
+                                    ['pending', 'active', 'inactive'] as const
                                 ).map((status) => (
                                     <label
                                         key={status}
@@ -152,12 +152,14 @@ export default function ListingEdit({ listing }: ListingEditProps) {
                                     >
                                         <input
                                             type="radio"
-                                            name="status"
+                                            name="listing_status"
                                             value={status}
-                                            checked={data.status === status}
+                                            checked={
+                                                data.listing_status === status
+                                            }
                                             onChange={(e) =>
                                                 setData(
-                                                    'status',
+                                                    'listing_status',
                                                     e.target.value as any,
                                                 )
                                             }
@@ -175,7 +177,7 @@ export default function ListingEdit({ listing }: ListingEditProps) {
                             </div>
                             <InputError
                                 className="mt-2"
-                                message={errors.status}
+                                message={errors.listing_status}
                             />
                         </div>
                     </div>

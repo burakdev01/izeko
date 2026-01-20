@@ -12,8 +12,8 @@ class ListingSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\Listing::factory(10)->create(['status' => 'pending']);
-        \App\Models\Listing::factory(10)->create(['status' => 'active']);
-        \App\Models\Listing::factory(5)->create(['status' => 'passive']);
+        \App\Models\Listing::factory(10)->create(['listing_status' => 'pending']);
+        \App\Models\Listing::factory(10)->create(['listing_status' => 'active']);
+        \App\Models\Listing::factory(5)->create(['listing_status' => 'inactive']);
     }
 }

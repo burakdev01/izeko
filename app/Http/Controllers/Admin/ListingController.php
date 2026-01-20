@@ -14,8 +14,8 @@ class ListingController extends Controller
     {
         $query = Listing::query();
 
-        if ($request->has('status') && in_array($request->status, ['pending', 'active', 'passive'])) {
-            $query->where('status', $request->status);
+        if ($request->has('status') && in_array($request->status, ['pending', 'active', 'inactive'])) {
+            $query->where('listing_status', $request->status);
         }
 
         $listings = $query->orderBy('sort_order')
@@ -39,11 +39,11 @@ class ListingController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'office' => 'required|string|max:255',
+            'description' => 'required|string',
+            'office_id' => 'required|integer',
+            'user_id' => 'required|integer|exists:users,id',
             'price' => 'required|numeric|min:0',
-            'date' => 'required|date',
-            'city' => 'required|string|max:255',
-            'status' => 'required|in:pending,active,passive',
+            'listing_status' => 'required|in:pending,active,inactive',
         ]);
 
         $listing->update($validated);

@@ -116,15 +116,11 @@ const SidebarItem = ({
             <div className="mb-1">
                 <button
                     onClick={() => setIsOpen(!isOpen)}
-                    className={`flex w-full items-center justify-between rounded-lg px-4 py-2 transition ${
-                        isChildActive
-                            ? 'bg-blue-50 text-blue-600'
-                            : 'text-gray-700 hover:bg-gray-100'
-                    }`}
+                    className="flex w-full items-center justify-between rounded-lg px-4 py-2 text-gray-700 transition hover:bg-[#FCE9EA] hover:text-[#da1f25]"
                 >
                     <div className="flex items-center space-x-3">
                         <Icon className="h-5 w-5" />
-                        <span className="font-medium">{item.label}</span>
+                        <span className="text-base">{item.label}</span>
                     </div>
                     {isOpen ? (
                         <ChevronDown className="h-4 w-4" />
@@ -140,17 +136,15 @@ const SidebarItem = ({
                                 href={child.href!}
                                 className={`flex items-center space-x-3 rounded-lg px-4 py-2 text-sm transition ${
                                     isActive(child.href!)
-                                        ? 'bg-blue-50 text-blue-600'
-                                        : 'text-gray-600 hover:bg-gray-50'
+                                        ? 'bg-[#FCE9EA] text-[#da1f25]'
+                                        : 'text-gray-600 hover:bg-[#FCE9EA] hover:text-[#da1f25]'
                                 }`}
                                 onClick={onMobileClick}
                             >
                                 {child.icon && (
                                     <child.icon className="h-4 w-4" />
                                 )}
-                                <span className="font-medium">
-                                    {child.label}
-                                </span>
+                                <span className="text-base">{child.label}</span>
                             </Link>
                         ))}
                     </div>
@@ -166,13 +160,13 @@ const SidebarItem = ({
             href={item.href!}
             className={`mb-1 flex items-center space-x-3 rounded-lg px-4 py-2 transition ${
                 active
-                    ? 'bg-blue-50 text-blue-600 hover:bg-blue-100'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? 'bg-[#FCE9EA] text-[#da1f25]'
+                    : 'text-gray-700 hover:bg-[#FCE9EA] hover:text-[#da1f25]'
             }`}
             onClick={onMobileClick}
         >
             <Icon className="h-5 w-5" />
-            <span className="font-medium">{item.label}</span>
+            <span className="text-base">{item.label}</span>
         </Link>
     );
 };

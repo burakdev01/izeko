@@ -8,11 +8,12 @@ import { GripVertical } from 'lucide-react';
 type Listing = {
     id: number;
     title: string;
-    office: string;
+    description: string;
+    office_id: number;
+    user_id: number;
     price: number;
-    date: string;
-    city: string;
-    status: 'pending' | 'active' | 'passive';
+    visit_count: number;
+    listing_status: 'pending' | 'active' | 'inactive';
 };
 
 type ListingsIndexProps = {
@@ -44,7 +45,7 @@ export default function ListingsIndex({
                 return 'Onay Bekliyor';
             case 'active':
                 return 'Aktif';
-            case 'passive':
+            case 'inactive':
                 return 'Pasif';
             default:
                 return status;
@@ -57,7 +58,7 @@ export default function ListingsIndex({
                 return 'bg-yellow-100 text-yellow-800';
             case 'active':
                 return 'bg-green-100 text-green-800';
-            case 'passive':
+            case 'inactive':
                 return 'bg-gray-100 text-gray-800';
             default:
                 return 'bg-gray-100 text-gray-800';
@@ -70,7 +71,7 @@ export default function ListingsIndex({
                 return 'Onay Bekleyen İlanlar';
             case 'active':
                 return 'Aktif İlanlar';
-            case 'passive':
+            case 'inactive':
                 return 'Pasif İlanlar';
             default:
                 return 'Tüm İlanlar';
@@ -99,16 +100,13 @@ export default function ListingsIndex({
                                         İlan Adı
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
-                                        Ofis
+                                        Ofis ID
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                                         Fiyat
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
-                                        Şehir
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
-                                        Tarih
+                                        Görüntülenme
                                     </th>
                                     <th className="px-6 py-3 text-center text-xs font-medium tracking-wider text-gray-500 uppercase">
                                         Durum
@@ -156,7 +154,7 @@ export default function ListingsIndex({
                                             {listing.title}
                                         </td>
                                         <td className="px-6 py-4 text-sm text-gray-600">
-                                            {listing.office}
+                                            #{listing.office_id}
                                         </td>
                                         <td className="px-6 py-4 text-sm text-gray-600">
                                             {new Intl.NumberFormat('tr-TR', {
@@ -165,18 +163,17 @@ export default function ListingsIndex({
                                             }).format(listing.price)}
                                         </td>
                                         <td className="px-6 py-4 text-sm text-gray-600">
-                                            {listing.city}
-                                        </td>
-                                        <td className="px-6 py-4 text-sm text-gray-600">
-                                            {listing.date}
+                                            {listing.visit_count}
                                         </td>
                                         <td className="px-6 py-4 text-center">
                                             <span
                                                 className={`inline-flex rounded-full px-2 text-xs leading-5 font-semibold ${getStatusColor(
-                                                    listing.status,
+                                                    listing.listing_status,
                                                 )}`}
                                             >
-                                                {getStatusLabel(listing.status)}
+                                                {getStatusLabel(
+                                                    listing.listing_status,
+                                                )}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-center">

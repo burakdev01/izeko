@@ -18,12 +18,13 @@ class ListingFactory extends Factory
     {
         return [
             'category_id' => 0,
+            'office_id' => $this->faker->numberBetween(1, 10),
+            'user_id' => \App\Models\User::factory(),
             'title' => $this->faker->sentence(4),
-            'office' => $this->faker->company(),
+            'description' => $this->faker->paragraph(),
             'price' => $this->faker->randomFloat(2, 1000, 1000000),
-            'date' => $this->faker->date(),
-            'city' => $this->faker->city(),
-            'status' => $this->faker->randomElement(['pending', 'active', 'passive']),
+            'visit_count' => $this->faker->numberBetween(0, 1000),
+            'listing_status' => $this->faker->randomElement(['pending', 'active', 'inactive']),
         ];
     }
 }
