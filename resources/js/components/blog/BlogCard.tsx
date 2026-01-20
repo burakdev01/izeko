@@ -43,7 +43,7 @@ const BlogCard = ({ image, title, date, href }: BlogCardProps) => {
         return (
             <Link
                 href={href}
-                className="group flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white"
+                className="group flex h-full flex-col overflow-hidden rounded-xl bg-white shadow"
             >
                 {content}
             </Link>

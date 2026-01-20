@@ -34,7 +34,7 @@ export default function Haberler({ posts }: HaberlerProps) {
                 heroPosition="center 30%"
                 showSidebar={false}
             >
-                <div className="space-y-8">
+                <div className="space-y-8 p-4">
                     <div className="flex flex-wrap items-center justify-between gap-4">
                         <h2 className="text-2xl font-bold text-gray-800">
                             Son Paylaşımlar
