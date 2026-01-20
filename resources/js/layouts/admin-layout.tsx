@@ -3,8 +3,13 @@ import {
     Bell,
     BookOpen,
     CalendarCheck,
+    CheckCircle,
+    ChevronDown,
+    ChevronRight,
+    ClipboardList,
     HelpCircle,
     Home,
+    List,
     LogOut,
     Megaphone,
     Menu,
@@ -12,19 +17,48 @@ import {
     Settings,
     SlidersHorizontal,
     X,
+    type LucideIcon,
 } from 'lucide-react';
-import { type ReactNode, useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 
 type AdminLayoutProps = {
     title?: string;
     children: ReactNode;
 };
 
-const navItems = [
+type NavItem = {
+    href?: string;
+    label: string;
+    icon: LucideIcon;
+    children?: NavItem[];
+};
+
+const navItems: NavItem[] = [
     {
         href: '/admin',
         label: 'Ana Sayfa',
         icon: Home,
+    },
+    {
+        label: 'İlan Yönetimi',
+        icon: List,
+        children: [
+            {
+                href: '/admin/ilanlar?status=pending',
+                label: 'Onay Bekleyenler',
+                icon: ClipboardList,
+            },
+            {
+                href: '/admin/ilanlar?status=active',
+                label: 'Aktif İlanlar',
+                icon: CheckCircle,
+            },
+            {
+                href: '/admin/ilanlar',
+                label: 'Tüm İlanlar',
+                icon: List,
+            },
+        ],
     },
     {
         href: '/admin/hero-slides',
@@ -58,24 +92,123 @@ const navItems = [
     },
 ];
 
+const SidebarItem = ({
+    item,
+    isActive,
+    currentPath,
+    onMobileClick,
+}: {
+    item: NavItem;
+    isActive: (href: string) => boolean;
+    currentPath: string;
+    onMobileClick?: () => void;
+}) => {
+    // Check if any child is active to auto-expand
+    const isChildActive =
+        item.children?.some((child) => child.href && isActive(child.href)) ??
+        false;
+
+    const [isOpen, setIsOpen] = useState(isChildActive);
+    const Icon = item.icon;
+
+    if (item.children) {
+        return (
+            <div className="mb-1">
+                <button
+                    onClick={() => setIsOpen(!isOpen)}
+                    className={`flex w-full items-center justify-between rounded-lg px-4 py-2 transition ${
+                        isChildActive
+                            ? 'bg-blue-50 text-blue-600'
+                            : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                >
+                    <div className="flex items-center space-x-3">
+                        <Icon className="h-5 w-5" />
+                        <span className="font-medium">{item.label}</span>
+                    </div>
+                    {isOpen ? (
+                        <ChevronDown className="h-4 w-4" />
+                    ) : (
+                        <ChevronRight className="h-4 w-4" />
+                    )}
+                </button>
+                {isOpen && (
+                    <div className="mt-1 ml-4 space-y-1 border-l-2 border-gray-100 pl-2">
+                        {item.children.map((child) => (
+                            <Link
+                                key={child.href}
+                                href={child.href!}
+                                className={`flex items-center space-x-3 rounded-lg px-4 py-2 text-sm transition ${
+                                    isActive(child.href!)
+                                        ? 'bg-blue-50 text-blue-600'
+                                        : 'text-gray-600 hover:bg-gray-50'
+                                }`}
+                                onClick={onMobileClick}
+                            >
+                                {child.icon && (
+                                    <child.icon className="h-4 w-4" />
+                                )}
+                                <span className="font-medium">
+                                    {child.label}
+                                </span>
+                            </Link>
+                        ))}
+                    </div>
+                )}
+            </div>
+        );
+    }
+
+    const active = item.href ? isActive(item.href) : false;
+
+    return (
+        <Link
+            href={item.href!}
+            className={`mb-1 flex items-center space-x-3 rounded-lg px-4 py-2 transition ${
+                active
+                    ? 'bg-blue-50 text-blue-600 hover:bg-blue-100'
+                    : 'text-gray-700 hover:bg-gray-100'
+            }`}
+            onClick={onMobileClick}
+        >
+            <Icon className="h-5 w-5" />
+            <span className="font-medium">{item.label}</span>
+        </Link>
+    );
+};
+
 export default function AdminLayout({
     title = 'Dashboard',
     children,
 }: AdminLayoutProps) {
     const page = usePage();
     const [mobileOpen, setMobileOpen] = useState(false);
-    const currentPath = useMemo(
-        () => page.url.split('?')[0] ?? '',
-        [page.url],
-    );
+    const currentPath = useMemo(() => page.url.split('?')[0] ?? '', [page.url]);
 
-    const isActive = (href: string) =>
-        href === '/admin' ? currentPath === href : currentPath.startsWith(href);
+    const isActive = (href: string) => {
+        const [hrefPath, hrefQuery] = href.split('?');
+        const [currentUrlPath, currentUrlQuery] = page.url.split('?');
+
+        if (href === '/admin') return currentUrlPath === href;
+
+        // If the item has query params (like status=pending)
+        if (hrefQuery) {
+            return page.url.includes(hrefQuery) && currentUrlPath === hrefPath;
+        }
+
+        // Special handling for "Tüm İlanlar" (listings)
+        // If we are on listings page BUT have a status param, "All" should not be active
+        if (href === '/admin/ilanlar' && page.url.includes('status=')) {
+            return false;
+        }
+
+        return currentPath.startsWith(href);
+    };
 
     return (
         <div className="min-h-screen bg-gray-50 font-sans text-black">
             <div className="flex min-h-screen overflow-hidden">
-                <aside className="hidden lg:flex lg:w-64 lg:flex-col border-r border-gray-200 bg-white">
+                <aside className="hidden border-r border-gray-200 bg-white lg:flex lg:w-64 lg:flex-col">
                     <div className="flex h-16 items-center justify-center border-b border-gray-200 px-6">
                         <div className="flex items-center space-x-3">
                             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-400 to-blue-600">
@@ -93,26 +226,14 @@ export default function AdminLayout({
                     </div>
 
                     <nav className="flex-1 overflow-y-auto px-3 py-4">
-                        {navItems.map((item) => {
-                            const active = isActive(item.href);
-                            const Icon = item.icon;
-                            return (
-                                <Link
-                                    key={item.href}
-                                    href={item.href}
-                                    className={`mb-1 flex items-center space-x-3 rounded-lg px-4 py-3 transition ${
-                                        active
-                                            ? 'bg-blue-50 text-blue-600 hover:bg-blue-100'
-                                            : 'text-gray-700 hover:bg-gray-100'
-                                    }`}
-                                >
-                                    <Icon className="h-5 w-5" />
-                                    <span className="font-medium">
-                                        {item.label}
-                                    </span>
-                                </Link>
-                            );
-                        })}
+                        {navItems.map((item, index) => (
+                            <SidebarItem
+                                key={index}
+                                item={item}
+                                isActive={isActive}
+                                currentPath={currentPath}
+                            />
+                        ))}
                     </nav>
                 </aside>
 
@@ -153,27 +274,15 @@ export default function AdminLayout({
                     </div>
 
                     <nav className="flex-1 overflow-y-auto px-3 py-4">
-                        {navItems.map((item) => {
-                            const active = isActive(item.href);
-                            const Icon = item.icon;
-                            return (
-                                <Link
-                                    key={item.href}
-                                    href={item.href}
-                                    className={`mb-1 flex items-center space-x-3 rounded-lg px-4 py-3 transition ${
-                                        active
-                                            ? 'bg-blue-50 text-blue-600'
-                                            : 'text-gray-700 hover:bg-gray-100'
-                                    }`}
-                                    onClick={() => setMobileOpen(false)}
-                                >
-                                    <Icon className="h-5 w-5" />
-                                    <span className="font-medium">
-                                        {item.label}
-                                    </span>
-                                </Link>
-                            );
-                        })}
+                        {navItems.map((item, index) => (
+                            <SidebarItem
+                                key={index}
+                                item={item}
+                                isActive={isActive}
+                                currentPath={currentPath}
+                                onMobileClick={() => setMobileOpen(false)}
+                            />
+                        ))}
                     </nav>
                 </aside>
 

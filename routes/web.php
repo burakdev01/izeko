@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\BlogPostController;
 use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\HeroSlideController;
+use App\Http\Controllers\Admin\ListingController;
 use App\Http\Controllers\Admin\LiveStreamController;
 use App\Models\Activity;
 use App\Models\Announcement;
@@ -398,6 +399,12 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
             ->parameters(['hero-slides' => 'heroSlide']);
         Route::resource('sss', FaqController::class)
             ->parameters(['sss' => 'faq']);
+
+        Route::patch('ilanlar/reorder', [ListingController::class, 'reorder'])
+            ->name('ilanlar.reorder');
+
+        Route::resource('ilanlar', ListingController::class)
+            ->parameters(['ilanlar' => 'listing']);
     },
 );
 
