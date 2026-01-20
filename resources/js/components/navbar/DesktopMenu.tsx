@@ -16,12 +16,12 @@ export function DesktopMenu({ items }: Props) {
                             <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
                         </button>
 
-                        <div className="invisible absolute top-full left-0 z-50 mt-2 w-80 overflow-hidden rounded-lg bg-white opacity-0 shadow-xl transition-all duration-200 group-hover:visible group-hover:opacity-100">
+                        <div className="invisible absolute top-full left-0 z-50 mt-2 w-66 overflow-hidden rounded-lg bg-white opacity-0 shadow-xl transition-all duration-200 group-hover:visible group-hover:opacity-100">
                             {item.submenu.map((sub, i) => (
                                 <a
                                     key={sub.path}
                                     href={sub.path}
-                                    className={`block px-6 py-3 text-lg ${
+                                    className={`block px-6 py-3 text-base hover:hidden ${
                                         sub.isHighlighted
                                             ? 'border-l-4 border-l-red-600 bg-red-50 text-red-600'
                                             : 'text-gray-700 hover:bg-gray-50 hover:text-red-600'

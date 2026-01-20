@@ -14,10 +14,10 @@ export function MobileSubmenu({ items }: Props) {
                     <a
                         key={item.path}
                         href={item.path}
-                        className={`block rounded-xl px-4 py-3 text-[15px] transition-colors ${
+                        className={`block rounded-xl px-4 py-2 text-[15px] font-medium transition-colors ${
                             item.isHighlighted
                                 ? 'bg-gray-100 font-medium text-red-600'
-                                : 'text-gray-700 hover:bg-gray-50'
+                                : 'text-gray-700 hover:bg-gray-50 hover:text-red-600'
                         }`}
                     >
                         {item.label}

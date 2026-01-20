@@ -18,7 +18,7 @@ export function MembershipImage({ image }: Props) {
                     <img
                         src={image}
                         alt=""
-                        className="h-[420px] w-[320px] rounded-md object-cover md:h-[460px] md:w-[360px]"
+                        className="h-[520px] w-[420px] rounded-md object-cover md:h-[560px] md:w-[460px]"
                     />
                 </div>
             </div>

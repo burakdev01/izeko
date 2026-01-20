@@ -15,7 +15,6 @@ export const navItems: NavItem[] = [
             {
                 label: 'Yönetim Kurulu Başkanımız',
                 path: '/kurumsal/yonetim-kurulu-baskanimiz',
-                isHighlighted: true,
             },
             { label: 'Yönetim Kurulu', path: '/kurumsal/yonetim-kurulu' },
             { label: 'Denetim Kurulu', path: '/kurumsal/denetim-kurulu' },
