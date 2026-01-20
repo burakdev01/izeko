@@ -407,4 +407,8 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
 //     })->name('dashboard');
 // });
 
+Route::get('/test', function () {
+    return "test";
+})->name('test');
+
 require __DIR__.'/settings.php';
