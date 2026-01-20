@@ -16,6 +16,7 @@ import {
     Radio,
     Settings,
     SlidersHorizontal,
+    Users,
     X,
     type LucideIcon,
 } from 'lucide-react';
@@ -61,6 +62,27 @@ const navItems: NavItem[] = [
         ],
     },
     {
+        label: 'Kullanıcı Yönetimi',
+        icon: Users,
+        children: [
+            {
+                href: '/admin/kullanicilar?status=pending',
+                label: 'Onay Bekleyenler',
+                icon: ClipboardList,
+            },
+            {
+                href: '/admin/kullanicilar?status=active',
+                label: 'Aktif Kullanıcılar',
+                icon: CheckCircle,
+            },
+            {
+                href: '/admin/kullanicilar',
+                label: 'Tüm Kullanıcılar',
+                icon: List,
+            },
+        ],
+    },
+    {
         href: '/admin/hero-slides',
         label: 'Slider Yönetimi',
         icon: SlidersHorizontal,
@@ -97,26 +119,24 @@ const SidebarItem = ({
     isActive,
     currentPath,
     onMobileClick,
+    isOpen,
+    onToggle,
 }: {
     item: NavItem;
     isActive: (href: string) => boolean;
     currentPath: string;
     onMobileClick?: () => void;
+    isOpen: boolean;
+    onToggle: () => void;
 }) => {
-    // Check if any child is active to auto-expand
-    const isChildActive =
-        item.children?.some((child) => child.href && isActive(child.href)) ??
-        false;
-
-    const [isOpen, setIsOpen] = useState(isChildActive);
     const Icon = item.icon;
 
     if (item.children) {
         return (
             <div className="mb-1">
                 <button
-                    onClick={() => setIsOpen(!isOpen)}
-                    className="flex w-full items-center justify-between rounded-lg px-4 py-2 transition hover:bg-[#FCE9EA] hover:text-[#da1f25]"
+                    onClick={onToggle}
+                    className="flex w-full items-center justify-between rounded-lg px-4 py-2 text-gray-700 transition hover:bg-[#FCE9EA] hover:text-[#da1f25]"
                 >
                     <div className="flex items-center space-x-3">
                         <Icon className="h-5 w-5" />
@@ -196,7 +216,23 @@ export default function AdminLayout({
             return false;
         }
 
+        if (href === '/admin/kullanicilar' && page.url.includes('status=')) {
+            return false;
+        }
+
         return currentPath.startsWith(href);
+    };
+
+    // Initialize open menu state based on current path
+    const [openMenuLabel, setOpenMenuLabel] = useState<string | null>(() => {
+        const activeParent = navItems.find((item) =>
+            item.children?.some((child) => child.href && isActive(child.href)),
+        );
+        return activeParent ? activeParent.label : null;
+    });
+
+    const handleMenuClick = (label: string) => {
+        setOpenMenuLabel(openMenuLabel === label ? null : label);
     };
 
     return (
@@ -226,6 +262,8 @@ export default function AdminLayout({
                                 item={item}
                                 isActive={isActive}
                                 currentPath={currentPath}
+                                isOpen={openMenuLabel === item.label}
+                                onToggle={() => handleMenuClick(item.label)}
                             />
                         ))}
                     </nav>
@@ -275,6 +313,8 @@ export default function AdminLayout({
                                 isActive={isActive}
                                 currentPath={currentPath}
                                 onMobileClick={() => setMobileOpen(false)}
+                                isOpen={openMenuLabel === item.label}
+                                onToggle={() => handleMenuClick(item.label)}
                             />
                         ))}
                     </nav>

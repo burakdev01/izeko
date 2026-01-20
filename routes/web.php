@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\BlogPostController;
 use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\HeroSlideController;
 use App\Http\Controllers\Admin\ListingController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\LiveStreamController;
 use App\Models\Activity;
 use App\Models\Announcement;
@@ -405,6 +406,9 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
 
         Route::resource('ilanlar', ListingController::class)
             ->parameters(['ilanlar' => 'listing']);
+
+        Route::resource('kullanicilar', UserController::class)
+            ->parameters(['kullanicilar' => 'user']);
     },
 );
 

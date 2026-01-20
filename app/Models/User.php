@@ -20,9 +20,14 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'surname',
         'email',
+        'phone_number',
+        'profile_photo_path',
+        'cover_photo_path',
         'password',
         'is_admin',
+        'is_active',
     ];
 
     /**
@@ -49,6 +54,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
             'is_admin' => 'boolean',
+            'is_active' => 'boolean',
         ];
     }
 }
