@@ -13,7 +13,7 @@ export default function YonetimKuruluBaskanimiz() {
                 heroImage="https://izeko.org.tr/app/themes/default/assets/images/izeko-banner.jpg"
                 heroPosition="center 30%"
             >
-                <div className="text-[#1f2937 space-y-6 text-base leading-relaxed font-medium">
+                <div className="text-[#1f2937 space-y-6 p-4 text-base leading-relaxed font-medium">
                     <p>
                         <b> İzmir Emlak Komisyoncuları Odası,</b> 10 Mart 1999
                         tarihinde Mesut Güleroğlu tarafından 216 emlakçı ile
