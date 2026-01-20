@@ -408,7 +408,7 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
 // });
 
 Route::get('/test', function () {
-    return "test";
+    return "testa";
 })->name('test');
 
 require __DIR__.'/settings.php';
