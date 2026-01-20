@@ -12,6 +12,7 @@ export default function YonetimKuruluBaskanimiz() {
                 title="Yönetim Kurulu Başkanımız"
                 heroImage="https://izeko.org.tr/app/themes/default/assets/images/izeko-banner.jpg"
                 heroPosition="center 30%"
+                showSidebar={true}
             >
                 <div className="text-[#1f2937 space-y-6 p-4 text-base leading-relaxed font-medium">
                     <p>
