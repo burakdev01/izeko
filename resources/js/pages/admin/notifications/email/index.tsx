@@ -1,6 +1,16 @@
 import AdminPageHeader from '@/components/admin/admin-page-header';
+import AdminStatsCard from '@/components/admin/admin-stats-card';
 import AdminLayout from '@/layouts/admin-layout';
 import { Head } from '@inertiajs/react';
+import {
+    AlertCircle,
+    BarChart3,
+    CheckCircle,
+    Download,
+    Filter,
+    Mail,
+    Search,
+} from 'lucide-react';
 
 export default function EmailNotificationsIndex() {
     // Mock data for display
@@ -39,6 +49,58 @@ export default function EmailNotificationsIndex() {
                     actionHref="/admin/bildirimler/email/yeni"
                     actionLabel="Yeni Email Gönder"
                 />
+
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                    <AdminStatsCard
+                        title="Toplam Gönderim"
+                        value="12,345"
+                        icon={Mail}
+                        color="red"
+                        trend={{ value: '%12', direction: 'up' }}
+                    />
+                    <AdminStatsCard
+                        title="Başarılı"
+                        value="11,980"
+                        icon={CheckCircle}
+                        color="green"
+                        trend={{ value: '%5', direction: 'up' }}
+                    />
+                    <AdminStatsCard
+                        title="Başarısız"
+                        value="365"
+                        icon={AlertCircle}
+                        color="red"
+                        trend={{ value: '%2', direction: 'down' }}
+                    />
+                    <AdminStatsCard
+                        title="Okunma Oranı"
+                        value="%45"
+                        icon={BarChart3}
+                        color="blue"
+                        trend={{ value: '%4', direction: 'up' }}
+                    />
+                </div>
+
+                <div className="flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+                    <div className="relative flex-1">
+                        <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                        <input
+                            type="text"
+                            placeholder="Konu veya alıcı ara..."
+                            className="w-full rounded-lg border border-gray-300 py-2 pr-4 pl-10 text-sm focus:border-[#da1f25] focus:ring-1 focus:ring-[#da1f25] focus:outline-none"
+                        />
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <button className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50">
+                            <Filter className="h-4 w-4" />
+                            Filtrele
+                        </button>
+                        <button className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50">
+                            <Download className="h-4 w-4" />
+                            Dışa Aktar
+                        </button>
+                    </div>
+                </div>
 
                 <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
                     <div className="overflow-x-auto">
