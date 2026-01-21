@@ -26,7 +26,13 @@ const formatDate = (value: string) =>
         year: 'numeric',
     });
 
+const getImageUrl = (filename: string | null | undefined): string | null => {
+    if (!filename) return null;
+    return `/uploads/announcements/${filename}`;
+};
+
 export default function DuyurularDetay({ announcement }: DuyuruDetayProps) {
+    const imageUrl = getImageUrl(announcement.image);
     return (
         <>
             <Head title={announcement.title} />
@@ -56,9 +62,9 @@ export default function DuyurularDetay({ announcement }: DuyuruDetayProps) {
                         ) : null}
                     </div>
 
-                    {announcement.image ? (
+                    {imageUrl ? (
                         <img
-                            src={announcement.image}
+                            src={imageUrl}
                             alt={announcement.title}
                             className="h-96 w-full rounded-2xl object-cover shadow-sm"
                         />
