@@ -7,13 +7,19 @@ type BlogCardProps = {
     href?: string;
 };
 
+const getImageUrl = (filename: string | null | undefined): string | null => {
+    if (!filename) return null;
+    return `/uploads/blogs/${filename}`;
+};
+
 const BlogCard = ({ image, title, date, href }: BlogCardProps) => {
+    const imageUrl = getImageUrl(image);
     const content = (
         <>
             <div className="h-56 overflow-hidden">
-                {image ? (
+                {imageUrl ? (
                     <img
-                        src={image}
+                        src={imageUrl}
                         alt={title}
                         className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />

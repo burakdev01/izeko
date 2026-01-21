@@ -35,7 +35,7 @@ class BlogPostController extends Controller
         $validated['active'] = $request->boolean('active');
         $validated['sort_order'] = (BlogPost::max('sort_order') ?? 0) + 1;
 
-        $image = $this->storePublicImageAsWebp(
+        $image = $this->storePublicImageNameAsWebp(
             $request,
             'image_file',
             'blogs',
@@ -66,7 +66,7 @@ class BlogPostController extends Controller
         $validated['active'] = $request->boolean('active');
 
         $removeImage = $request->boolean('remove_image');
-        $image = $this->storePublicImageAsWebp(
+        $image = $this->storePublicImageNameAsWebp(
             $request,
             'image_file',
             'blogs',
@@ -117,7 +117,7 @@ class BlogPostController extends Controller
         Request $request,
         ?BlogPost $blogPost = null,
     ): array {
-        $imageRules = ['nullable', 'url', 'max:255'];
+        $imageRules = ['nullable', 'string', 'max:255'];
 
         if (! $blogPost) {
             $imageRules[] = 'required_without:image_file';

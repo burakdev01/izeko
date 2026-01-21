@@ -27,7 +27,13 @@ const formatDate = (value: string) =>
         year: 'numeric',
     });
 
+const getImageUrl = (filename: string | null | undefined): string | null => {
+    if (!filename) return null;
+    return `/uploads/blogs/${filename}`;
+};
+
 export default function HaberlerDetay({ post }: BlogDetailProps) {
+    const imageUrl = getImageUrl(post.image);
     return (
         <>
             <Head title={post.seo_title || post.title}>
@@ -44,9 +50,9 @@ export default function HaberlerDetay({ post }: BlogDetailProps) {
                 breadcrumbLabel={post.title}
             >
                 <div className="space-y-6 rounded-lg bg-white p-4 font-normal">
-                    {post.image ? (
+                    {imageUrl ? (
                         <img
-                            src={post.image}
+                            src={imageUrl}
                             alt={post.title}
                             className="h-96 w-full rounded-2xl object-cover shadow-sm"
                         />
