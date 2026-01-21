@@ -206,11 +206,6 @@ export default function BlogPostForm({
                                         </div>
                                     </div>
                                 </div>
-
-                                <div className="border-t border-gray-100 px-6 py-6 text-xs text-gray-500">
-                                    Boş bırakılan alanlar kaydedilmez. SEO
-                                    alanları isteğe bağlıdır.
-                                </div>
                             </div>
                         </div>
 

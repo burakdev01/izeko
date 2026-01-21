@@ -51,7 +51,6 @@ export default function HaberlerDetay({ post }: BlogDetailProps) {
                             className="h-96 w-full rounded-2xl object-cover shadow-sm"
                         />
                     ) : null}
-
                     <div className="flex items-center gap-3 text-sm text-gray-500">
                         <Calendar className="h-4 w-4 text-gray-400" />
                         <span>{formatDate(post.date)}</span>

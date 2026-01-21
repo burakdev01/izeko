@@ -9,6 +9,20 @@ export default function BolgeSorumlularimiz() {
 
     const regions = [
         { region: 'Alsancak Bölge Sorumlusu', name: 'Nezih DİNDAR' },
+        { region: 'Balçova Bölge Sorumlusu', name: 'Yusuf ÇOKYAŞAR' },
+        { region: 'Bayraklı Bölge Sorumlusu', name: 'Aytekin DELİBAŞ' },
+        { region: 'Bornova Bölge Sorumlusu', name: 'Serkan ÇELİK' },
+        { region: 'Buca Bölge Sorumlusu', name: 'Ebru YAZICI' },
+        { region: 'Çiğli Bölge Sorumlusu', name: 'Ayhan DEMİRCİ' },
+        { region: 'Dikili Bölge Sorumlusu', name: 'Belgin ÇİFTLER' },
+        { region: 'Foça Bölge Sorumlusu', name: 'Kenan DÜZGÜN' },
+        { region: 'Gaziemir Bölge Sorumlusu', name: 'Ahmet ARSLAN' },
+        { region: 'Hatay Bölge Sorumlusu', name: 'Şükran ŞAHİN' },
+        { region: 'Karşıyaka Bölge Sorumlusu', name: 'Münir ÖNDER' },
+        { region: 'Kemalpaşa Bölge Sorumlusu', name: 'Kenan SEMET' },
+        { region: 'Kemalpaşa Bölge Temsilcisi', name: 'Kenan Semet' },
+        { region: 'Menderes Bölge Sorumlusu', name: 'Furkan ÖZER' },
+        { region: 'Menderes Bölge Temsilcisi', name: 'Deniz Budak' },
         { region: 'Menemen Bölge Sorumlusu', name: 'Gül AKMAN' },
         { region: 'Narlıdere Bölge Sorumlusu', name: 'İbrahim GÜDÜCÜ' },
         { region: 'Seferihisar Bölge Sorumlusu', name: 'Atilla AKGÜN' },
@@ -49,12 +63,12 @@ export default function BolgeSorumlularimiz() {
                         <div className="overflow-hidden rounded-3xl bg-white shadow-md">
                             <div className="grid grid-cols-1 border-b-2 border-red-500 bg-gray-100 shadow-md sm:grid-cols-2">
                                 <div className="px-8 py-6">
-                                    <h2 className="text-xl font-semibold text-red-500 sm:text-2xl">
+                                    <h2 className="text-base font-semibold text-red-500 sm:text-2xl">
                                         Görevli Olduğu Bölge
                                     </h2>
                                 </div>
                                 <div className="px-8 py-6 sm:text-start">
-                                    <h2 className="text-xl font-semibold text-red-500 sm:text-2xl">
+                                    <h2 className="text-lg font-semibold text-red-500 sm:text-2xl">
                                         Ad Soyad
                                     </h2>
                                 </div>

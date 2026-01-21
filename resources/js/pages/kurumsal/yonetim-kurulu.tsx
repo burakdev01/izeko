@@ -58,6 +58,24 @@ const members = [
         image: 'https://izeko.org.tr/app/themes/default/assets/images/room-directors/ibrahim-guducu.jpg',
         size: 'normal',
     },
+    {
+        name: 'Serkan ÇELİK',
+        title: 'Yönetim Kurulu Üyesi',
+        image: 'https://izeko.org.tr/app/themes/default/assets/images/room-directors/serkan-celik.png',
+        size: 'normal',
+    },
+    {
+        name: 'Ahmet ARSLAN',
+        title: 'Yönetim Kurulu Üyesi',
+        image: 'https://izeko.org.tr/app/themes/default/assets/images/room-directors/ahmet-arslan.png',
+        size: 'normal',
+    },
+    {
+        name: 'Ebru YAZICI',
+        title: 'Yönetim Kurulu Üyesi',
+        image: 'https://izeko.org.tr/app/themes/default/assets/images/room-directors/ebru-yazici.png',
+        size: 'normal',
+    },
 ];
 
 export default function YonetimKurulu() {

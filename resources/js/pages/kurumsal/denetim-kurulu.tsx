@@ -11,19 +11,19 @@ type Member = {
 
 const members: Member[] = [
     {
-        name: 'Nermin UZUN',
+        name: 'Ergun KÖSECİOĞULLARI',
         title: 'Denetim Kurulu Başkanı',
-        image: 'https://izeko.org.tr/app/themes/default/assets/images/room-directors/mesut-guleroglu.jpg',
+        image: 'https://izeko.org.tr/app/themes/default/assets/images/supervisor-realtors/ergun-koseciogullari.png',
     },
     {
-        name: 'Tolga AKSOY',
+        name: 'Adem UÇAR',
         title: 'Denetim Kurulu Üyesi',
-        image: 'https://izeko.org.tr/app/themes/default/assets/images/room-directors/gonul-vural.jpg',
+        image: 'https://izeko.org.tr/app/themes/default/assets/images/supervisor-realtors/adem-ucar.jpg',
     },
     {
-        name: 'Gizem KARA',
+        name: 'Muhittin TOMAN',
         title: 'Denetim Kurulu Üyesi',
-        image: 'https://izeko.org.tr/app/themes/default/assets/images/room-directors/bedi-yazicioglu.jpg',
+        image: 'https://izeko.org.tr/app/themes/default/assets/images/supervisor-realtors/muhittin-toman.jpg',
     },
 ];
 

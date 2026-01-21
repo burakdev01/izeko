@@ -11,29 +11,24 @@ type TeamMember = {
 
 const teamMembers: TeamMember[] = [
     {
-        name: 'Mesut GÜLEROĞLU',
-        title: 'Genel Koordinatör',
-        image: 'https://izeko.org.tr/app/themes/default/assets/images/room-directors/mesut-guleroglu.jpg',
+        name: 'Melihat ÇETİN',
+        title: 'Genel Sekreter',
+        image: 'https://izeko.org.tr/app/themes/default/assets/images/room-team/melihat-cetin.jpg',
     },
     {
-        name: 'Gönül VURAL',
-        title: 'Operasyon Sorumlusu',
-        image: 'https://izeko.org.tr/app/themes/default/assets/images/room-directors/gonul-vural.jpg',
+        name: 'Adem DEMİR',
+        title: 'Oda Personeli',
+        image: 'https://izeko.org.tr/app/themes/default/assets/images/room-team/adem-demir.jpg',
     },
     {
-        name: 'Bedi YAZICIOĞLU',
-        title: 'Üye İlişkileri',
-        image: 'https://izeko.org.tr/app/themes/default/assets/images/room-directors/bedi-yazicioglu.jpg',
+        name: 'Sezen TAYİŞ',
+        title: 'Oda Personeli',
+        image: 'https://izeko.org.tr/app/themes/default/assets/images/room-team/sezen-tayis.jpg',
     },
     {
-        name: 'Ali KAVAKLI',
-        title: 'Finans ve Muhasebe',
-        image: 'https://izeko.org.tr/app/themes/default/assets/images/room-directors/ali-kavakli.jpg',
-    },
-    {
-        name: 'Şenay GÜNDOĞAN',
-        title: 'Kurumsal İletişim',
-        image: 'https://izeko.org.tr/app/themes/default/assets/images/room-directors/senay-gundogan.jpg',
+        name: 'Yeşim Gedikoğlu',
+        title: 'Sosyal Medya Uzmanı',
+        image: 'https://placehold.co/300x300',
     },
 ];
 
