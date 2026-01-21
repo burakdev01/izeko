@@ -38,6 +38,7 @@ class SpotlightController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'content' => 'nullable|string',
             'image' => 'required|image|max:2048', // Max 2MB
             'active' => 'boolean',
         ]);
@@ -47,6 +48,7 @@ class SpotlightController extends Controller
         Spotlight::create([
             'title' => $validated['title'],
             'description' => $validated['description'],
+            'content' => $validated['content'],
             'image' => $path,
             'active' => $validated['active'] ?? true,
             'sort_order' => Spotlight::max('sort_order') + 1,
@@ -62,6 +64,7 @@ class SpotlightController extends Controller
                 'id' => $spotlight->id,
                 'title' => $spotlight->title,
                 'description' => $spotlight->description,
+                'content' => $spotlight->content,
                 'image' => $spotlight->image,
                 'active' => $spotlight->active,
             ],
@@ -73,6 +76,7 @@ class SpotlightController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'content' => 'nullable|string',
             'image' => 'nullable|image|max:2048',
             'active' => 'boolean',
         ]);
@@ -89,6 +93,7 @@ class SpotlightController extends Controller
         $spotlight->update([
             'title' => $validated['title'],
             'description' => $validated['description'],
+            'content' => $validated['content'],
             'active' => $validated['active'] ?? $spotlight->active,
         ]);
 

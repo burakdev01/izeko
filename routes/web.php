@@ -131,6 +131,7 @@ Route::get('/', function () {
             'id' => $spotlight->id,
             'title' => $spotlight->title,
             'description' => $spotlight->description,
+            'slug' => $spotlight->slug,
             'image' => $spotlight->image, // Assuming accessor or raw path
             'date' => optional($spotlight->updated_at)->format('d F Y'), // Format date for display
         ]);
@@ -456,5 +457,24 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
 Route::get('/test', function () {
     return "testa";
 })->name('test');
+
+Route::get('/manset/{slug}', function (string $slug) {
+    $spotlight = \App\Models\Spotlight::where('active', true)
+        ->where('slug', $slug)
+        ->first();
+
+    abort_unless($spotlight, 404);
+
+    return Inertia::render('manset-detay', [
+        'spotlight' => [
+            'id' => $spotlight->id,
+            'title' => $spotlight->title,
+            'description' => $spotlight->description,
+            'content' => $spotlight->content,
+            'image' => $spotlight->image,
+            'date' => optional($spotlight->updated_at)->format('d F Y'),
+        ],
+    ]);
+})->name('manset.show');
 
 require __DIR__.'/settings.php';

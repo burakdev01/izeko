@@ -7,13 +7,18 @@ import { Autoplay, EffectCoverflow, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import './spotlight.css';
 
+import { Link } from '@inertiajs/react';
+
 interface SlideData {
     id: number;
     image: string;
     title: string;
     description?: string | null;
+    slug?: string;
     date?: string;
 }
+
+// ... existing code ...
 
 interface SpotlightCarouselProps {
     slides?: SlideData[];
@@ -49,9 +54,12 @@ export const SpotlightCarousel = ({ slides = [] }: SpotlightCarouselProps) => {
                     {slides.map((slide) => (
                         <SwiperSlide
                             key={slide.id}
-                            className="!w-[80%] md:!w-[60%]"
+                            className="!w-[90%] md:!w-[60%]"
                         >
-                            <div className="group relative h-[430px] cursor-pointer overflow-hidden rounded-2xl shadow-2xl">
+                            <Link
+                                href={route('manset.show', slide.slug || '')}
+                                className="group relative block h-[430px] cursor-pointer overflow-hidden rounded-2xl shadow-2xl"
+                            >
                                 {/* Background Image */}
                                 <div
                                     className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
@@ -74,9 +82,10 @@ export const SpotlightCarousel = ({ slides = [] }: SpotlightCarouselProps) => {
                                 )}
 
                                 {/* Content */}
-                                <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-12">
+                                {/* Content */}
+                                <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8 lg:p-12">
                                     {/* Title */}
-                                    <h2 className="mb-4 text-3xl leading-tight font-bold text-white drop-shadow-lg md:text-4xl">
+                                    <h2 className="mb-2 text-xl leading-tight font-bold text-white drop-shadow-lg md:mb-3 md:text-2xl lg:mb-4 lg:text-3xl">
                                         {slide.title
                                             .split(' ')
                                             .map((word, index) => (
@@ -95,20 +104,25 @@ export const SpotlightCarousel = ({ slides = [] }: SpotlightCarouselProps) => {
 
                                     {/* Description */}
                                     {slide.description && (
-                                        <p className="mb-6 max-w-3xl text-base leading-relaxed text-white/90 drop-shadow-md md:text-lg">
-                                            {slide.description}
-                                        </p>
+                                        <div className="mb-4 inline-block max-w-3xl rounded-xl bg-gradient-to-t from-black/80 to-transparent p-4 md:mb-5 md:p-5 lg:mb-6 lg:p-6">
+                                            <p className="line-clamp-2 text-xs leading-relaxed text-white drop-shadow-md md:line-clamp-3 md:text-sm lg:line-clamp-none lg:text-base">
+                                                {slide.description}
+                                            </p>
+                                        </div>
                                     )}
 
                                     {/* CTA Button */}
-                                    <div>
-                                        <button className="inline-flex transform items-center gap-3 rounded-full bg-[#da1f25] px-8 py-3 font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-red-800 hover:shadow-xl">
+                                    <div className="relative z-20">
+                                        <span className="inline-flex transform items-center gap-2 rounded-full bg-[#da1f25] px-5 py-2 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-red-800 hover:shadow-xl md:gap-3 md:px-6 md:py-2.5 md:text-base lg:px-8 lg:py-3">
                                             Detaylı Bilgi
-                                            <ArrowRight size={20} />
-                                        </button>
+                                            <ArrowRight
+                                                size={16}
+                                                className="md:h-5 md:w-5"
+                                            />
+                                        </span>
                                     </div>
                                 </div>
-                            </div>
+                            </Link>
                         </SwiperSlide>
                     ))}
                 </Swiper>

@@ -1,12 +1,15 @@
 import AdminFormHeader from '@/components/admin/admin-form-header';
+import AdminMediaUpload from '@/components/admin/admin-media-upload';
+import AdminStatusToggle from '@/components/admin/admin-status-toggle';
+import RichTextEditor from '@/components/admin/rich-text-editor';
 import AdminLayout from '@/layouts/admin-layout';
 import { Head, useForm } from '@inertiajs/react';
-import { ImagePlus } from 'lucide-react';
 
 interface Spotlight {
     id: number;
     title: string;
     description: string | null;
+    content: string | null;
     image: string;
     active: boolean;
 }
@@ -17,6 +20,7 @@ export default function SpotlightEdit({ spotlight }: { spotlight: Spotlight }) {
         _method: 'put',
         title: spotlight.title,
         description: spotlight.description || '',
+        content: spotlight.content || '',
         image: null as File | null,
         active: spotlight.active,
     });
@@ -30,151 +34,106 @@ export default function SpotlightEdit({ spotlight }: { spotlight: Spotlight }) {
         <AdminLayout>
             <Head title="Manşet Düzenle" />
 
-            <form onSubmit={submit} className="mx-auto max-w-3xl">
+            <form onSubmit={submit}>
                 <AdminFormHeader
                     title="Manşet Düzenle"
-                    backHref={route('admin.spotlights.index')}
+                    description="Manşet detaylarını güncelleyin."
+                    submitLabel="Güncelle"
+                    cancelHref={route('admin.spotlights.index')}
+                    processing={processing}
                 />
 
-                <div className="mt-6 space-y-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-                    {/* Title */}
-                    <div>
-                        <label
-                            htmlFor="title"
-                            className="mb-2 block text-sm font-medium text-gray-900"
-                        >
-                            Başlık
-                        </label>
-                        <input
-                            type="text"
-                            id="title"
-                            value={data.title}
-                            onChange={(e) => setData('title', e.target.value)}
-                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-[#da1f25] focus:ring-[#da1f25]"
-                            required
-                        />
-                        {errors.title && (
-                            <p className="mt-1 text-sm text-red-600">
-                                {errors.title}
-                            </p>
-                        )}
-                    </div>
-
-                    {/* Description */}
-                    <div>
-                        <label
-                            htmlFor="description"
-                            className="mb-2 block text-sm font-medium text-gray-900"
-                        >
-                            Açıklama (İsteğe Bağlı)
-                        </label>
-                        <textarea
-                            id="description"
-                            rows={4}
-                            value={data.description}
-                            onChange={(e) =>
-                                setData('description', e.target.value)
-                            }
-                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-[#da1f25] focus:ring-[#da1f25]"
-                        ></textarea>
-                        {errors.description && (
-                            <p className="mt-1 text-sm text-red-600">
-                                {errors.description}
-                            </p>
-                        )}
-                    </div>
-
-                    {/* Current Image */}
-                    <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-900">
-                            Mevcut Görsel
-                        </label>
-                        <img
-                            src={spotlight.image}
-                            alt={spotlight.title}
-                            className="h-40 w-auto rounded-lg object-cover shadow-sm"
-                        />
-                    </div>
-
-                    {/* Image Upload */}
-                    <div>
-                        <label
-                            htmlFor="image"
-                            className="mb-2 block text-sm font-medium text-gray-900"
-                        >
-                            Görseli Değiştir (İsteğe Bağlı)
-                        </label>
-                        <div className="flex w-full items-center justify-center">
-                            <label
-                                htmlFor="image-upload"
-                                className="dark:hover:bg-bray-800 flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100"
-                            >
-                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                    <ImagePlus className="mb-4 h-8 w-8 text-gray-500" />
-                                    <p className="mb-2 text-sm text-gray-500">
-                                        <span className="font-semibold">
-                                            Yüklemek için tıklayın
-                                        </span>
-                                    </p>
-                                    <p className="text-xs text-gray-500">
-                                        PNG, JPG, GIF (Max 2MB)
-                                    </p>
-                                </div>
+                <div className="flex flex-col gap-6 md:grid md:grid-cols-3">
+                    <div className="space-y-6 md:col-span-2">
+                        <div className="space-y-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+                            {/* Title */}
+                            <div>
+                                <label
+                                    htmlFor="title"
+                                    className="mb-2 block text-sm font-medium text-gray-900"
+                                >
+                                    Başlık
+                                </label>
                                 <input
-                                    id="image-upload"
-                                    type="file"
-                                    className="hidden"
+                                    type="text"
+                                    id="title"
+                                    value={data.title}
                                     onChange={(e) =>
-                                        setData(
-                                            'image',
-                                            e.target.files
-                                                ? e.target.files[0]
-                                                : null,
-                                        )
+                                        setData('title', e.target.value)
                                     }
-                                    accept="image/*"
+                                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-[#da1f25] focus:ring-[#da1f25]"
+                                    required
                                 />
-                            </label>
-                        </div>
-                        {data.image && (
-                            <div className="mt-2 text-sm text-gray-500">
-                                Seçilen dosya: {data.image.name}
+                                {errors.title && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {errors.title}
+                                    </p>
+                                )}
                             </div>
-                        )}
-                        {errors.image && (
-                            <p className="mt-1 text-sm text-red-600">
-                                {errors.image}
-                            </p>
-                        )}
+
+                            {/* Description */}
+                            <div>
+                                <label
+                                    htmlFor="description"
+                                    className="mb-2 block text-sm font-medium text-gray-900"
+                                >
+                                    Açıklama (İsteğe Bağlı)
+                                </label>
+                                <textarea
+                                    id="description"
+                                    rows={4}
+                                    value={data.description}
+                                    onChange={(e) =>
+                                        setData('description', e.target.value)
+                                    }
+                                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-[#da1f25] focus:ring-[#da1f25]"
+                                ></textarea>
+                                {errors.description && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {errors.description}
+                                    </p>
+                                )}
+                            </div>
+
+                            {/* Content */}
+                            <div>
+                                <label className="mb-2 block text-sm font-medium text-gray-900">
+                                    Detaylı İçerik
+                                </label>
+                                <RichTextEditor
+                                    value={data.content}
+                                    onChange={(content) =>
+                                        setData('content', content)
+                                    }
+                                    placeholder="Manşet detay içeriğini buraya giriniz..."
+                                />
+                                {errors.content && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                        {errors.content}
+                                    </p>
+                                )}
+                            </div>
+                        </div>
                     </div>
 
-                    {/* Active */}
-                    <div className="flex items-center">
-                        <input
-                            id="active"
-                            type="checkbox"
-                            checked={data.active}
-                            onChange={(e) =>
-                                setData('active', e.target.checked)
-                            }
-                            className="h-4 w-4 rounded border-gray-300 bg-gray-100 text-[#da1f25] focus:ring-2 focus:ring-[#da1f25]"
-                        />
-                        <label
-                            htmlFor="active"
-                            className="ml-2 text-sm font-medium text-gray-900"
-                        >
-                            Aktif
-                        </label>
-                    </div>
+                    <div className="space-y-6">
+                        <div className="space-y-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+                            {/* Active */}
+                            <AdminStatusToggle
+                                checked={data.active}
+                                onChange={(checked) =>
+                                    setData('active', checked)
+                                }
+                            />
 
-                    <div className="flex items-center justify-end">
-                        <button
-                            type="submit"
-                            disabled={processing}
-                            className="rounded-lg bg-[#da1f25] px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-red-800 focus:ring-4 focus:ring-red-300 focus:outline-none disabled:opacity-50"
-                        >
-                            {processing ? 'Kaydediliyor...' : 'Güncelle'}
-                        </button>
+                            {/* Image */}
+                            <AdminMediaUpload
+                                label="Kapak Görseli"
+                                name="image"
+                                initialPreview={spotlight.image}
+                                error={errors.image}
+                            />
+                        </div>
                     </div>
                 </div>
             </form>

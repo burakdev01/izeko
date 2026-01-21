@@ -12,7 +12,7 @@ export default function TopBar() {
                             className="flex items-center gap-2 transition-opacity hover:opacity-80"
                         >
                             <Phone size={16} />
-                            <span className="text-sm font-medium">
+                            <span className="text-sm font-bold">
                                 +90 (232) 425 85 91
                             </span>
                         </a>
@@ -21,13 +21,13 @@ export default function TopBar() {
                             className="hidden items-center gap-2 transition-opacity hover:opacity-80 lg:flex"
                         >
                             <Mail size={16} />
-                            <span className="text-sm font-medium">
+                            <span className="text-sm font-bold">
                                 info@izeko.org.tr
                             </span>
                         </a>
                         <div className="hidden items-center gap-2 xl:flex">
                             <MapPin size={16} className="flex-shrink-0" />
-                            <span className="text-sm font-medium">
+                            <span className="text-sm font-bold">
                                 Yenigün, Gazi Osman Paşa Blv. Koçaş İş Merkez
                                 No:87 303-304, 35250 Konak/İzmir
                             </span>
@@ -39,9 +39,7 @@ export default function TopBar() {
                             className="flex items-center gap-2 transition-opacity hover:opacity-80"
                         >
                             <MapPin size={16} />
-                            <span className="text-sm font-medium">
-                                İletişim
-                            </span>
+                            <span className="text-sm font-bold">İletişim</span>
                         </a>
                         <div className="flex items-center gap-2">
                             <a
