@@ -2,14 +2,14 @@ import AnnouncementsSection from '@/components/announcements/AnnouncementsSectio
 import BlogSection from '@/components/blog/BlogSection';
 import TopBar from '@/components/contact-header';
 import FaqSection, { type FaqItem } from '@/components/faq/FaqSection';
-import QuickAccessSection, {
-    type QuickAccessItem,
-} from '@/components/quick-access/QuickAccessSection';
 import Footer from '@/components/footer/Footer';
 import { HeroSlider } from '@/components/hero/HeroSlider';
 import { type HeroSlideData } from '@/components/hero/types';
 import { MembershipSection } from '@/components/membership/MembershipSection';
 import { Navbar } from '@/components/navbar/Navbar';
+import QuickAccessSection, {
+    type QuickAccessItem,
+} from '@/components/quick-access/QuickAccessSection';
 import { SectionHeader } from '@/components/section-header/SectionHeader';
 import { SpotlightCarousel } from '@/components/spotlight-carousel/SpotlightCarousel';
 
@@ -32,6 +32,7 @@ interface HomeProps {
     }[];
     quickAccessItems?: QuickAccessItem[];
     faqItems?: FaqItem[];
+    spotlights?: any[]; // Using any[] for now to match structure passed from backend, can refine type later
 }
 
 export default function HomeComponent({
@@ -40,6 +41,7 @@ export default function HomeComponent({
     announcements = [],
     quickAccessItems = [],
     faqItems = [],
+    spotlights = [],
 }: HomeProps) {
     return (
         <>
@@ -54,7 +56,7 @@ export default function HomeComponent({
                     buttonHref: '/haberler',
                 }}
             />
-            <SpotlightCarousel />
+            <SpotlightCarousel slides={spotlights} />
             <MembershipSection />
             <AnnouncementsSection announcements={announcements} />
             <BlogSection posts={blogPosts} />

@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\HeroSlideController;
 use App\Http\Controllers\Admin\ListingController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\SpotlightController;
 use App\Http\Controllers\Admin\LiveStreamController;
 use App\Models\Activity;
 use App\Models\Announcement;
@@ -122,8 +123,21 @@ Route::get('/', function () {
         ])
         ->values();
 
+    $spotlights = \App\Models\Spotlight::where('active', true)
+        ->orderBy('sort_order')
+        ->orderByDesc('updated_at')
+        ->get()
+        ->map(fn (\App\Models\Spotlight $spotlight) => [
+            'id' => $spotlight->id,
+            'title' => $spotlight->title,
+            'description' => $spotlight->description,
+            'image' => $spotlight->image, // Assuming accessor or raw path
+            'date' => optional($spotlight->updated_at)->format('d F Y'), // Format date for display
+        ]);
+
     return Inertia::render('Home', [
         'heroSlides' => $slides,
+        'spotlights' => $spotlights,
         'blogPosts' => $blogPosts,
         'announcements' => $announcements,
         'quickAccessItems' => $quickAccessItems,
@@ -426,6 +440,10 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
             ->name('notifications.sms.create');
         Route::post('bildirimler/sms', [\App\Http\Controllers\Admin\NotificationController::class, 'smsStore'])
             ->name('notifications.sms.store');
+        Route::patch('spotlights/reorder', [SpotlightController::class, 'reorder'])
+            ->name('spotlights.reorder');
+        Route::resource('spotlights', SpotlightController::class)
+            ->parameters(['spotlights' => 'spotlight']);
     },
 );
 

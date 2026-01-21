@@ -13,7 +13,7 @@ export default function OdaKayitIslemleri() {
                 heroImage="https://izeko.org.tr/app/themes/default/assets/images/izeko-banner.jpg"
                 heroPosition="center 30%"
             >
-                <div className="text-[#1f2937 space-y-6 text-base leading-relaxed font-medium">
+                <div className="text-[#1f2937 space-y-6 p-3 text-base leading-relaxed font-medium">
                     <b className="text-sm font-bold">
                         ESNAF SİCİL MÜDÜRLÜĞÜNE KAYIT İÇİN GEREKLİ EVRAKLAR
                     </b>

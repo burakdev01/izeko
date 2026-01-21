@@ -111,6 +111,11 @@ const navItems: NavItem[] = [
         ],
     },
     {
+        href: '/admin/spotlights',
+        label: 'Manşet Yönetimi',
+        icon: Megaphone, // Using Megaphone temporarily or I can use another icon like 'Star' or 'Layout'
+    },
+    {
         href: '/admin/hero-slides',
         label: 'Slider Yönetimi',
         icon: SlidersHorizontal,

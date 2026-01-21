@@ -1,37 +1,14 @@
 export const announcements = [
     {
         id: 0,
-        image: 'https://izeko.org.tr/files/system//r5rmkQB7SatE4V5XwIPYv28307USz5Qz8NFgbtmX%20(1).png',
+        image: 'https://izeko.org.tr/files/system//aa6cYNVdRJ2ei8WbWLCoaSEwhfJcpexT8LHruInO.png',
         date: {
             day: '25',
             month: 'Kasım',
             year: '2025',
         },
-        title: 'ODAMIZA YAPILACAK TÜM ÖDEMELER İÇİN SİSTEMDE GERÇEKLEŞEN DEĞİŞİKLİK',
-        description: 'DİKKAT! Önemli Duyuru. Sayın Üyelerimiz;',
-    },
-    {
-        id: 1,
-        image: 'https://izeko.org.tr/files/system//yhsmqG5YdoHJQrFa3wjQmZRqxPglGI1mePs31Voo.jpg',
-        date: {
-            day: '25',
-            month: 'Kasım',
-            year: '2025',
-        },
-        title: 'ODAMIZA YAPILACAK TÜM ÖDEMELER İÇİN SİSTEMDE GERÇEKLEŞEN DEĞİŞİKLİK',
+        title: 'İZEKO Emlak Sektörünün ETİK Kurallarını Yazıyor',
         description:
-            'İhale Duyurusu - Belediyemize ait 49 adet taşınmaz 2886 sayılı D',
-    },
-    {
-        id: 3,
-        image: 'https://izeko.org.tr/files/system//Wn7H8NN4idYrhzAHyPL7bTqP4SJu3XfEM1uA18LH.png',
-        date: {
-            day: '25',
-            month: 'Kasım',
-            year: '2025',
-        },
-        title: "İhale Duyurusu- Mülkiyeti Menemen Belediyesi'ne ait 49 adet taşınmaz",
-        description:
-            'Mülkiyeti Menemen Belediye Başkanlığımıza Ait Taşınmazın Satış İhalesi',
+            "İzmir Emlakçılar Odası olarak, gayrimenkul sektöründe mesleki standartları yükseltecek önemli bir adım atıyoruz: Mesleki Etik Kuralları'nı yazmaya başladık. Bu önemli çalışmayı yalnızca yerel düzeyde değil, ülke genelinde ortak akılla şekillendirmek amacıyla planlıyoruz. Hazırlık sürecinde; Türkiye genelindeki tüm Emlak Meslek Odaları ile",
     },
 ];

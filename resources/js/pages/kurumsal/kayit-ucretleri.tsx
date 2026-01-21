@@ -38,7 +38,7 @@ export default function KayitUcretleri() {
                     </div>
 
                     <div className="mt-10 overflow-x-auto">
-                        <table className="min-w-[760px] w-full text-left text-gray-700">
+                        <table className="w-full text-left text-gray-700">
                             <thead className="text-sm font-semibold text-gray-500">
                                 <tr className="border-b-2 border-red-500">
                                     <th className="py-5 pr-6"> </th>
@@ -46,7 +46,7 @@ export default function KayitUcretleri() {
                                     <th className="py-5 pr-6">MALİYE</th>
                                     <th className="py-5 pr-6">KAYIT ÜCRETİ</th>
                                     <th className="py-5 pr-6">HİZMET BEDELİ</th>
-                                    <th className="py-5 text-right">TOPL</th>
+                                    <th className="py-5 text-right">TOPLAM</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100 text-base font-medium">
@@ -58,7 +58,9 @@ export default function KayitUcretleri() {
                                     <td className="py-6 pr-6">1.858,05</td>
                                     <td className="py-6 pr-6">2.674,00</td>
                                     <td className="py-6 pr-6">266,00</td>
-                                    <td className="py-6 text-right">6.063,05</td>
+                                    <td className="py-6 text-right">
+                                        6.063,05
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td className="py-6 pr-6 font-semibold text-gray-600">
@@ -88,7 +90,9 @@ export default function KayitUcretleri() {
                                     <td className="py-6 pr-6">1.514,65</td>
                                     <td className="py-6 pr-6"> </td>
                                     <td className="py-6 pr-6">261,00</td>
-                                    <td className="py-6 text-right">1.890,65</td>
+                                    <td className="py-6 text-right">
+                                        1.890,65
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td className="py-6 pr-6 font-semibold text-gray-600">

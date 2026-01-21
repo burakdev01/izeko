@@ -22,7 +22,7 @@ const BlogCard = ({ image, title, date, href }: BlogCardProps) => {
                 )}
             </div>
             <div className="flex flex-1 flex-col p-6">
-                <h3 className="mb-3 line-clamp-2 text-lg font-semibold text-gray-900">
+                <h3 className="mb-3 line-clamp-2 text-lg font-extrabold text-gray-900">
                     {title}
                 </h3>
 
