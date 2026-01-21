@@ -12,6 +12,7 @@ import QuickAccessSection, {
 } from '@/components/quick-access/QuickAccessSection';
 import { SectionHeader } from '@/components/section-header/SectionHeader';
 import { SpotlightCarousel } from '@/components/spotlight-carousel/SpotlightCarousel';
+import { Head } from '@inertiajs/react';
 
 interface HomeProps {
     heroSlides?: HeroSlideData[];
@@ -45,6 +46,7 @@ export default function HomeComponent({
 }: HomeProps) {
     return (
         <>
+            <Head title="Anasayfa" />
             <TopBar />
             <Navbar />
             <HeroSlider slides={heroSlides} />

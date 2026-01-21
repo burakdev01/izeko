@@ -1,5 +1,5 @@
 import { type SharedData } from '@/types';
-import { usePage } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import { ChevronRight, Home } from 'lucide-react';
 import { type ReactNode } from 'react';
 import {
@@ -52,6 +52,7 @@ export function ArticleLayout({
 
     return (
         <main className={backgroundColor}>
+            <Head title={title} />
             <header className="relative h-64 overflow-hidden bg-slate-900">
                 <div className="absolute inset-0">
                     {heroImage ? (
