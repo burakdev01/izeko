@@ -1,6 +1,7 @@
 import AdminFormHeader from '@/components/admin/admin-form-header';
 import AdminMediaUpload from '@/components/admin/admin-media-upload';
 import AdminStatusToggle from '@/components/admin/admin-status-toggle';
+import RichTextEditor from '@/components/admin/rich-text-editor';
 import InputError from '@/components/input-error';
 import { slugify } from '@/lib/utils';
 import { Form } from '@inertiajs/react';
@@ -96,17 +97,14 @@ export default function BlogPostForm({
                                             <label className="mb-2 block text-sm font-medium text-gray-700">
                                                 İçerik:
                                             </label>
-                                            <textarea
-                                                name="content"
-                                                rows={6}
+                                            <RichTextEditor
                                                 value={content}
-                                                onChange={(event) =>
-                                                    setContent(
-                                                        event.target.value,
-                                                    )
-                                                }
-                                                placeholder="Blog içeriğini yazın"
-                                                className="w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                                                onChange={setContent}
+                                            />
+                                            <input
+                                                type="hidden"
+                                                name="content"
+                                                value={content}
                                             />
                                             <InputError
                                                 className="mt-2"

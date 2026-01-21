@@ -1,6 +1,7 @@
 import AdminFormHeader from '@/components/admin/admin-form-header';
 import AdminMediaUpload from '@/components/admin/admin-media-upload';
 import AdminStatusToggle from '@/components/admin/admin-status-toggle';
+import RichTextEditor from '@/components/admin/rich-text-editor';
 import InputError from '@/components/input-error';
 import { Form } from '@inertiajs/react';
 import { useState } from 'react';
@@ -71,7 +72,7 @@ export default function AnnouncementForm({
                                                 )
                                             }
                                             placeholder="Başlık"
-                                            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 outline-none transition focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                                            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition outline-none focus:border-transparent focus:ring-2 focus:ring-[#da1f25]"
                                         />
                                         <InputError
                                             className="mt-2"
@@ -83,24 +84,20 @@ export default function AnnouncementForm({
                                         <label className="mb-2 block text-sm font-medium text-gray-700">
                                             İçerik
                                         </label>
-                                        <textarea
-                                            name="content"
-                                            rows={6}
+                                        <RichTextEditor
                                             value={content}
-                                            onChange={(event) =>
-                                                setContent(
-                                                    event.target.value,
-                                                )
-                                            }
-                                            placeholder="Duyuru içeriğini yazın"
-                                            className="w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 outline-none transition focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                                            onChange={setContent}
+                                        />
+                                        <input
+                                            type="hidden"
+                                            name="content"
+                                            value={content}
                                         />
                                         <InputError
                                             className="mt-2"
                                             message={errors.content}
                                         />
                                     </div>
-
                                 </div>
                             </div>
                         </div>

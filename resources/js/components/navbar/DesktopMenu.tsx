@@ -21,7 +21,7 @@ export function DesktopMenu({ items }: Props) {
                                 <a
                                     key={sub.path}
                                     href={sub.path}
-                                    className={`block px-6 py-3 text-base hover:hidden ${
+                                    className={`block px-6 py-3 text-base ${
                                         sub.isHighlighted
                                             ? 'border-l-4 border-l-red-600 bg-red-50 text-red-600'
                                             : 'text-gray-700 hover:bg-gray-50 hover:text-red-600'

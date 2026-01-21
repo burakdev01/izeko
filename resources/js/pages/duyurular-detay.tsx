@@ -38,7 +38,7 @@ export default function DuyurularDetay({ announcement }: DuyuruDetayProps) {
                 heroPosition="center 30%"
                 breadcrumbLabel={announcement.title}
             >
-                <div className="space-y-6">
+                <div className="space-y-6 p-4 font-normal">
                     <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
                         <div className="flex items-center gap-3">
                             <Calendar className="h-4 w-4 text-gray-400" />
@@ -64,9 +64,12 @@ export default function DuyurularDetay({ announcement }: DuyuruDetayProps) {
                         />
                     ) : null}
 
-                    <div className="whitespace-pre-line text-base leading-relaxed text-gray-700">
-                        {announcement.content}
-                    </div>
+                    <div
+                        className="prose prose-sm max-w-none text-gray-700 sm:prose-base prose-strong:font-bold"
+                        dangerouslySetInnerHTML={{
+                            __html: announcement.content,
+                        }}
+                    />
                 </div>
             </ArticleLayout>
             <Footer />

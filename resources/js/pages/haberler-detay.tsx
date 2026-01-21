@@ -43,7 +43,7 @@ export default function HaberlerDetay({ post }: BlogDetailProps) {
                 heroPosition="center 30%"
                 breadcrumbLabel={post.title}
             >
-                <div className="space-y-6 rounded-lg bg-white p-4">
+                <div className="space-y-6 rounded-lg bg-white p-4 font-normal">
                     {post.image ? (
                         <img
                             src={post.image}
@@ -57,9 +57,10 @@ export default function HaberlerDetay({ post }: BlogDetailProps) {
                         <span>{formatDate(post.date)}</span>
                     </div>
 
-                    <div className="text-base leading-6 leading-relaxed font-normal whitespace-pre-line text-gray-700">
-                        {post.content}
-                    </div>
+                    <div
+                        className="prose prose-sm max-w-none text-gray-700 sm:prose-base prose-strong:font-bold"
+                        dangerouslySetInnerHTML={{ __html: post.content }}
+                    />
                 </div>
             </ArticleLayout>
             <Footer />
