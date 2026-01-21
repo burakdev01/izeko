@@ -23,11 +23,21 @@ class UserController extends Controller
             }
         }
 
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('surname', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('phone_number', 'like', "%{$search}%");
+            });
+        }
+
         $users = $query->orderByDesc('created_at')->get();
 
         return Inertia::render('admin/users/index', [
             'users' => $users,
-            'filters' => $request->only(['status']),
+            'filters' => $request->only(['status', 'search']),
         ]);
     }
 

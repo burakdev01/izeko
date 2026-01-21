@@ -18,13 +18,22 @@ class ListingController extends Controller
             $query->where('listing_status', $request->status);
         }
 
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('id', 'like', "%{$search}%")
+                  ->orWhere('office_id', 'like', "%{$search}%");
+            });
+        }
+
         $listings = $query->orderBy('sort_order')
             ->orderByDesc('updated_at')
             ->get();
 
         return Inertia::render('admin/listings/index', [
             'listings' => $listings,
-            'filters' => $request->only(['status']),
+            'filters' => $request->only(['status', 'search']),
             'stats' => [
                 'total' => Listing::count(),
                 'active' => Listing::where('listing_status', 'active')->count(),

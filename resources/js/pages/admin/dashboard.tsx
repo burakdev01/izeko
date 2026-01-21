@@ -162,7 +162,7 @@ export default function AdminDashboard({
                                                     </td>
                                                     <td className="px-6 py-4">
                                                         <span
-                                                            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-center text-xs font-medium ${
+                                                            className={`inline-flex w-full items-center justify-center rounded-full px-2.5 py-0.5 text-center text-xs font-medium ${
                                                                 item.status ===
                                                                 'active'
                                                                     ? 'bg-green-100 text-green-800'

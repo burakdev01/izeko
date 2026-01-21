@@ -2,16 +2,15 @@ import AdminRowActions from '@/components/admin/admin-row-actions';
 import DashboardStatsCard from '@/components/admin/dashboard-stats-card';
 import { useAdminSortableList } from '@/hooks/use-admin-sortable-list';
 import AdminLayout from '@/layouts/admin-layout';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import {
     CheckCircle,
     Clock,
-    Download,
-    Filter,
     GripVertical,
     Handshake,
     Search,
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 type Listing = {
     id: number;
@@ -28,6 +27,7 @@ type ListingsIndexProps = {
     listings: Listing[];
     filters: {
         status?: string;
+        search?: string;
     };
     stats: {
         total: number;
@@ -52,6 +52,23 @@ export default function ListingsIndex({
         items: listings,
         reorderUrl: '/admin/ilanlar/reorder',
     });
+
+    const [searchQuery, setSearchQuery] = useState(filters.search || '');
+
+    // Debounce search
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (searchQuery !== (filters.search || '')) {
+                router.get(
+                    route('admin.ilanlar.index'),
+                    { ...filters, search: searchQuery },
+                    { preserveState: true, replace: true },
+                );
+            }
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [searchQuery, filters]);
 
     const getStatusLabel = (status: string) => {
         switch (status) {
@@ -143,18 +160,20 @@ export default function ListingsIndex({
                             <input
                                 type="text"
                                 placeholder="İlan başlığı, ofis veya ID ara..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
                                 className="w-full rounded-lg border border-gray-300 py-2 pr-4 pl-10 text-sm focus:border-[#da1f25] focus:ring-1 focus:ring-[#da1f25] focus:outline-none"
                             />
                         </div>
                         <div className="flex items-center gap-2">
-                            <button className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50">
+                            {/* <button className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50">
                                 <Filter className="h-4 w-4" />
                                 Filtrele
-                            </button>
-                            <button className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50">
+                            </button> */}
+                            {/* <button className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50">
                                 <Download className="h-4 w-4" />
                                 Dışa Aktar
-                            </button>
+                            </button> */}
                         </div>
                     </div>
 

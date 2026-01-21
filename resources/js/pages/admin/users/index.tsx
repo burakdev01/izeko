@@ -1,7 +1,9 @@
 import AdminPageHeader from '@/components/admin/admin-page-header';
 import AdminRowActions from '@/components/admin/admin-row-actions';
 import AdminLayout from '@/layouts/admin-layout';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
+import { Search } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 type User = {
     id: number;
@@ -17,6 +19,7 @@ type UsersIndexProps = {
     users: User[];
     filters: {
         status?: string;
+        search?: string;
     };
 };
 
@@ -42,15 +45,44 @@ export default function UsersIndex({ users, filters }: UsersIndexProps) {
             : 'bg-yellow-100 text-yellow-800';
     };
 
+    const [searchQuery, setSearchQuery] = useState(filters.search || '');
+
+    // Debounce search
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (searchQuery !== (filters.search || '')) {
+                router.get(
+                    route('admin.kullanicilar.index'),
+                    { ...filters, search: searchQuery },
+                    { preserveState: true, replace: true },
+                );
+            }
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [searchQuery, filters]);
+
     return (
         <AdminLayout title={getPageTitle()}>
             <Head title={getPageTitle()} />
 
             <div className="space-y-6">
-                <AdminPageHeader
-                    title={getPageTitle()}
-                    description="Kullanıcıları listeleyin, düzenleyin veya silin."
-                />
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <AdminPageHeader
+                        title={getPageTitle()}
+                        description="Kullanıcıları listeleyin, düzenleyin veya silin."
+                    />
+                    <div className="relative w-full sm:w-64">
+                        <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                        <input
+                            type="text"
+                            placeholder="Ad, e-posta veya telefon ara..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full rounded-lg border border-gray-300 py-2 pr-4 pl-10 text-sm focus:border-[#da1f25] focus:ring-1 focus:ring-[#da1f25] focus:outline-none"
+                        />
+                    </div>
+                </div>
 
                 <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
                     <div className="overflow-x-auto">
