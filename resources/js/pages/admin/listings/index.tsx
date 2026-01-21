@@ -1,9 +1,19 @@
 import AdminPageHeader from '@/components/admin/admin-page-header';
 import AdminRowActions from '@/components/admin/admin-row-actions';
+import AdminStatsCard from '@/components/admin/admin-stats-card';
 import { useAdminSortableList } from '@/hooks/use-admin-sortable-list';
 import AdminLayout from '@/layouts/admin-layout';
 import { Head } from '@inertiajs/react';
-import { GripVertical } from 'lucide-react';
+import {
+    Activity,
+    BarChart3,
+    CheckCircle,
+    Clock,
+    Download,
+    Filter,
+    GripVertical,
+    Search,
+} from 'lucide-react';
 
 type Listing = {
     id: number;
@@ -90,6 +100,58 @@ export default function ListingsIndex({
                         actionLabel="Yeni İlan"
                         actionHref="/admin/ilanlar/create"
                     />
+
+                    <div className="grid gap-6 border-b border-gray-200 p-6 md:grid-cols-2 lg:grid-cols-4">
+                        <AdminStatsCard
+                            title="Toplam İlan"
+                            value="1,240"
+                            icon={CheckCircle}
+                            color="blue"
+                            trend={{ value: '%12', direction: 'up' }}
+                        />
+                        <AdminStatsCard
+                            title="Aktif İlan"
+                            value="1,180"
+                            icon={Activity}
+                            color="green"
+                            trend={{ value: '%8', direction: 'up' }}
+                        />
+                        <AdminStatsCard
+                            title="Onay Bekleyen"
+                            value="45"
+                            icon={Clock}
+                            color="yellow"
+                            trend={{ value: '%2', direction: 'down' }}
+                        />
+                        <AdminStatsCard
+                            title="Toplam Görüntülenme"
+                            value="85.4K"
+                            icon={BarChart3}
+                            color="red"
+                            trend={{ value: '%24', direction: 'up' }}
+                        />
+                    </div>
+
+                    <div className="flex flex-col gap-4 border-b border-gray-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="relative flex-1">
+                            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                            <input
+                                type="text"
+                                placeholder="İlan başlığı, ofis veya ID ara..."
+                                className="w-full rounded-lg border border-gray-300 py-2 pr-4 pl-10 text-sm focus:border-[#da1f25] focus:ring-1 focus:ring-[#da1f25] focus:outline-none"
+                            />
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <button className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50">
+                                <Filter className="h-4 w-4" />
+                                Filtrele
+                            </button>
+                            <button className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50">
+                                <Download className="h-4 w-4" />
+                                Dışa Aktar
+                            </button>
+                        </div>
+                    </div>
 
                     <div className="overflow-x-auto">
                         <table className="w-full">
