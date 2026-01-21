@@ -46,7 +46,7 @@ export default function AdminLogin({
                             <h1 className="text-2xl font-bold text-gray-900">
                                 Giriş Yap
                             </h1>
-                            <p className="mt-2 text-sm text-gray-600">
+                            {/* <p className="mt-2 text-sm text-gray-600">
                                 Henüz hesabın yok mu?{' '}
                                 <a
                                     href="/register"
@@ -54,7 +54,7 @@ export default function AdminLogin({
                                 >
                                     Hemen oluşturalım
                                 </a>
-                            </p>
+                            </p> */}
                         </div>
 
                         {status && (
@@ -103,14 +103,14 @@ export default function AdminLogin({
                                         Şifre:{' '}
                                         <span className="text-red-600">*</span>
                                     </label>
-                                    {canResetPassword && (
+                                    {/* {canResetPassword && (
                                         <a
                                             href="/forgot-password"
                                             className="text-sm font-medium text-red-600 hover:text-red-700"
                                         >
                                             Şifremi Unuttum
                                         </a>
-                                    )}
+                                    )} */}
                                 </div>
                                 <div className="relative">
                                     <input

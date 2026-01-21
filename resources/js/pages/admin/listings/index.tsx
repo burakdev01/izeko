@@ -1,4 +1,3 @@
-import AdminPageHeader from '@/components/admin/admin-page-header';
 import AdminRowActions from '@/components/admin/admin-row-actions';
 import DashboardStatsCard from '@/components/admin/dashboard-stats-card';
 import { useAdminSortableList } from '@/hooks/use-admin-sortable-list';
@@ -126,12 +125,12 @@ export default function ListingsIndex({
                 </div>
 
                 <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
-                    <AdminPageHeader
+                    {/* <AdminPageHeader
                         title={getPageTitle()}
                         description="İlanları listeleyin ve yönetin."
                         actionLabel="Yeni İlan"
                         actionHref="/admin/ilanlar/create"
-                    />
+                    /> */}
 
                     <div className="flex flex-col gap-4 border-b border-gray-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
                         <div className="relative flex-1">

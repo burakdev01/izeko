@@ -5,7 +5,6 @@ import {
 } from '@/components/ui/collapsible';
 import { Link, usePage } from '@inertiajs/react';
 import {
-    Bell,
     BookOpen,
     Building,
     CalendarCheck,
@@ -21,7 +20,6 @@ import {
     Menu,
     MessageSquare,
     Radio,
-    Settings,
     SlidersHorizontal,
     Users,
     X,
@@ -441,25 +439,13 @@ export default function AdminLayout({
                         </div>
 
                         <div className="flex items-center space-x-2 sm:space-x-4">
-                            <button
-                                type="button"
-                                className="rounded-lg p-2 text-gray-600 transition hover:bg-gray-100 hover:text-gray-800"
-                            >
-                                <Bell className="h-5 w-5" />
-                            </button>
-                            <button
-                                type="button"
-                                className="rounded-lg p-2 text-gray-600 transition hover:bg-gray-100 hover:text-gray-800"
-                            >
-                                <Settings className="h-5 w-5" />
-                            </button>
                             <Link
                                 href="/logout"
                                 method="post"
                                 as="button"
-                                className="rounded-lg p-2 text-red-600 transition hover:bg-red-50 hover:text-red-700"
+                                className="flex items-center gap-2 rounded-lg p-2 text-red-600 transition hover:bg-red-50 hover:text-red-700"
                             >
-                                <LogOut className="h-5 w-5" />
+                                Çıkış Yap <LogOut className="h-5 w-5" />
                             </Link>
                         </div>
                     </header>
