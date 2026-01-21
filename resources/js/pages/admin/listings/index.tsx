@@ -4,7 +4,6 @@ import { useAdminSortableList } from '@/hooks/use-admin-sortable-list';
 import AdminLayout from '@/layouts/admin-layout';
 import { Head } from '@inertiajs/react';
 import {
-    Activity,
     CheckCircle,
     Clock,
     Download,
@@ -30,11 +29,17 @@ type ListingsIndexProps = {
     filters: {
         status?: string;
     };
+    stats: {
+        total: number;
+        active: number;
+        pending: number;
+    };
 };
 
 export default function ListingsIndex({
     listings,
     filters,
+    stats,
 }: ListingsIndexProps) {
     const {
         orderedItems,
@@ -95,21 +100,21 @@ export default function ListingsIndex({
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <DashboardStatsCard
                         title="Toplam İlan"
-                        value="1,240"
+                        value={stats.total}
                         icon={CheckCircle}
                         color="blue"
                         change="%12 Artış"
                     />
                     <DashboardStatsCard
                         title="Aktif İlan"
-                        value="1,180"
-                        icon={Activity}
+                        value={stats.active}
+                        icon={CheckCircle}
                         color="green"
                         change="%8 Artış"
                     />
                     <DashboardStatsCard
                         title="Onay Bekleyen"
-                        value="45"
+                        value={stats.pending}
                         icon={Clock}
                         color="orange"
                         change="%2 Azalış"

@@ -25,6 +25,11 @@ class ListingController extends Controller
         return Inertia::render('admin/listings/index', [
             'listings' => $listings,
             'filters' => $request->only(['status']),
+            'stats' => [
+                'total' => Listing::count(),
+                'active' => Listing::where('listing_status', 'active')->count(),
+                'pending' => Listing::where('listing_status', 'pending')->count(),
+            ],
         ]);
     }
 

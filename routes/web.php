@@ -133,7 +133,7 @@ Route::get('/', function () {
             'description' => $spotlight->description,
             'slug' => $spotlight->slug,
             'image' => $spotlight->image, // Assuming accessor or raw path
-            'date' => optional($spotlight->updated_at)->format('d F Y'), // Format date for display
+            'date' => optional($spotlight->updated_at)->locale('tr')->translatedFormat('d F Y'), // Format date for display
         ]);
 
     return Inertia::render('Home', [

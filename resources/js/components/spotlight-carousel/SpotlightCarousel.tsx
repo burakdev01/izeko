@@ -103,13 +103,6 @@ export const SpotlightCarousel = ({ slides = [] }: SpotlightCarouselProps) => {
                                     </h2>
 
                                     {/* Description */}
-                                    {slide.description && (
-                                        <div className="mb-4 inline-block max-w-3xl rounded-xl bg-gradient-to-t from-black/80 to-transparent p-4 md:mb-5 md:p-5 lg:mb-6 lg:p-6">
-                                            <p className="line-clamp-2 text-xs leading-relaxed text-white drop-shadow-md md:line-clamp-3 md:text-sm lg:line-clamp-none lg:text-base">
-                                                {slide.description}
-                                            </p>
-                                        </div>
-                                    )}
 
                                     {/* CTA Button */}
                                     <div className="relative z-20">
