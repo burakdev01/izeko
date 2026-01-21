@@ -28,6 +28,10 @@ class Announcement extends Model
         'image',
         'link',
         'active',
+        'seo_title',
+        'seo_description',
+        'seo_keywords',
+        'seo_url',
         'sort_order',
     ];
 
@@ -55,7 +59,7 @@ class Announcement extends Model
     {
         return LogOptions::defaults()
             ->useLogName('announcements')
-            ->logOnly(['title', 'subtitle', 'link', 'image', 'active'])
+            ->logOnly(['title', 'subtitle', 'link', 'image', 'active', 'seo_title', 'seo_description', 'seo_url'])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
     }

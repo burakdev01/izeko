@@ -48,7 +48,9 @@
   }
   </style>
 
-  <title inertia>{{ config('app.name', 'Laravel') }}</title>
+  <title inertia>{{ $meta_title ?? config('app.name', 'Laravel') }}</title>
+  <meta name="description" content="{{ $meta_description ?? '' }}">
+  <meta name="keywords" content="{{ $meta_keywords ?? '' }}">
 
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">

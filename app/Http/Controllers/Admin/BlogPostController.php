@@ -46,6 +46,10 @@ class BlogPostController extends Controller
             $validated['image'] = $image;
         }
 
+        if ($request->filled('seo_url')) {
+            $validated['seo_url'] = \Illuminate\Support\Str::slug($validated['seo_url']);
+        }
+
         BlogPost::create($validated);
 
         return redirect()
@@ -79,6 +83,10 @@ class BlogPostController extends Controller
             $validated['image'] = $image;
         } else {
             $validated['image'] = $blogPost->image;
+        }
+
+        if ($request->filled('seo_url')) {
+            $validated['seo_url'] = \Illuminate\Support\Str::slug($validated['seo_url']);
         }
 
         $blogPost->update($validated);
@@ -132,6 +140,7 @@ class BlogPostController extends Controller
             'active' => ['nullable', 'boolean'],
             'seo_title' => ['nullable', 'string', 'max:255'],
             'seo_description' => ['nullable', 'string', 'max:1000'],
+            'seo_keywords' => ['nullable', 'string', 'max:1000'],
             'seo_url' => ['nullable', 'string', 'max:255'],
         ]);
     }
@@ -146,6 +155,7 @@ class BlogPostController extends Controller
             'active' => $post->active,
             'seo_title' => $post->seo_title,
             'seo_description' => $post->seo_description,
+            'seo_keywords' => $post->seo_keywords,
             'seo_url' => $post->seo_url,
             'date' => optional($post->updated_at)->format('Y-m-d'),
             'sort_order' => $post->sort_order,

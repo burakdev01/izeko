@@ -12,6 +12,7 @@ type BlogPost = {
     content: string;
     seo_title?: string | null;
     seo_description?: string | null;
+    seo_keywords?: string | null;
     slug: string;
     date: string;
 };
@@ -36,7 +37,10 @@ export default function HaberlerDetay({ post }: BlogDetailProps) {
     const imageUrl = getImageUrl(post.image);
     return (
         <>
-            <Head title={post.seo_title || post.title}>
+            <Head>
+                {post.seo_keywords ? (
+                    <meta name="keywords" content={post.seo_keywords} />
+                ) : null}
                 {post.seo_description ? (
                     <meta name="description" content={post.seo_description} />
                 ) : null}
@@ -45,6 +49,7 @@ export default function HaberlerDetay({ post }: BlogDetailProps) {
             <Navbar />
             <ArticleLayout
                 title={post.title}
+                headTitle={post.seo_title || post.title}
                 heroImage="https://izeko.org.tr/app/themes/default/assets/images/izeko-banner.jpg"
                 heroPosition="center 30%"
                 breadcrumbLabel={post.title}

@@ -12,6 +12,10 @@ type Announcement = {
     content: string;
     image?: string | null;
     active?: boolean;
+    seo_title?: string | null;
+    seo_description?: string | null;
+    seo_keywords?: string | null;
+    seo_url?: string | null;
 };
 
 type AnnouncementFormProps = {
@@ -36,6 +40,23 @@ export default function AnnouncementForm({
     const [titleValue, setTitleValue] = useState(announcement?.title ?? '');
     const [content, setContent] = useState(announcement?.content ?? '');
     const [active, setActive] = useState(announcement?.active ?? true);
+    const [seoTitle, setSeoTitle] = useState(announcement?.seo_title ?? '');
+    const [seoDescription, setSeoDescription] = useState(
+        announcement?.seo_description ?? '',
+    );
+    const [seoKeywords, setSeoKeywords] = useState(
+        announcement?.seo_keywords ?? '',
+    );
+
+    const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newTitle = e.target.value;
+        setTitleValue(newTitle);
+    };
+
+    const handleSeoTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newSeoTitle = e.target.value;
+        setSeoTitle(newSeoTitle);
+    };
 
     return (
         <Form
@@ -66,11 +87,7 @@ export default function AnnouncementForm({
                                             type="text"
                                             name="title"
                                             value={titleValue}
-                                            onChange={(event) =>
-                                                setTitleValue(
-                                                    event.target.value,
-                                                )
-                                            }
+                                            onChange={handleTitleChange}
                                             placeholder="Başlık"
                                             className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition outline-none focus:border-transparent focus:ring-2 focus:ring-[#da1f25]"
                                         />
@@ -97,6 +114,76 @@ export default function AnnouncementForm({
                                             className="mt-2"
                                             message={errors.content}
                                         />
+                                    </div>
+                                </div>
+
+                                <div className="rounded-2xl bg-gray-50 p-6">
+                                    <h3 className="mb-4 text-base font-semibold text-gray-800">
+                                        SEO Bilgileri
+                                    </h3>
+
+                                    <div className="space-y-4">
+                                        <div>
+                                            <label className="mb-2 block text-sm font-medium text-gray-700">
+                                                SEO Title:
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="seo_title"
+                                                value={seoTitle}
+                                                onChange={handleSeoTitleChange}
+                                                placeholder="SEO başlığı"
+                                                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                                            />
+                                            <InputError
+                                                className="mt-2"
+                                                message={errors.seo_title}
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="mb-2 block text-sm font-medium text-gray-700">
+                                                SEO Description:
+                                            </label>
+                                            <textarea
+                                                name="seo_description"
+                                                rows={3}
+                                                value={seoDescription}
+                                                onChange={(event) =>
+                                                    setSeoDescription(
+                                                        event.target.value,
+                                                    )
+                                                }
+                                                placeholder="SEO açıklaması"
+                                                className="w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                                            />
+                                            <InputError
+                                                className="mt-2"
+                                                message={errors.seo_description}
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="mb-2 block text-sm font-medium text-gray-700">
+                                                SEO Keywords:
+                                            </label>
+                                            <textarea
+                                                name="seo_keywords"
+                                                rows={2}
+                                                value={seoKeywords}
+                                                onChange={(event) =>
+                                                    setSeoKeywords(
+                                                        event.target.value,
+                                                    )
+                                                }
+                                                placeholder="Anahtar kelimeler (virgül ile ayırın)"
+                                                className="w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                                            />
+                                            <InputError
+                                                className="mt-2"
+                                                message={errors.seo_keywords}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </div>

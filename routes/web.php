@@ -247,6 +247,10 @@ Route::get('/haberler/{slug}', function (string $slug) {
             'slug' => $post->seo_url ?? Str::slug($post->title),
             'date' => optional($post->updated_at)->format('Y-m-d'),
         ],
+    ])->withViewData([
+        'meta_title' => $post->seo_title ?? $post->title,
+        'meta_description' => $post->seo_description,
+        'meta_keywords' => $post->seo_keywords,
     ]);
 })->name('haberler.show');
 
@@ -292,9 +296,16 @@ Route::get('/duyurular', function () {
 })->name('duyurular');
 
 Route::get('/duyurular/{slug}', function (string $slug) {
-    $announcement = Announcement::where('active', true)->get()->first(
-        fn (Announcement $item) => Str::slug($item->title) === $slug,
-    );
+    $announcement = Announcement::where('active', true)
+        ->where('seo_url', $slug)
+        ->first();
+
+    if (! $announcement) {
+        $announcement = Announcement::where('active', true)
+            ->whereNull('seo_url')
+            ->get()
+            ->first(fn (Announcement $item) => Str::slug($item->title) === $slug);
+    }
 
     abort_unless($announcement, 404);
 
@@ -305,9 +316,15 @@ Route::get('/duyurular/{slug}', function (string $slug) {
             'content' => $announcement->content,
             'image' => $announcement->image,
             'link' => $announcement->link,
-            'slug' => Str::slug($announcement->title),
+            'seo_title' => $announcement->seo_title,
+            'seo_description' => $announcement->seo_description,
+            'slug' => $announcement->seo_url ?? Str::slug($announcement->title),
             'date' => optional($announcement->updated_at)->format('Y-m-d'),
         ],
+    ])->withViewData([
+        'meta_title' => $announcement->seo_title ?? $announcement->title,
+        'meta_description' => $announcement->seo_description,
+        'meta_keywords' => $announcement->seo_keywords,
     ]);
 })->name('duyurular.show');
 

@@ -37,7 +37,8 @@ export function ArticleLayout({
     showSidebar = true,
     backgroundColor = 'bg-[#F3F4F6]',
     children,
-}: ArticleLayoutProps) {
+    headTitle,
+}: ArticleLayoutProps & { headTitle?: string }) {
     const { articleSidebar } = usePage<SharedData>().props;
     const sidebarData = articleSidebar as ArticleSidebarData | undefined;
     const sidebarAnnouncements = sidebarData?.announcements ?? [];
@@ -52,7 +53,7 @@ export function ArticleLayout({
 
     return (
         <main className={backgroundColor}>
-            <Head title={title} />
+            <Head title={headTitle ?? title} />
             <header className="relative h-64 overflow-hidden bg-slate-900">
                 <div className="absolute inset-0">
                     {heroImage ? (

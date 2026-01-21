@@ -3,7 +3,6 @@ import AdminMediaUpload from '@/components/admin/admin-media-upload';
 import AdminStatusToggle from '@/components/admin/admin-status-toggle';
 import RichTextEditor from '@/components/admin/rich-text-editor';
 import InputError from '@/components/input-error';
-import { slugify } from '@/lib/utils';
 import { Form } from '@inertiajs/react';
 import { useState } from 'react';
 
@@ -15,6 +14,7 @@ type BlogPost = {
     active?: boolean;
     seo_title?: string | null;
     seo_description?: string | null;
+    seo_keywords?: string | null;
     seo_url?: string | null;
 };
 
@@ -26,8 +26,6 @@ type BlogPostFormProps = {
     submitLabel?: string;
     cancelHref?: string;
 };
-
-const seoBaseUrl = '/haberler/';
 
 export default function BlogPostForm({
     post,
@@ -44,10 +42,17 @@ export default function BlogPostForm({
     const [seoDescription, setSeoDescription] = useState(
         post?.seo_description ?? '',
     );
-    const seoUrlValue = slugify(titleValue);
-    const previewTitle = seoTitle || titleValue || 'Başlık';
-    const previewDescription = seoDescription || content || 'Açıklama';
-    const previewSlug = seoUrlValue || 'seo-url';
+    const [seoKeywords, setSeoKeywords] = useState(post?.seo_keywords ?? '');
+
+    const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newTitle = e.target.value;
+        setTitleValue(newTitle);
+    };
+
+    const handleSeoTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newSeoTitle = e.target.value;
+        setSeoTitle(newSeoTitle);
+    };
 
     return (
         <Form
@@ -79,11 +84,7 @@ export default function BlogPostForm({
                                                 type="text"
                                                 name="title"
                                                 value={titleValue}
-                                                onChange={(event) =>
-                                                    setTitleValue(
-                                                        event.target.value,
-                                                    )
-                                                }
+                                                onChange={handleTitleChange}
                                                 placeholder="Başlık"
                                                 className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500"
                                             />
@@ -113,23 +114,10 @@ export default function BlogPostForm({
                                         </div>
                                     </div>
 
-                                    <div className="hidden rounded-2xl bg-gray-50 p-6">
+                                    <div className="rounded-2xl bg-gray-50 p-6">
                                         <h3 className="mb-4 text-base font-semibold text-gray-800">
                                             SEO Bilgileri
                                         </h3>
-
-                                        <div className="mb-6 rounded-xl border border-gray-200 bg-white p-4">
-                                            <p className="text-lg font-medium text-blue-700">
-                                                {previewTitle}
-                                            </p>
-                                            <p className="mt-1 text-sm break-all text-green-600">
-                                                {seoBaseUrl}
-                                                {previewSlug}
-                                            </p>
-                                            <p className="mt-1 text-sm text-gray-600">
-                                                {previewDescription}
-                                            </p>
-                                        </div>
 
                                         <div className="space-y-4">
                                             <div>
@@ -140,10 +128,8 @@ export default function BlogPostForm({
                                                     type="text"
                                                     name="seo_title"
                                                     value={seoTitle}
-                                                    onChange={(event) =>
-                                                        setSeoTitle(
-                                                            event.target.value,
-                                                        )
+                                                    onChange={
+                                                        handleSeoTitleChange
                                                     }
                                                     placeholder="SEO başlığı"
                                                     className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500"
@@ -180,27 +166,25 @@ export default function BlogPostForm({
 
                                             <div>
                                                 <label className="mb-2 block text-sm font-medium text-gray-700">
-                                                    SEO URL:
+                                                    SEO Keywords:
                                                 </label>
-                                                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                                                    <input
-                                                        type="text"
-                                                        value={seoBaseUrl}
-                                                        readOnly
-                                                        className="w-full rounded-lg border border-gray-200 bg-gray-100 px-4 py-2.5 text-sm text-gray-500 sm:w-auto"
-                                                    />
-                                                    <input
-                                                        type="text"
-                                                        name="seo_url"
-                                                        value={seoUrlValue}
-                                                        placeholder="seo-url"
-                                                        readOnly
-                                                        className="w-full flex-1 rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500"
-                                                    />
-                                                </div>
+                                                <textarea
+                                                    name="seo_keywords"
+                                                    rows={2}
+                                                    value={seoKeywords}
+                                                    onChange={(event) =>
+                                                        setSeoKeywords(
+                                                            event.target.value,
+                                                        )
+                                                    }
+                                                    placeholder="Anahtar kelimeler (virgül ile ayırın)"
+                                                    className="w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                                                />
                                                 <InputError
                                                     className="mt-2"
-                                                    message={errors.seo_url}
+                                                    message={
+                                                        errors.seo_keywords
+                                                    }
                                                 />
                                             </div>
                                         </div>

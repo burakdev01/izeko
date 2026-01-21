@@ -11,6 +11,9 @@ type Announcement = {
     content: string;
     image?: string | null;
     link?: string | null;
+    seo_title?: string | null;
+    seo_description?: string | null;
+    seo_keywords?: string | null;
     slug: string;
     date: string;
 };
@@ -35,11 +38,22 @@ export default function DuyurularDetay({ announcement }: DuyuruDetayProps) {
     const imageUrl = getImageUrl(announcement.image);
     return (
         <>
-            <Head title={announcement.title} />
+            <Head>
+                {announcement.seo_keywords ? (
+                    <meta name="keywords" content={announcement.seo_keywords} />
+                ) : null}
+                {announcement.seo_description ? (
+                    <meta
+                        name="description"
+                        content={announcement.seo_description}
+                    />
+                ) : null}
+            </Head>
             <TopBar />
             <Navbar />
             <ArticleLayout
                 title={announcement.title}
+                headTitle={announcement.seo_title || announcement.title}
                 heroImage="https://izeko.org.tr/app/themes/default/assets/images/izeko-banner.jpg"
                 heroPosition="center 30%"
                 breadcrumbLabel={announcement.title}

@@ -47,6 +47,10 @@ class AnnouncementController extends Controller
             $validated['image'] = $image;
         }
 
+        if ($request->filled('seo_url')) {
+            $validated['seo_url'] = \Illuminate\Support\Str::slug($validated['seo_url']);
+        }
+
         Announcement::create($validated);
 
         return redirect()
@@ -77,6 +81,10 @@ class AnnouncementController extends Controller
             $validated['image'] = $image;
         } elseif (! $request->filled('image')) {
             $validated['image'] = $announcement->image;
+        }
+
+        if ($request->filled('seo_url')) {
+            $validated['seo_url'] = \Illuminate\Support\Str::slug($validated['seo_url']);
         }
 
         $announcement->update($validated);
@@ -128,6 +136,10 @@ class AnnouncementController extends Controller
             'image_file' => ['nullable', 'image', 'max:5120'],
             'link' => ['nullable', 'url', 'max:255'],
             'active' => ['nullable', 'boolean'],
+            'seo_title' => ['nullable', 'string', 'max:255'],
+            'seo_description' => ['nullable', 'string', 'max:1000'],
+            'seo_keywords' => ['nullable', 'string', 'max:1000'],
+            'seo_url' => ['nullable', 'string', 'max:255'],
         ]);
     }
 
@@ -139,6 +151,10 @@ class AnnouncementController extends Controller
             'content' => $announcement->content,
             'image' => $announcement->image,
             'link' => $announcement->link,
+            'seo_title' => $announcement->seo_title,
+            'seo_description' => $announcement->seo_description,
+            'seo_keywords' => $announcement->seo_keywords,
+            'seo_url' => $announcement->seo_url,
             'date' => optional($announcement->updated_at)->format('Y-m-d'),
             'active' => $announcement->active,
             'sort_order' => $announcement->sort_order,
