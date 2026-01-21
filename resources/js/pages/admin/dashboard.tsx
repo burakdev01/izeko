@@ -8,7 +8,6 @@ import {
     FileText,
     Home,
     Megaphone,
-    Newspaper,
     Play,
     Plus,
     Users,
@@ -72,35 +71,36 @@ export default function AdminDashboard({
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <DashboardStatsCard
-                        title="Toplam Üye"
-                        value={stats.users}
-                        icon={Users}
-                        change="Aktif Üyeler"
-                        trend="up"
-                        color="blue"
-                    />
-                    <DashboardStatsCard
-                        title="Kayıtlı Ofis"
-                        value={stats.offices}
-                        icon={Building2}
-                        change="Kurumsal Üyeler"
-                        color="purple"
-                    />
-                    <DashboardStatsCard
                         title="Toplam İlan"
                         value={stats.listings}
                         icon={Home}
-                        change={`${stats.pending_listings} Bekleyen İlan`}
-                        trend={stats.pending_listings > 0 ? 'down' : 'neutral'}
-                        color="red"
-                        description="Onay bekleyen ilanlarınıza göz atın."
+                        change="Tüm İlanlar"
+                        color="blue"
+                        href={route('admin.ilanlar.index')}
                     />
                     <DashboardStatsCard
-                        title="Blog & Haber"
-                        value={stats.posts}
-                        icon={Newspaper}
-                        change={`${stats.activities} Etkinlik`}
+                        title="Aktif İlan"
+                        value={stats.active_listings}
+                        icon={Building2}
+                        change="Yayında"
+                        color="green"
+                        href={route('admin.ilanlar.index')}
+                    />
+                    <DashboardStatsCard
+                        title="Bekleyen İlan"
+                        value={stats.pending_listings}
+                        icon={Home}
+                        change="Onay Bekliyor"
                         color="orange"
+                        href={route('admin.ilanlar.index')}
+                    />
+                    <DashboardStatsCard
+                        title="Toplam Üye"
+                        value={stats.users}
+                        icon={Users}
+                        change="Tüm Üyeler"
+                        color="purple"
+                        href={route('admin.kullanicilar.index')}
                     />
                 </div>
 

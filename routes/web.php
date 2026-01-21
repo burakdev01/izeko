@@ -315,9 +315,11 @@ Route::get('/ofisler', function () {
     return Inertia::render('ofisler');
 })->name('ofisler');
 
-Route::get('/iletisim', function () {
-    return Inertia::render('iletisim');
-})->name('iletisim');
+Route::post('/iletisim', [\App\Http\Controllers\ContactController::class, 'store'])
+    ->name('iletisim.store');
+
+Route::get('/iletisim', [\App\Http\Controllers\ContactController::class, 'index'])
+    ->name('iletisim');
 
 Route::get('/kullanim-kosullari', function () {
     return Inertia::render('kullanim-kosullari');
@@ -465,6 +467,10 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
             ->name('spotlights.reorder');
         Route::resource('spotlights', SpotlightController::class)
             ->parameters(['spotlights' => 'spotlight']);
+            
+        Route::resource('iletisim', \App\Http\Controllers\Admin\ContactMessageController::class)
+            ->parameters(['iletisim' => 'contactMessage'])
+            ->only(['index', 'show', 'destroy']);
     },
 );
 

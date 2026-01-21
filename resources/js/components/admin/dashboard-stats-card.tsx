@@ -1,3 +1,4 @@
+import { Link } from '@inertiajs/react';
 import { type LucideIcon } from 'lucide-react';
 
 interface DashboardStatsCardProps {
@@ -8,6 +9,7 @@ interface DashboardStatsCardProps {
     description?: string;
     trend?: 'up' | 'down' | 'neutral';
     color?: 'red' | 'blue' | 'green' | 'orange' | 'purple';
+    href?: string;
 }
 
 export default function DashboardStatsCard({
@@ -16,84 +18,54 @@ export default function DashboardStatsCard({
     icon: Icon,
     change,
     description,
-    trend = 'neutral',
     color = 'red',
+    href,
 }: DashboardStatsCardProps) {
     const colorStyles = {
         red: {
-            bg: 'bg-red-50',
-            text: 'text-red-600',
-            border: 'border-red-100',
-            iconBg: 'bg-red-100',
+            bg: 'bg-gradient-to-br from-orange-400 to-red-500',
+            pill: 'bg-white/20',
         },
         blue: {
-            bg: 'bg-blue-50',
-            text: 'text-blue-600',
-            border: 'border-blue-100',
-            iconBg: 'bg-blue-100',
+            bg: 'bg-gradient-to-br from-indigo-500 to-purple-600',
+            pill: 'bg-white/20',
         },
         green: {
-            bg: 'bg-green-50',
-            text: 'text-green-600',
-            border: 'border-green-100',
-            iconBg: 'bg-green-100',
+            bg: 'bg-gradient-to-br from-green-400 to-emerald-600',
+            pill: 'bg-white/20',
         },
         orange: {
-            bg: 'bg-orange-50',
-            text: 'text-orange-600',
-            border: 'border-orange-100',
-            iconBg: 'bg-orange-100',
+            bg: 'bg-gradient-to-br from-orange-400 to-red-500',
+            pill: 'bg-white/20',
         },
         purple: {
-            bg: 'bg-purple-50',
-            text: 'text-purple-600',
-            border: 'border-purple-100',
-            iconBg: 'bg-purple-100',
+            bg: 'bg-gradient-to-br from-blue-500 to-indigo-600',
+            pill: 'bg-white/20',
         },
     };
 
-    const styles = colorStyles[color];
+    const styles = colorStyles[color] || colorStyles.red;
+    const Component = href ? Link : 'div';
 
     return (
-        <div
-            className={`group relative overflow-hidden rounded-xl border bg-white p-6 transition-all hover:shadow-lg ${styles.border}`}
+        <Component
+            href={href || ''}
+            className={`group flex cursor-pointer flex-col items-center justify-between rounded-2xl p-6 text-white shadow-lg transition-transform hover:scale-[1.02] ${styles.bg}`}
         >
-            <div className="flex items-start justify-between">
-                <div>
-                    <p className="text-sm font-medium text-gray-500">{title}</p>
-                    <h3 className="mt-2 text-3xl font-bold text-gray-900">
-                        {value}
-                    </h3>
-                </div>
-                <div
-                    className={`rounded-xl p-3 transition-transform group-hover:scale-110 ${styles.iconBg} ${styles.text}`}
-                >
-                    <Icon size={24} />
-                </div>
+            <div className="mb-4 rounded-full bg-white/20 p-3 backdrop-blur-sm">
+                <Icon size={32} className="text-white" />
             </div>
 
-            {(change || description) && (
-                <div className="mt-4 flex items-center gap-2">
-                    {change && (
-                        <span
-                            className={`flex items-center text-sm font-medium ${
-                                trend === 'up'
-                                    ? 'text-green-600'
-                                    : trend === 'down'
-                                      ? 'text-red-600'
-                                      : 'text-gray-600'
-                            }`}
-                        >
-                            {change}
-                        </span>
-                    )}
-                    {description && (
-                        <span className="text-sm text-gray-400">
-                            {description}
-                        </span>
-                    )}
+            <h3 className="text-4xl font-bold tracking-tight">{value}</h3>
+            <p className="mt-1 text-sm font-medium text-white/90">{title}</p>
+
+            {change && (
+                <div
+                    className={`mt-6 rounded-lg px-4 py-1.5 text-xs font-semibold backdrop-blur-md ${styles.pill}`}
+                >
+                    {change}
                 </div>
             )}
-        </div>
+        </Component>
     );
 }

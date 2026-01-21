@@ -1,10 +1,9 @@
 import AdminPageHeader from '@/components/admin/admin-page-header';
-import AdminStatsCard from '@/components/admin/admin-stats-card';
+import DashboardStatsCard from '@/components/admin/dashboard-stats-card';
 import AdminLayout from '@/layouts/admin-layout';
 import { Head } from '@inertiajs/react';
 import {
     AlertCircle,
-    BarChart3,
     CheckCircle,
     Download,
     Filter,
@@ -50,34 +49,28 @@ export default function EmailNotificationsIndex() {
                     actionLabel="Yeni Email Gönder"
                 />
 
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                    <AdminStatsCard
-                        title="Toplam Gönderim"
-                        value="12,345"
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <DashboardStatsCard
+                        title="Bugün Gönderilen"
+                        value="145"
                         icon={Mail}
-                        color="red"
-                        trend={{ value: '%12', direction: 'up' }}
+                        color="blue"
+                        change="%12 Artış"
                     />
-                    <AdminStatsCard
-                        title="Başarılı"
-                        value="11,980"
+                    <DashboardStatsCard
+                        title="Bu Ay Gönderilen"
+                        value="12,345"
                         icon={CheckCircle}
                         color="green"
-                        trend={{ value: '%5', direction: 'up' }}
+                        change="%5 Artış"
                     />
-                    <AdminStatsCard
-                        title="Başarısız"
-                        value="365"
+                    <DashboardStatsCard
+                        title="Bugün Başarısız"
+                        value="2"
                         icon={AlertCircle}
                         color="red"
-                        trend={{ value: '%2', direction: 'down' }}
-                    />
-                    <AdminStatsCard
-                        title="Okunma Oranı"
-                        value="%45"
-                        icon={BarChart3}
-                        color="blue"
-                        trend={{ value: '%4', direction: 'up' }}
+                        change="%2 Azalış"
+                        trend="down"
                     />
                 </div>
 

@@ -1,5 +1,5 @@
 import AdminPageHeader from '@/components/admin/admin-page-header';
-import AdminStatsCard from '@/components/admin/admin-stats-card';
+import DashboardStatsCard from '@/components/admin/dashboard-stats-card';
 import AdminLayout from '@/layouts/admin-layout';
 import { Head } from '@inertiajs/react';
 import {
@@ -9,7 +9,6 @@ import {
     Filter,
     MessageSquare,
     Search,
-    TrendingUp,
 } from 'lucide-react';
 
 export default function SmsNotificationsIndex() {
@@ -50,34 +49,28 @@ export default function SmsNotificationsIndex() {
                     actionLabel="Yeni SMS Gönder"
                 />
 
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                    <AdminStatsCard
-                        title="Toplam SMS"
-                        value="5,432"
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <DashboardStatsCard
+                        title="Bugün Gönderilen"
+                        value="85"
                         icon={MessageSquare}
                         color="blue"
-                        trend={{ value: '%8', direction: 'up' }}
+                        change="%8 Artış"
                     />
-                    <AdminStatsCard
-                        title="İletildi"
-                        value="5,100"
+                    <DashboardStatsCard
+                        title="Bu Ay Gönderilen"
+                        value="5,432"
                         icon={CheckCircle}
                         color="green"
-                        trend={{ value: '%3', direction: 'up' }}
+                        change="%3 Artış"
                     />
-                    <AdminStatsCard
-                        title="Hata"
-                        value="332"
+                    <DashboardStatsCard
+                        title="Bugün Başarısız"
+                        value="1"
                         icon={AlertCircle}
                         color="red"
-                        trend={{ value: '%1', direction: 'down' }}
-                    />
-                    <AdminStatsCard
-                        title="Bakiye Kullanımı"
-                        value="5.2K"
-                        icon={TrendingUp}
-                        color="yellow"
-                        trend={{ value: '%15', direction: 'up' }}
+                        change="%1 Azalış"
+                        trend="down"
                     />
                 </div>
 

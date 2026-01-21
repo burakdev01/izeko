@@ -1,17 +1,17 @@
 import AdminPageHeader from '@/components/admin/admin-page-header';
 import AdminRowActions from '@/components/admin/admin-row-actions';
-import AdminStatsCard from '@/components/admin/admin-stats-card';
+import DashboardStatsCard from '@/components/admin/dashboard-stats-card';
 import { useAdminSortableList } from '@/hooks/use-admin-sortable-list';
 import AdminLayout from '@/layouts/admin-layout';
 import { Head } from '@inertiajs/react';
 import {
     Activity,
-    BarChart3,
     CheckCircle,
     Clock,
     Download,
     Filter,
     GripVertical,
+    Handshake,
     Search,
 } from 'lucide-react';
 
@@ -93,6 +93,38 @@ export default function ListingsIndex({
             <Head title={getPageTitle()} />
 
             <div className="space-y-6">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <DashboardStatsCard
+                        title="Toplam İlan"
+                        value="1,240"
+                        icon={CheckCircle}
+                        color="blue"
+                        change="%12 Artış"
+                    />
+                    <DashboardStatsCard
+                        title="Aktif İlan"
+                        value="1,180"
+                        icon={Activity}
+                        color="green"
+                        change="%8 Artış"
+                    />
+                    <DashboardStatsCard
+                        title="Onay Bekleyen"
+                        value="45"
+                        icon={Clock}
+                        color="orange"
+                        change="%2 Azalış"
+                        trend="down"
+                    />
+                    <DashboardStatsCard
+                        title="Satılan İlan"
+                        value="0"
+                        icon={Handshake}
+                        color="purple"
+                        change="Tamamlandı"
+                    />
+                </div>
+
                 <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
                     <AdminPageHeader
                         title={getPageTitle()}
@@ -100,37 +132,6 @@ export default function ListingsIndex({
                         actionLabel="Yeni İlan"
                         actionHref="/admin/ilanlar/create"
                     />
-
-                    <div className="grid gap-6 border-b border-gray-200 p-6 md:grid-cols-2 lg:grid-cols-4">
-                        <AdminStatsCard
-                            title="Toplam İlan"
-                            value="1,240"
-                            icon={CheckCircle}
-                            color="blue"
-                            trend={{ value: '%12', direction: 'up' }}
-                        />
-                        <AdminStatsCard
-                            title="Aktif İlan"
-                            value="1,180"
-                            icon={Activity}
-                            color="green"
-                            trend={{ value: '%8', direction: 'up' }}
-                        />
-                        <AdminStatsCard
-                            title="Onay Bekleyen"
-                            value="45"
-                            icon={Clock}
-                            color="yellow"
-                            trend={{ value: '%2', direction: 'down' }}
-                        />
-                        <AdminStatsCard
-                            title="Toplam Görüntülenme"
-                            value="85.4K"
-                            icon={BarChart3}
-                            color="red"
-                            trend={{ value: '%24', direction: 'up' }}
-                        />
-                    </div>
 
                     <div className="flex flex-col gap-4 border-b border-gray-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
                         <div className="relative flex-1">

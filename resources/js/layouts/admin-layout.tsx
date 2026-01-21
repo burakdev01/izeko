@@ -164,6 +164,11 @@ const navGroups: NavGroup[] = [
                 label: 'SSS',
                 icon: HelpCircle,
             },
+            {
+                href: '/admin/iletisim',
+                label: 'İletişim',
+                icon: MessageSquare,
+            },
         ],
     },
 ];
