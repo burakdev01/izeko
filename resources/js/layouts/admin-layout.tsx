@@ -303,7 +303,13 @@ export default function AdminLayout({
             <div className="flex min-h-screen overflow-hidden">
                 <aside className="hidden border-r border-gray-200 bg-white lg:flex lg:w-64 lg:flex-col">
                     <div className="flex items-center justify-center border-b border-gray-200 px-6">
-                        <div className="flex items-center space-x-3"></div>
+                        <div className="flex items-center space-x-3">
+                            <img
+                                src="https://izeko.deniz-web.com/public/themes/default/assets/images/izeko-logo.png"
+                                alt=""
+                                className="h-26"
+                            />
+                        </div>
                     </div>
 
                     <nav className="flex-1 overflow-y-auto px-3 py-4">
