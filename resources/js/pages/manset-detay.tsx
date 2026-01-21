@@ -13,6 +13,9 @@ type Spotlight = {
     image: string;
     slug?: string;
     date: string;
+    seo_title?: string | null;
+    seo_description?: string | null;
+    seo_keywords?: string | null;
 };
 
 type SpotlightDetailProps = {
@@ -22,7 +25,18 @@ type SpotlightDetailProps = {
 export default function MansetDetay({ spotlight }: SpotlightDetailProps) {
     return (
         <>
-            <Head title={spotlight.title} />
+            <Head>
+                <title>{spotlight.seo_title || spotlight.title}</title>
+                {spotlight.seo_description ? (
+                    <meta
+                        name="description"
+                        content={spotlight.seo_description}
+                    />
+                ) : null}
+                {spotlight.seo_keywords ? (
+                    <meta name="keywords" content={spotlight.seo_keywords} />
+                ) : null}
+            </Head>
             <TopBar />
             <Navbar />
             <ArticleLayout

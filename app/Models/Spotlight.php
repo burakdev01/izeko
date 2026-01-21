@@ -13,6 +13,9 @@ class Spotlight extends Model
         'slug',
         'image',
         'active',
+        'seo_title',
+        'seo_description',
+        'seo_keywords',
         'sort_order',
     ];
 

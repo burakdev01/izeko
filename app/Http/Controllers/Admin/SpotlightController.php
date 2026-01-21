@@ -41,6 +41,9 @@ class SpotlightController extends Controller
             'content' => 'nullable|string',
             'image' => 'required|image|max:2048', // Max 2MB
             'active' => 'boolean',
+            'seo_title' => 'nullable|string|max:255',
+            'seo_description' => 'nullable|string|max:1000',
+            'seo_keywords' => 'nullable|string|max:1000',
         ]);
 
         $path = $this->convertAndSaveWebp($request->file('image'));
@@ -51,6 +54,9 @@ class SpotlightController extends Controller
             'content' => $validated['content'],
             'image' => $path,
             'active' => $validated['active'] ?? true,
+            'seo_title' => $validated['seo_title'] ?? null,
+            'seo_description' => $validated['seo_description'] ?? null,
+            'seo_keywords' => $validated['seo_keywords'] ?? null,
             'sort_order' => Spotlight::max('sort_order') + 1,
         ]);
 
@@ -67,6 +73,9 @@ class SpotlightController extends Controller
                 'content' => $spotlight->content,
                 'image' => $spotlight->image,
                 'active' => $spotlight->active,
+                'seo_title' => $spotlight->seo_title,
+                'seo_description' => $spotlight->seo_description,
+                'seo_keywords' => $spotlight->seo_keywords,
             ],
         ]);
     }
@@ -79,6 +88,9 @@ class SpotlightController extends Controller
             'content' => 'nullable|string',
             'image' => 'nullable|image|max:2048',
             'active' => 'boolean',
+            'seo_title' => 'nullable|string|max:255',
+            'seo_description' => 'nullable|string|max:1000',
+            'seo_keywords' => 'nullable|string|max:1000',
         ]);
 
         if ($request->hasFile('image')) {
@@ -95,6 +107,9 @@ class SpotlightController extends Controller
             'description' => $validated['description'],
             'content' => $validated['content'],
             'active' => $validated['active'] ?? $spotlight->active,
+            'seo_title' => $validated['seo_title'] ?? null,
+            'seo_description' => $validated['seo_description'] ?? null,
+            'seo_keywords' => $validated['seo_keywords'] ?? null,
         ]);
 
         return redirect()->route('admin.spotlights.index')->with('success', 'Manşet başarıyla güncellendi.');

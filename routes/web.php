@@ -525,7 +525,14 @@ Route::get('/manset/{slug}', function (string $slug) {
             'content' => $spotlight->content,
             'image' => $spotlight->image,
             'date' => optional($spotlight->updated_at)->format('d F Y'),
+            'seo_title' => $spotlight->seo_title,
+            'seo_description' => $spotlight->seo_description,
+            'seo_keywords' => $spotlight->seo_keywords,
         ],
+    ])->withViewData([
+        'meta_title' => $spotlight->seo_title ?? $spotlight->title,
+        'meta_description' => $spotlight->seo_description,
+        'meta_keywords' => $spotlight->seo_keywords,
     ]);
 })->name('manset.show');
 
