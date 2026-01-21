@@ -27,6 +27,11 @@ const formatMonthYear = (value: string) =>
         year: 'numeric',
     });
 
+const getImageUrl = (filename: string): string => {
+    if (!filename) return '';
+    return `/uploads/announcements/${filename}`;
+};
+
 export default function Duyurular({ announcements }: DuyurularProps) {
     return (
         <>
@@ -49,7 +54,9 @@ export default function Duyurular({ announcements }: DuyurularProps) {
                                 <article>
                                     <div className="h-56 w-full overflow-hidden bg-gray-200">
                                         <img
-                                            src={announcement.image}
+                                            src={getImageUrl(
+                                                announcement.image,
+                                            )}
                                             alt={announcement.title}
                                             className="h-full w-full object-cover"
                                         />
@@ -65,9 +72,7 @@ export default function Duyurular({ announcements }: DuyurularProps) {
                                     >
                                         <div className="flex items-center gap-4">
                                             <span className="text-5xl font-bold text-red-500">
-                                                {formatDay(
-                                                    announcement.date,
-                                                )}
+                                                {formatDay(announcement.date)}
                                             </span>
                                             <span className="text-lg font-semibold text-gray-500">
                                                 {formatMonthYear(

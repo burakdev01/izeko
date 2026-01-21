@@ -36,7 +36,7 @@ class AnnouncementController extends Controller
         $validated['sort_order'] = (Announcement::max('sort_order') ?? 0) + 1;
         $validated['excerpt'] = '';
 
-        $image = $this->storePublicImageAsWebp(
+        $image = $this->storePublicImageNameAsWebp(
             $request,
             'image_file',
             'announcements',
@@ -66,7 +66,7 @@ class AnnouncementController extends Controller
         $validated = $this->validateAnnouncement($request, $announcement);
         $validated['active'] = $request->boolean('active');
 
-        $image = $this->storePublicImageAsWebp(
+        $image = $this->storePublicImageNameAsWebp(
             $request,
             'image_file',
             'announcements',
@@ -115,7 +115,7 @@ class AnnouncementController extends Controller
         Request $request,
         ?Announcement $announcement = null,
     ): array {
-        $imageRules = ['nullable', 'url', 'max:255'];
+        $imageRules = ['nullable', 'string', 'max:255'];
 
         if (! $announcement || ! $announcement->image) {
             $imageRules[] = 'required_without:image_file';

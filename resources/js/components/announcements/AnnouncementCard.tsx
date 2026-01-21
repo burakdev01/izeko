@@ -11,12 +11,18 @@ type AnnouncementCardProps = {
     href?: string;
 };
 
+const getImageUrl = (filename: string): string => {
+    if (!filename) return '';
+    return `/uploads/announcements/${filename}`;
+};
+
 const AnnouncementCard = ({
     image,
     date,
     title,
     href,
 }: AnnouncementCardProps) => {
+    const imageUrl = getImageUrl(image);
     const isExternal = href?.startsWith('http');
     const actionLabel = 'Detayları Oku →';
     const cardClasses =
@@ -26,7 +32,7 @@ const AnnouncementCard = ({
         <>
             <div className="h-48 overflow-hidden rounded-t-xl">
                 <img
-                    src={image}
+                    src={imageUrl}
                     alt={title}
                     className="h-full w-full object-cover"
                 />
