@@ -1,7 +1,7 @@
 import AdminPageHeader from '@/components/admin/admin-page-header';
 import DashboardStatsCard from '@/components/admin/dashboard-stats-card';
 import AdminLayout from '@/layouts/admin-layout';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import {
     AlertCircle,
     CheckCircle,
@@ -10,33 +10,44 @@ import {
     MessageSquare,
     Search,
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
-export default function SmsNotificationsIndex() {
-    // Mock data for display
-    const logs = [
-        {
-            id: 1,
-            message: 'Doğrulama kodunuz: 123456',
-            recipient: '+90 555 111 22 33',
-            status: 'sent',
-            sent_at: '2026-01-21 09:30',
-        },
-        {
-            id: 2,
-            message: 'Randevunuz oluşturuldu.',
-            recipient: '+90 532 999 88 77',
-            status: 'sent',
-            sent_at: '2026-01-21 10:00',
-        },
-        {
-            id: 3,
-            message: 'Ödeme hatırlatması.',
-            recipient: '+90 533 444 55 66',
-            status: 'failed',
-            sent_at: '2026-01-21 10:45',
-        },
-    ];
+type Notification = {
+    id: number;
+    subject: string;
+    message: string;
+    recipient_count: number;
+    audience: string;
+    created_at: string;
+};
 
+type SmsNotificationsIndexProps = {
+    notifications: Notification[];
+    filters: {
+        search?: string;
+    };
+};
+
+export default function SmsNotificationsIndex({
+    notifications,
+    filters,
+}: SmsNotificationsIndexProps) {
+    const [searchQuery, setSearchQuery] = useState(filters.search || '');
+
+    // Debounce search
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (searchQuery !== (filters.search || '')) {
+                router.get(
+                    route('admin.notifications.sms'),
+                    { ...filters, search: searchQuery },
+                    { preserveState: true, replace: true },
+                );
+            }
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [searchQuery, filters]);
     return (
         <AdminLayout title="SMS Bildirimleri">
             <Head title="SMS Bildirimleri" />
@@ -80,6 +91,8 @@ export default function SmsNotificationsIndex() {
                         <input
                             type="text"
                             placeholder="Mesaj içeriği veya alıcı ara..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
                             className="w-full rounded-lg border border-gray-300 py-2 pr-4 pl-10 text-sm focus:border-[#da1f25] focus:ring-1 focus:ring-[#da1f25] focus:outline-none"
                         />
                     </div>
@@ -101,13 +114,10 @@ export default function SmsNotificationsIndex() {
                             <thead className="bg-gray-50">
                                 <tr>
                                     <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
-                                        Mesaj İçeriği
+                                        Konu
                                     </th>
-                                    <th className="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase md:table-cell">
-                                        Alıcı
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
-                                        Durum
+                                    <th className="px-6 py-3 text-center text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                        Alıcı Sayısı
                                     </th>
                                     <th className="hidden px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase lg:table-cell">
                                         Gönderim Tarihi
@@ -115,41 +125,53 @@ export default function SmsNotificationsIndex() {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200 bg-white">
-                                {logs.map((log) => (
+                                {notifications.map((notification) => (
                                     <tr
-                                        key={log.id}
+                                        key={notification.id}
                                         className="transition-colors hover:bg-gray-50"
                                     >
                                         <td className="max-w-md px-6 py-4 text-sm font-medium text-gray-900">
                                             <div className="truncate">
-                                                {log.message}
+                                                {notification.subject}
                                             </div>
                                             <div className="mt-1 flex flex-col space-y-1 text-xs text-gray-500 md:hidden">
-                                                <span>{log.recipient}</span>
+                                                <span>
+                                                    {
+                                                        notification.recipient_count
+                                                    }{' '}
+                                                    alıcı
+                                                </span>
                                                 <span className="lg:hidden">
-                                                    {log.sent_at}
+                                                    {new Date(
+                                                        notification.created_at,
+                                                    ).toLocaleString('tr-TR')}
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="hidden px-6 py-4 text-sm text-gray-600 md:table-cell">
-                                            {log.recipient}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {log.status === 'sent' ? (
-                                                <span className="inline-flex rounded-full bg-green-100 px-2 text-xs leading-5 font-semibold text-green-800">
-                                                    İletildi
-                                                </span>
-                                            ) : (
-                                                <span className="inline-flex rounded-full bg-red-100 px-2 text-xs leading-5 font-semibold text-red-800">
-                                                    Hata
-                                                </span>
-                                            )}
+                                        <td className="px-6 py-4 text-center">
+                                            <span className="inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-800">
+                                                {notification.recipient_count}{' '}
+                                                Kişi
+                                            </span>
                                         </td>
                                         <td className="hidden px-6 py-4 text-sm text-gray-600 lg:table-cell">
-                                            {log.sent_at}
+                                            {new Date(
+                                                notification.created_at,
+                                            ).toLocaleString('tr-TR')}
                                         </td>
                                     </tr>
                                 ))}
+                                {notifications.length === 0 && (
+                                    <tr>
+                                        <td
+                                            colSpan={3}
+                                            className="px-6 py-8 text-center text-gray-500"
+                                        >
+                                            Henüz gönderilmiş bi SMS bildirimi
+                                            bulunmuyor.
+                                        </td>
+                                    </tr>
+                                )}
                             </tbody>
                         </table>
                     </div>

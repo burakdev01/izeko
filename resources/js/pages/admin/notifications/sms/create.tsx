@@ -24,6 +24,7 @@ export default function SmsCreate({ users, offices }: SmsCreateProps) {
         audience: 'all', // all, offices, users, custom
         selected_users: [] as number[],
         selected_offices: [] as number[],
+        subject: '',
         message: '',
     });
 
@@ -261,6 +262,25 @@ export default function SmsCreate({ users, offices }: SmsCreateProps) {
                                 </div>
                             </div>
                         )}
+
+                        <div>
+                            <label className="mb-2 block text-sm font-medium text-gray-700">
+                                Konu (Bilgi Amaçlı)
+                            </label>
+                            <input
+                                type="text"
+                                value={data.subject}
+                                onChange={(e) =>
+                                    setData('subject', e.target.value)
+                                }
+                                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition outline-none focus:border-transparent focus:ring-2 focus:ring-[#da1f25]"
+                                placeholder="Örn: Kampanya Duyurusu"
+                            />
+                            <InputError
+                                className="mt-2"
+                                message={errors.subject as string}
+                            />
+                        </div>
 
                         <div>
                             <label className="mb-2 block text-sm font-medium text-gray-700">
