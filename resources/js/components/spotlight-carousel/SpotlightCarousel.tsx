@@ -85,7 +85,7 @@ export const SpotlightCarousel = ({ slides = [] }: SpotlightCarouselProps) => {
                                 {/* Content */}
                                 <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8 lg:p-12">
                                     {/* Title */}
-                                    <h2 className="mb-2 text-xl leading-tight font-bold text-white drop-shadow-lg md:mb-3 md:text-2xl lg:mb-4 lg:text-3xl">
+                                    <h2 className="mb-2 text-xl leading-tight font-bold text-white drop-shadow-lg md:mb-3 md:text-xl lg:mb-4 lg:text-2xl">
                                         {slide.title
                                             .split(' ')
                                             .map((word, index) => (
