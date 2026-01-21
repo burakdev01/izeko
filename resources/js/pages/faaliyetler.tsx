@@ -33,6 +33,7 @@ export default function Faaliyetler({ activities }: FaaliyetlerProps) {
                 heroImage="https://izeko.org.tr/app/themes/default/assets/images/izeko-banner.jpg"
                 heroPosition="center 30%"
                 showSidebar={false}
+                backgroundColor="#fff"
             >
                 <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
                     {activities.map((activity) => (

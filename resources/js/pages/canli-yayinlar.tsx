@@ -58,6 +58,7 @@ export default function CanliYayinlar({ streams }: CanliYayinlarProps) {
                 heroImage="https://izeko.org.tr/app/themes/default/assets/images/izeko-banner.jpg"
                 heroPosition="center 30%"
                 showSidebar={false}
+                backgroundColor="#fff"
             >
                 <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
                     {streams.map((stream) => {
@@ -68,7 +69,7 @@ export default function CanliYayinlar({ streams }: CanliYayinlarProps) {
                                 key={stream.id}
                                 className="rounded-3xl border border-gray-100 bg-white p-7 shadow-[0_18px_45px_rgba(15,23,42,0.08)]"
                             >
-                                <h2 className="line-clamp-2 min-h-[3.25rem] text-xl font-semibold leading-snug text-gray-800">
+                                <h2 className="line-clamp-2 min-h-[3.25rem] text-xl leading-snug font-semibold text-gray-800">
                                     {stream.title}
                                 </h2>
                                 <div className="relative mt-6 aspect-video overflow-hidden rounded-2xl bg-gray-900 shadow-[0_14px_30px_rgba(15,23,42,0.12)]">

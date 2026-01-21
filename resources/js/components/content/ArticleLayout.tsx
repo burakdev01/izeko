@@ -23,6 +23,7 @@ interface ArticleLayoutProps {
     breadcrumbLabel?: string;
     homeHref?: string;
     showSidebar?: boolean;
+    backgroundColor?: string;
     children: ReactNode;
 }
 
@@ -34,6 +35,7 @@ export function ArticleLayout({
     breadcrumbLabel,
     homeHref = '/',
     showSidebar = true,
+    backgroundColor = 'bg-[#F3F4F6]',
     children,
 }: ArticleLayoutProps) {
     const { articleSidebar } = usePage<SharedData>().props;
@@ -49,7 +51,7 @@ export function ArticleLayout({
         (sidebarAnnouncements.length > 0 || sidebarNews.length > 0);
 
     return (
-        <main className="bg-[#F3F4F6]">
+        <main className={backgroundColor}>
             <header className="relative h-64 overflow-hidden bg-slate-900">
                 <div className="absolute inset-0">
                     {heroImage ? (
