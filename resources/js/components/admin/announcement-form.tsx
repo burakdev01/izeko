@@ -54,8 +54,8 @@ export default function AnnouncementForm({
                         processing={processing}
                     />
 
-                    <div className="flex flex-col gap-6">
-                        <div>
+                    <div className="flex flex-col gap-6 md:grid md:grid-cols-3">
+                        <div className="space-y-6 md:col-span-2">
                             <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
                                 <div className="space-y-4 p-6">
                                     <div>
@@ -102,21 +102,24 @@ export default function AnnouncementForm({
                             </div>
                         </div>
 
-                        <div className="w-full max-w-xl space-y-6">
-                            <AdminMediaUpload
-                                label="Duyuru Görseli"
-                                name="image_file"
-                                initialPreview={announcement?.image ?? null}
-                                error={
-                                    errors.image ||
-                                    errors.image_file ||
-                                    undefined
-                                }
-                            />
-                            <AdminStatusToggle
-                                checked={active}
-                                onChange={setActive}
-                            />
+                        <div className="space-y-6">
+                            <div className="space-y-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+                                <AdminStatusToggle
+                                    checked={active}
+                                    onChange={setActive}
+                                />
+
+                                <AdminMediaUpload
+                                    label="Duyuru Görseli"
+                                    name="image_file"
+                                    initialPreview={announcement?.image ?? null}
+                                    error={
+                                        errors.image ||
+                                        errors.image_file ||
+                                        undefined
+                                    }
+                                />
+                            </div>
                         </div>
                     </div>
                 </>

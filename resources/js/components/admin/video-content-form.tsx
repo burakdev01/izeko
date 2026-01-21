@@ -61,10 +61,10 @@ export default function VideoContentForm({
                         processing={processing}
                     />
 
-                    <div className="flex flex-col gap-6">
-                        <div>
+                    <div className="flex flex-col gap-6 md:grid md:grid-cols-3">
+                        <div className="space-y-6 md:col-span-2">
                             <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
-                                <div className="p-6 space-y-4">
+                                <div className="space-y-4 p-6">
                                     <div>
                                         <label className="mb-2 block text-sm font-medium text-gray-700">
                                             {labels?.title ?? 'Başlık'}
@@ -79,7 +79,7 @@ export default function VideoContentForm({
                                                 )
                                             }
                                             placeholder="Başlık"
-                                            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 outline-none transition focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                                            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500"
                                         />
                                         <InputError
                                             className="mt-2"
@@ -96,12 +96,10 @@ export default function VideoContentForm({
                                             name="video_url"
                                             value={videoUrl}
                                             onChange={(event) =>
-                                                setVideoUrl(
-                                                    event.target.value,
-                                                )
+                                                setVideoUrl(event.target.value)
                                             }
                                             placeholder="https://"
-                                            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 outline-none transition focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                                            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500"
                                         />
                                         <InputError
                                             className="mt-2"
@@ -112,26 +110,30 @@ export default function VideoContentForm({
                             </div>
                         </div>
 
-                        <div className="w-full max-w-xl space-y-6">
-                            {showThumbnail ? (
-                                <AdminMediaUpload
-                                    label={
-                                        labels?.image ??
-                                        'Kapak Görseli (Maks. 4MB)'
-                                    }
-                                    name="thumbnail_file"
-                                    initialPreview={content?.thumbnail ?? null}
-                                    error={
-                                        errors.thumbnail ||
-                                        errors.thumbnail_file ||
-                                        undefined
-                                    }
+                        <div className="space-y-6">
+                            <div className="space-y-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+                                <AdminStatusToggle
+                                    checked={active}
+                                    onChange={setActive}
                                 />
-                            ) : null}
-                            <AdminStatusToggle
-                                checked={active}
-                                onChange={setActive}
-                            />
+                                {showThumbnail ? (
+                                    <AdminMediaUpload
+                                        label={
+                                            labels?.image ??
+                                            'Kapak Görseli (Maks. 4MB)'
+                                        }
+                                        name="thumbnail_file"
+                                        initialPreview={
+                                            content?.thumbnail ?? null
+                                        }
+                                        error={
+                                            errors.thumbnail ||
+                                            errors.thumbnail_file ||
+                                            undefined
+                                        }
+                                    />
+                                ) : null}
+                            </div>
                         </div>
                     </div>
                 </>

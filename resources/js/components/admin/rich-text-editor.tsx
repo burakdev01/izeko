@@ -502,6 +502,35 @@ const MenuBar = ({ editor }: { editor: any }) => {
     );
 };
 
+const EditorStatus = ({ editor }: { editor: any }) => {
+    if (!editor) {
+        return null;
+    }
+
+    const [, forceUpdate] = useState({});
+
+    useEffect(() => {
+        const handleTransaction = () => {
+            forceUpdate({});
+        };
+
+        editor.on('transaction', handleTransaction);
+        editor.on('update', handleTransaction);
+
+        return () => {
+            editor.off('transaction', handleTransaction);
+            editor.off('update', handleTransaction);
+        };
+    }, [editor]);
+
+    return (
+        <div className="border-t border-gray-100 px-4 py-2 text-xs text-gray-400">
+            {editor.storage.characterCount?.words() ?? 0} kelime,{' '}
+            {editor.storage.characterCount?.characters() ?? 0} karakter
+        </div>
+    );
+};
+
 export default function RichTextEditor({
     value,
     onChange,
@@ -549,7 +578,7 @@ export default function RichTextEditor({
             TaskItem.configure({
                 nested: true,
             }),
-            CharacterCount,
+            CharacterCount.configure(),
             Placeholder.configure({
                 placeholder: placeholder,
                 emptyEditorClass:
@@ -582,10 +611,7 @@ export default function RichTextEditor({
         <div className="flex w-full flex-col overflow-hidden rounded-lg border border-gray-300 bg-white shadow-sm ring-offset-2 focus-within:ring-2 focus-within:ring-[#da1f25] focus-within:ring-offset-2">
             <MenuBar editor={editor} />
             <EditorContent editor={editor} className="min-h-[150px] flex-1" />
-            <div className="border-t border-gray-100 px-4 py-2 text-xs text-gray-400">
-                {editor.storage.characterCount.words()} kelime,{' '}
-                {editor.storage.characterCount.characters()} karakter
-            </div>
+            <EditorStatus editor={editor} />
         </div>
     );
 }
