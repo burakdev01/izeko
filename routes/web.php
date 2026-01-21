@@ -381,12 +381,32 @@ Route::get('/admin/login', function (Request $request) {
 Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
     function () {
         Route::get('/', function () {
+            $listings = \App\Models\Listing::with(['user', 'office'])
+                ->latest()
+                ->take(5)
+                ->get()
+                ->map(fn ($listing) => [
+                    'id' => $listing->id,
+                    'title' => $listing->title,
+                    'office' => $listing->office->name ?? '-',
+                    'user' => $listing->user->name ?? '-',
+                    'price' => $listing->price,
+                    'status' => $listing->listing_status,
+                    'date' => $listing->created_at->format('d.m.Y'),
+                ]);
+
             return Inertia::render('admin/dashboard', [
                 'stats' => [
+                    'users' => \App\Models\User::count(),
+                    'offices' => \App\Models\Office::count(),
+                    'listings' => \App\Models\Listing::count(),
+                    'active_listings' => \App\Models\Listing::where('listing_status', 'active')->count(),
+                    'pending_listings' => \App\Models\Listing::where('listing_status', 'pending')->count(),
                     'activities' => Activity::count(),
                     'streams' => LiveStream::count(),
                     'posts' => BlogPost::count(),
                 ],
+                'recentListings' => $listings,
             ]);
         })->name('dashboard');
 

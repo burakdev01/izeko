@@ -32,10 +32,7 @@ class Listing extends Model
 
     public function office()
     {
-        // Placeholder relationship if Offices table doesn't exist yet, 
-        // or just return integer if no table. 
-        // User requested office_id but didn't specify Office model.
-        // Assuming no Office model for now.
+        return $this->belongsTo(Office::class);
     }
 
     public function user()

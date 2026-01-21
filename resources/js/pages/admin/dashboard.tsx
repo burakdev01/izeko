@@ -1,135 +1,291 @@
+import DashboardStatsCard from '@/components/admin/dashboard-stats-card';
 import AdminLayout from '@/layouts/admin-layout';
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { BookOpen, CalendarCheck, PlusCircle, Radio } from 'lucide-react';
+import {
+    Activity,
+    Building2,
+    FileText,
+    Home,
+    Megaphone,
+    Newspaper,
+    Play,
+    Plus,
+    Users,
+} from 'lucide-react';
 
 type DashboardProps = {
     stats: {
+        users: number;
+        offices: number;
+        listings: number;
+        active_listings: number;
+        pending_listings: number;
         activities: number;
         streams: number;
         posts: number;
     };
+    recentListings: Array<{
+        id: number;
+        title: string;
+        office: string;
+        user: string;
+        price: number;
+        status: string;
+        date: string;
+    }>;
 };
 
-const statStyles = {
-    blue: {
-        icon: 'text-blue-600',
-        iconBg: 'bg-blue-100',
-    },
-    purple: {
-        icon: 'text-purple-600',
-        iconBg: 'bg-purple-100',
-    },
-    orange: {
-        icon: 'text-orange-600',
-        iconBg: 'bg-orange-100',
-    },
-};
-
-export default function AdminDashboard({ stats }: DashboardProps) {
+export default function AdminDashboard({
+    stats,
+    recentListings,
+}: DashboardProps) {
     const { auth } = usePage<SharedData>().props;
     const userName = auth?.user?.name || 'Admin';
 
-    const cards = [
-        {
-            label: 'Toplam Faaliyetler',
-            value: stats.activities,
-            change: '+12%',
-            icon: CalendarCheck,
-            tone: 'blue' as const,
-        },
-        {
-            label: 'Toplam Canlı Yayınlar',
-            value: stats.streams,
-            change: '+8%',
-            icon: Radio,
-            tone: 'purple' as const,
-        },
-        {
-            label: 'Blog Yazısı',
-            value: stats.posts,
-            change: '+15%',
-            icon: BookOpen,
-            tone: 'orange' as const,
-        },
-    ];
-
-    const quickActions = [
-        {
-            href: '/admin/haberler/create',
-            label: 'Yeni Blog Yazısı',
-        },
-        {
-            href: '/admin/faaliyetler/create',
-            label: 'Yeni Faaliyet',
-        },
-        {
-            href: '/admin/canli-yayinlar/create',
-            label: 'Yeni Canlı Yayın',
-        },
-        {
-            href: '/admin/duyurular/create',
-            label: 'Yeni Duyuru',
-        },
-    ];
-
     return (
         <AdminLayout title="Dashboard">
-            <Head title="Dashboard" />
+            <Head title="Panel Özeti" />
 
-            <div className="space-y-6">
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-3">
-                    {cards.map((card) => {
-                        const Icon = card.icon;
-                        const styles = statStyles[card.tone];
-                        return (
-                            <div
-                                key={card.label}
-                                className="rounded-xl border border-gray-200 bg-white p-6 transition-shadow hover:shadow-lg"
-                            >
-                                <div className="mb-4 flex items-center justify-between">
-                                    <div
-                                        className={`flex h-12 w-12 items-center justify-center rounded-lg ${styles.iconBg}`}
-                                    >
-                                        <Icon
-                                            className={`h-6 w-6 ${styles.icon}`}
-                                        />
-                                    </div>
-                                    <span className="rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-600">
-                                        {card.change}
-                                    </span>
-                                </div>
-                                <h3 className="mb-1 text-2xl font-bold text-black">
-                                    {card.value}
-                                </h3>
-                                <p className="text-sm text-gray-600">
-                                    {card.label}
-                                </p>
-                            </div>
-                        );
-                    })}
+            <div className="space-y-8">
+                {/* Header Section */}
+                <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+                    <div>
+                        <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+                            Merhaba, {userName} 👋
+                        </h1>
+                        <p className="mt-2 text-gray-500">
+                            İşte bugünkü panel özetiniz ve istatistikler.
+                        </p>
+                    </div>
+                    <div className="flex gap-3">
+                        <Link
+                            href={route('admin.ilanlar.create')}
+                            className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-red-700 hover:shadow-md active:scale-95"
+                        >
+                            <Plus size={18} />
+                            Hızlı İlan Ekle
+                        </Link>
+                    </div>
                 </div>
 
-                <div className="rounded-xl border border-gray-200 bg-white">
-                    <div className="border-b border-gray-200 px-6 py-4">
-                        <h3 className="text-lg font-semibold text-black">
-                            Hızlı İşlemler
-                        </h3>
-                    </div>
-                    <div className="p-6">
-                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                            {quickActions.map((action) => (
+                {/* Stats Grid */}
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <DashboardStatsCard
+                        title="Toplam Üye"
+                        value={stats.users}
+                        icon={Users}
+                        change="Aktif Üyeler"
+                        trend="up"
+                        color="blue"
+                    />
+                    <DashboardStatsCard
+                        title="Kayıtlı Ofis"
+                        value={stats.offices}
+                        icon={Building2}
+                        change="Kurumsal Üyeler"
+                        color="purple"
+                    />
+                    <DashboardStatsCard
+                        title="Toplam İlan"
+                        value={stats.listings}
+                        icon={Home}
+                        change={`${stats.pending_listings} Bekleyen İlan`}
+                        trend={stats.pending_listings > 0 ? 'down' : 'neutral'}
+                        color="red"
+                        description="Onay bekleyen ilanlarınıza göz atın."
+                    />
+                    <DashboardStatsCard
+                        title="Blog & Haber"
+                        value={stats.posts}
+                        icon={Newspaper}
+                        change={`${stats.activities} Etkinlik`}
+                        color="orange"
+                    />
+                </div>
+
+                <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+                    {/* Main Content - Recent Listings */}
+                    <div className="lg:col-span-2">
+                        <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+                            <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
+                                <h3 className="font-semibold text-gray-900">
+                                    Son Eklenen İlanlar
+                                </h3>
                                 <Link
-                                    key={action.label}
-                                    href={action.href}
-                                    className="group flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-4 transition hover:border-blue-500 hover:bg-blue-50"
+                                    href={route('admin.ilanlar.index')}
+                                    className="text-sm font-medium text-red-600 hover:text-red-700 hover:underline"
                                 >
-                                    <PlusCircle className="mb-2 h-8 w-8 text-gray-400 transition group-hover:text-blue-500" />
-                                    <span className="text-sm font-medium text-gray-700 transition group-hover:text-blue-600">
-                                        {action.label}
-                                    </span>
+                                    Tümünü Gör
                                 </Link>
-                            ))}
+                            </div>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left text-sm text-gray-500">
+                                    <thead className="bg-gray-50 text-xs text-gray-700 uppercase">
+                                        <tr>
+                                            <th className="px-6 py-3">
+                                                İlan Başlığı
+                                            </th>
+                                            <th className="px-6 py-3">Fiyat</th>
+                                            <th className="px-6 py-3">
+                                                Ekleyen
+                                            </th>
+                                            <th className="px-6 py-3">Ofis</th>
+                                            <th className="px-6 py-3">Durum</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {recentListings.length > 0 ? (
+                                            recentListings.map((item) => (
+                                                <tr
+                                                    key={item.id}
+                                                    className="border-b bg-white hover:bg-gray-50 md:border-none"
+                                                >
+                                                    <td className="px-6 py-4 font-medium text-gray-900">
+                                                        {item.title}
+                                                    </td>
+                                                    <td className="px-6 py-4 font-bold text-gray-900">
+                                                        {new Intl.NumberFormat(
+                                                            'tr-TR',
+                                                            {
+                                                                style: 'currency',
+                                                                currency: 'TRY',
+                                                                maximumFractionDigits: 0,
+                                                            },
+                                                        ).format(item.price)}
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        {item.user}
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        {item.office}
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <span
+                                                            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                                                                item.status ===
+                                                                'active'
+                                                                    ? 'bg-green-100 text-green-800'
+                                                                    : item.status ===
+                                                                        'pending'
+                                                                      ? 'bg-yellow-100 text-yellow-800'
+                                                                      : 'bg-gray-100 text-gray-800'
+                                                            }`}
+                                                        >
+                                                            {item.status ===
+                                                            'active'
+                                                                ? 'Yayında'
+                                                                : item.status ===
+                                                                    'pending'
+                                                                  ? 'Onay Bekliyor'
+                                                                  : 'Pasif'}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td
+                                                    colSpan={5}
+                                                    className="px-6 py-8 text-center text-gray-500"
+                                                >
+                                                    Henüz ilan girişi
+                                                    yapılmamış.
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Sidebar - Quick Actions */}
+                    <div className="space-y-6">
+                        <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+                            <h3 className="mb-4 font-semibold text-gray-900">
+                                Hızlı İşlemler
+                            </h3>
+                            <div className="grid grid-cols-1 gap-3">
+                                <Link
+                                    href={route('admin.kullanicilar.index')}
+                                    className="group flex w-full items-center justify-between rounded-xl border border-gray-200 bg-gray-50 p-4 transition-all hover:border-red-200 hover:bg-white hover:shadow-md"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="rounded-lg bg-blue-100 p-2 text-blue-600 transition-colors group-hover:bg-red-100 group-hover:text-red-600">
+                                            <Users size={20} />
+                                        </div>
+                                        <span className="font-medium text-gray-700 group-hover:text-gray-900">
+                                            Üye Onayla
+                                        </span>
+                                    </div>
+                                    <Plus className="text-gray-400 group-hover:text-red-500" />
+                                </Link>
+
+                                <Link
+                                    href={route('admin.duyurular.create')}
+                                    className="group flex w-full items-center justify-between rounded-xl border border-gray-200 bg-gray-50 p-4 transition-all hover:border-red-200 hover:bg-white hover:shadow-md"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="rounded-lg bg-orange-100 p-2 text-orange-600 transition-colors group-hover:bg-red-100 group-hover:text-red-600">
+                                            <Megaphone size={20} />
+                                        </div>
+                                        <span className="font-medium text-gray-700 group-hover:text-gray-900">
+                                            Duyuru Yayınla
+                                        </span>
+                                    </div>
+                                    <Plus className="text-gray-400 group-hover:text-red-500" />
+                                </Link>
+
+                                <Link
+                                    href={route('admin.haberler.create')}
+                                    className="group flex w-full items-center justify-between rounded-xl border border-gray-200 bg-gray-50 p-4 transition-all hover:border-red-200 hover:bg-white hover:shadow-md"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="rounded-lg bg-purple-100 p-2 text-purple-600 transition-colors group-hover:bg-red-100 group-hover:text-red-600">
+                                            <FileText size={20} />
+                                        </div>
+                                        <span className="font-medium text-gray-700 group-hover:text-gray-900">
+                                            Blog Yazısı Ekle
+                                        </span>
+                                    </div>
+                                    <Plus className="text-gray-400 group-hover:text-red-500" />
+                                </Link>
+
+                                <Link
+                                    href={route('admin.canli-yayinlar.create')}
+                                    className="group flex w-full items-center justify-between rounded-xl border border-gray-200 bg-gray-50 p-4 transition-all hover:border-red-200 hover:bg-white hover:shadow-md"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="rounded-lg bg-green-100 p-2 text-green-600 transition-colors group-hover:bg-red-100 group-hover:text-red-600">
+                                            <Play size={20} />
+                                        </div>
+                                        <span className="font-medium text-gray-700 group-hover:text-gray-900">
+                                            Canlı Yayın Ekle
+                                        </span>
+                                    </div>
+                                    <Plus className="text-gray-400 group-hover:text-red-500" />
+                                </Link>
+                            </div>
+                        </div>
+
+                        <div className="rounded-2xl bg-gradient-to-br from-red-600 to-red-700 p-6 text-white shadow-lg">
+                            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm">
+                                <Activity className="h-6 w-6 text-white" />
+                            </div>
+                            <h3 className="text-lg font-bold">
+                                Faaliyet Raporu
+                            </h3>
+                            <p className="mt-2 text-sm text-red-100 opacity-90">
+                                Bu ay toplam {stats.activities} yeni faaliyet ve{' '}
+                                {stats.streams} canlı yayın gerçekleştirildi.
+                            </p>
+                            <Link
+                                href={route('admin.faaliyetler.index')}
+                                className="mt-6 inline-flex w-full items-center justify-center rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50"
+                            >
+                                Raporu Görüntüle
+                            </Link>
                         </div>
                     </div>
                 </div>
