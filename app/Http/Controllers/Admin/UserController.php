@@ -18,7 +18,7 @@ class UserController extends Controller
         if ($request->has('status')) {
             if ($request->status === 'active') {
                 $query->where('is_active', true);
-            } elseif ($request->status === 'pending') {
+            } elseif ($request->status === 'pending' || $request->status === 'passive') {
                 $query->where('is_active', false);
             }
         }

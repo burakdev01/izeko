@@ -25,6 +25,7 @@ import {
     SlidersHorizontal,
     Users,
     X,
+    XCircle,
     type LucideIcon,
 } from 'lucide-react';
 import { useMemo, useState, type ReactNode } from 'react';
@@ -41,109 +42,129 @@ type NavItem = {
     children?: NavItem[];
 };
 
-const navItems: NavItem[] = [
+type NavGroup = {
+    title: string;
+    items: NavItem[];
+};
+
+const navGroups: NavGroup[] = [
     {
-        href: '/admin',
-        label: 'Ana Sayfa',
-        icon: Home,
-    },
-    {
-        label: 'İlan Yönetimi',
-        icon: List,
-        children: [
+        title: 'CRM Yönetimi',
+        items: [
             {
-                href: '/admin/ilanlar?status=pending',
-                label: 'Onay Bekleyenler',
-                icon: ClipboardList,
+                href: '/admin/ofisler',
+                label: 'Ofis Yönetimi',
+                icon: Building,
             },
             {
-                href: '/admin/ilanlar?status=active',
-                label: 'Aktif İlanlar',
-                icon: CheckCircle,
-            },
-            {
-                href: '/admin/ilanlar',
-                label: 'Tüm İlanlar',
+                label: 'İlan Yönetimi',
                 icon: List,
+                children: [
+                    {
+                        href: '/admin/ilanlar?status=pending',
+                        label: 'Onay Bekleyenler',
+                        icon: ClipboardList,
+                    },
+                    {
+                        href: '/admin/ilanlar?status=active',
+                        label: 'Aktif İlanlar',
+                        icon: CheckCircle,
+                    },
+                    {
+                        href: '/admin/ilanlar?status=passive',
+                        label: 'Pasif İlanlar',
+                        icon: XCircle,
+                    },
+                    {
+                        href: '/admin/ilanlar',
+                        label: 'Tüm İlanlar',
+                        icon: List,
+                    },
+                ],
+            },
+            {
+                label: 'Bildirim Sistemi',
+                icon: Megaphone,
+                children: [
+                    {
+                        href: '/admin/bildirimler/email',
+                        label: 'Email Bildirimleri',
+                        icon: Mail,
+                    },
+                    {
+                        href: '/admin/bildirimler/sms',
+                        label: 'SMS Bildirimleri',
+                        icon: MessageSquare,
+                    },
+                ],
+            },
+            {
+                label: 'Kullanıcı Yönetimi',
+                icon: Users,
+                children: [
+                    {
+                        href: '/admin/kullanicilar?status=pending',
+                        label: 'Onay Bekleyenler',
+                        icon: ClipboardList,
+                    },
+                    {
+                        href: '/admin/kullanicilar?status=active',
+                        label: 'Aktif Kullanıcılar',
+                        icon: CheckCircle,
+                    },
+                    {
+                        href: '/admin/kullanicilar?status=passive',
+                        label: 'Pasif Kullanıcılar',
+                        icon: XCircle,
+                    },
+                    {
+                        href: '/admin/kullanicilar',
+                        label: 'Tüm Kullanıcılar',
+                        icon: List,
+                    },
+                ],
             },
         ],
     },
     {
-        href: '/admin/ofisler',
-        label: 'Ofis Yönetimi',
-        icon: Building,
-    },
-    {
-        label: 'Bildirim Sistemi',
-        icon: Megaphone,
-        children: [
+        title: 'Site Yönetimi',
+        items: [
             {
-                href: '/admin/bildirimler/email',
-                label: 'Email Bildirimleri',
-                icon: Mail,
+                href: '/admin/spotlights',
+                label: 'Manşet Yönetimi',
+                icon: Megaphone,
             },
             {
-                href: '/admin/bildirimler/sms',
-                label: 'SMS Bildirimleri',
-                icon: MessageSquare,
-            },
-        ],
-    },
-    {
-        label: 'Kullanıcı Yönetimi',
-        icon: Users,
-        children: [
-            {
-                href: '/admin/kullanicilar?status=pending',
-                label: 'Onay Bekleyenler',
-                icon: ClipboardList,
+                href: '/admin/hero-slides',
+                label: 'Slider Yönetimi',
+                icon: SlidersHorizontal,
             },
             {
-                href: '/admin/kullanicilar?status=active',
-                label: 'Aktif Kullanıcılar',
-                icon: CheckCircle,
+                href: '/admin/haberler',
+                label: 'Blog Yönetimi',
+                icon: BookOpen,
             },
             {
-                href: '/admin/kullanicilar',
-                label: 'Tüm Kullanıcılar',
-                icon: List,
+                href: '/admin/faaliyetler',
+                label: 'Faaliyetler',
+                icon: CalendarCheck,
+            },
+            {
+                href: '/admin/canli-yayinlar',
+                label: 'Canlı Yayınlar',
+                icon: Radio,
+            },
+            {
+                href: '/admin/duyurular',
+                label: 'Duyurular',
+                icon: Megaphone,
+            },
+            {
+                href: '/admin/sss',
+                label: 'SSS',
+                icon: HelpCircle,
             },
         ],
-    },
-    {
-        href: '/admin/spotlights',
-        label: 'Manşet Yönetimi',
-        icon: Megaphone, // Using Megaphone temporarily or I can use another icon like 'Star' or 'Layout'
-    },
-    {
-        href: '/admin/hero-slides',
-        label: 'Slider Yönetimi',
-        icon: SlidersHorizontal,
-    },
-    {
-        href: '/admin/haberler',
-        label: 'Blog Yönetimi',
-        icon: BookOpen,
-    },
-    {
-        href: '/admin/faaliyetler',
-        label: 'Faaliyetler',
-        icon: CalendarCheck,
-    },
-    {
-        href: '/admin/canli-yayinlar',
-        label: 'Canlı Yayınlar',
-        icon: Radio,
-    },
-    {
-        href: '/admin/duyurular',
-        label: 'Duyurular',
-        icon: Megaphone,
-    },
-    {
-        href: '/admin/sss',
-        label: 'SSS',
-        icon: HelpCircle,
     },
 ];
 
@@ -257,10 +278,15 @@ export default function AdminLayout({
 
     // Initialize open menu state based on current path
     const [openMenuLabel, setOpenMenuLabel] = useState<string | null>(() => {
-        const activeParent = navItems.find((item) =>
-            item.children?.some((child) => child.href && isActive(child.href)),
-        );
-        return activeParent ? activeParent.label : null;
+        for (const group of navGroups) {
+            const activeParent = group.items.find((item) =>
+                item.children?.some(
+                    (child) => child.href && isActive(child.href),
+                ),
+            );
+            if (activeParent) return activeParent.label;
+        }
+        return null;
     });
 
     const handleMenuClick = (label: string) => {
@@ -272,25 +298,44 @@ export default function AdminLayout({
             <div className="flex min-h-screen overflow-hidden">
                 <aside className="hidden border-r border-gray-200 bg-white lg:flex lg:w-64 lg:flex-col">
                     <div className="flex items-center justify-center border-b border-gray-200 px-6">
-                        <div className="flex items-center space-x-3">
-                            <img
-                                src="https://izeko.deniz-web.com/public/themes/default/assets/images/izeko-logo.png"
-                                alt=""
-                                className="h-26"
-                            />
-                        </div>
+                        <div className="flex items-center space-x-3"></div>
                     </div>
 
                     <nav className="flex-1 overflow-y-auto px-3 py-4">
-                        {navItems.map((item, index) => (
-                            <SidebarItem
-                                key={index}
-                                item={item}
-                                isActive={isActive}
-                                currentPath={currentPath}
-                                isOpen={openMenuLabel === item.label}
-                                onToggle={() => handleMenuClick(item.label)}
-                            />
+                        <SidebarItem
+                            item={{
+                                href: '/admin',
+                                label: 'Ana Sayfa',
+                                icon: Home,
+                            }}
+                            isActive={isActive}
+                            currentPath={currentPath}
+                            isOpen={false}
+                            onToggle={() => {}}
+                        />
+                        <div className="my-2" />
+                        {navGroups.map((group, groupIndex) => (
+                            <div key={groupIndex} className="mb-6 last:mb-0">
+                                <h3 className="mb-2 px-4 text-xs font-semibold tracking-wider text-gray-400 uppercase">
+                                    {group.title}
+                                </h3>
+                                <div className="space-y-1">
+                                    {group.items.map((item, index) => (
+                                        <SidebarItem
+                                            key={index}
+                                            item={item}
+                                            isActive={isActive}
+                                            currentPath={currentPath}
+                                            isOpen={
+                                                openMenuLabel === item.label
+                                            }
+                                            onToggle={() =>
+                                                handleMenuClick(item.label)
+                                            }
+                                        />
+                                    ))}
+                                </div>
+                            </div>
                         ))}
                     </nav>
                 </aside>
@@ -326,16 +371,44 @@ export default function AdminLayout({
                     </div>
 
                     <nav className="flex-1 overflow-y-auto px-3 py-4">
-                        {navItems.map((item, index) => (
-                            <SidebarItem
-                                key={index}
-                                item={item}
-                                isActive={isActive}
-                                currentPath={currentPath}
-                                onMobileClick={() => setMobileOpen(false)}
-                                isOpen={openMenuLabel === item.label}
-                                onToggle={() => handleMenuClick(item.label)}
-                            />
+                        <SidebarItem
+                            item={{
+                                href: '/admin',
+                                label: 'Ana Sayfa',
+                                icon: Home,
+                            }}
+                            isActive={isActive}
+                            currentPath={currentPath}
+                            onMobileClick={() => setMobileOpen(false)}
+                            isOpen={false}
+                            onToggle={() => {}}
+                        />
+                        <div className="my-2" />
+                        {navGroups.map((group, groupIndex) => (
+                            <div key={groupIndex} className="mb-6 last:mb-0">
+                                <h3 className="mb-2 px-4 text-xs font-semibold tracking-wider text-gray-400 uppercase">
+                                    {group.title}
+                                </h3>
+                                <div className="space-y-1">
+                                    {group.items.map((item, index) => (
+                                        <SidebarItem
+                                            key={index}
+                                            item={item}
+                                            isActive={isActive}
+                                            currentPath={currentPath}
+                                            onMobileClick={() =>
+                                                setMobileOpen(false)
+                                            }
+                                            isOpen={
+                                                openMenuLabel === item.label
+                                            }
+                                            onToggle={() =>
+                                                handleMenuClick(item.label)
+                                            }
+                                        />
+                                    ))}
+                                </div>
+                            </div>
                         ))}
                     </nav>
                 </aside>

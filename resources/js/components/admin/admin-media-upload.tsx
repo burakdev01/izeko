@@ -12,6 +12,7 @@ type AdminMediaUploadProps = {
     previewType?: 'image' | 'video';
     ctaLabel?: string;
     removeName?: string;
+    onChange?: (file: File | null) => void;
 };
 
 export default function AdminMediaUpload({
@@ -24,6 +25,7 @@ export default function AdminMediaUpload({
     previewType = 'image',
     ctaLabel = 'Görsel Seç',
     removeName,
+    onChange,
 }: AdminMediaUploadProps) {
     const inputId = useId();
     const [preview, setPreview] = useState<string | null>(initialPreview);
@@ -54,6 +56,7 @@ export default function AdminMediaUpload({
         const nextPreview = URL.createObjectURL(file);
         setPreview(nextPreview);
         setIsRemoved(false);
+        onChange?.(file);
     };
 
     const handleRemove = () => {
@@ -62,6 +65,7 @@ export default function AdminMediaUpload({
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
         }
+        onChange?.(null);
     };
 
     return (

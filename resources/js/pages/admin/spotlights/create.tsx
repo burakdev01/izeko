@@ -121,6 +121,7 @@ export default function SpotlightCreate() {
                                 name="image"
                                 initialPreview={null}
                                 error={errors.image}
+                                onChange={(file) => setData('image', file)}
                             />
                         </div>
                     </div>
