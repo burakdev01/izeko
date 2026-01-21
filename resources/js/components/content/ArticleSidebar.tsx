@@ -45,6 +45,11 @@ const ActionLink = ({ href, label }: { href?: string; label: string }) =>
         </button>
     );
 
+const getNewsImageUrl = (filename: string): string => {
+    if (!filename) return '';
+    return `/uploads/blogs/${filename}`;
+};
+
 export function ArticleSidebar({
     announcements = [],
     news = [],
@@ -137,7 +142,7 @@ export function ArticleSidebar({
                                 className="flex gap-3 border-b border-gray-100 pb-4 last:border-0 last:pb-0"
                             >
                                 <img
-                                    src={item.image}
+                                    src={getNewsImageUrl(item.image)}
                                     alt={item.title}
                                     className="h-20 w-24 flex-shrink-0 rounded object-cover"
                                 />
