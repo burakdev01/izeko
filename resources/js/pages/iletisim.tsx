@@ -2,14 +2,6 @@ import TopBar from '@/components/contact-header';
 import { ArticleLayout } from '@/components/content/ArticleLayout';
 import Footer from '@/components/footer/Footer';
 import { Navbar } from '@/components/navbar/Navbar';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from '@/components/ui/dialog';
 import { useForm } from '@inertiajs/react';
 import { Mail, MapPin, Phone, Users } from 'lucide-react';
 import { FormEventHandler } from 'react';
@@ -318,106 +310,27 @@ export default function Iletisim() {
                                                 className="mt-1 rounded border-gray-300 text-red-600 focus:ring-red-500"
                                             />
                                             <span className="text-sm text-gray-600">
-                                                <Dialog>
-                                                    <DialogTrigger asChild>
-                                                        <button
-                                                            type="button"
-                                                            className="font-medium text-red-600 hover:underline"
-                                                        >
-                                                            KVKK Aydınlatma
-                                                            Metni
-                                                        </button>
-                                                    </DialogTrigger>
-                                                    <DialogContent className="max-h-[80vh] overflow-y-auto sm:max-w-2xl">
-                                                        <DialogHeader>
-                                                            <DialogTitle>
-                                                                KVKK Aydınlatma
-                                                                Metni
-                                                            </DialogTitle>
-                                                            <DialogDescription>
-                                                                Kişisel
-                                                                Verilerin
-                                                                Korunması Kanunu
-                                                                kapsamında
-                                                                bilgilendirme
-                                                                metni.
-                                                            </DialogDescription>
-                                                        </DialogHeader>
-                                                        <div className="space-y-4 text-sm leading-relaxed text-gray-600">
-                                                            <p>
-                                                                <strong>
-                                                                    Veri
-                                                                    Sorumlusu:
-                                                                </strong>{' '}
-                                                                İzmir Emlak
-                                                                Komisyoncuları
-                                                                Odası (İZEKO)
-                                                            </p>
-                                                            <p>
-                                                                6698 sayılı
-                                                                Kişisel
-                                                                Verilerin
-                                                                Korunması Kanunu
-                                                                ("KVKK")
-                                                                uyarınca,
-                                                                kişisel
-                                                                verileriniz;
-                                                                veri sorumlusu
-                                                                olarak İZEKO
-                                                                tarafından
-                                                                aşağıda
-                                                                açıklanan
-                                                                kapsamda
-                                                                işlenebilecektir.
-                                                            </p>
-                                                            <p>
-                                                                <strong>
-                                                                    Kişisel
-                                                                    Verilerin
-                                                                    İşlenme
-                                                                    Amacı:
-                                                                </strong>
-                                                                <br />
-                                                                Toplanan kişisel
-                                                                verileriniz,
-                                                                Odamız
-                                                                tarafından
-                                                                sunulan ürün ve
-                                                                hizmetlerden
-                                                                sizleri
-                                                                faydalandırmak
-                                                                için gerekli
-                                                                çalışmaların iş
-                                                                birimlerimiz
-                                                                tarafından
-                                                                yapılması,
-                                                                Odamızın ve
-                                                                Odamızla iş
-                                                                ilişkisi
-                                                                içerisinde olan
-                                                                kişilerin hukuki
-                                                                ve ticari
-                                                                güvenliğinin
-                                                                temini amacıyla
-                                                                KVKK’nın 5. ve
-                                                                6. maddelerinde
-                                                                belirtilen
-                                                                kişisel veri
-                                                                işleme şartları
-                                                                ve amaçları
-                                                                dahilinde
-                                                                işlenecektir.
-                                                            </p>
-                                                            <p>
-                                                                Detaylı bilgiye
-                                                                www.izeko.org.tr
-                                                                adresinden
-                                                                ulaşabilirsiniz.
-                                                            </p>
-                                                        </div>
-                                                    </DialogContent>
-                                                </Dialog>
-                                                'ni okudum ve kabul ediyorum.
+                                                Kişisel verilerimin{' '}
+                                                <a
+                                                    href="/acik-riza-metni"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="font-medium text-red-600 hover:underline"
+                                                >
+                                                    Açık Rıza Metni
+                                                </a>
+                                                'nde belirlenen şartlarda
+                                                işlenmesine izin verdiğimi ve{' '}
+                                                <a
+                                                    href="/kvkk-aydinlatma-metni"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="font-medium text-red-600 hover:underline"
+                                                >
+                                                    KVKK Aydınlatma Metni
+                                                </a>
+                                                'ni okuduğumu ve kabul ettiğimi
+                                                onaylıyorum.
                                             </span>
                                         </label>
                                         {errors.kvkk_consent && (

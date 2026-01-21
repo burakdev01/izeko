@@ -321,6 +321,15 @@ Route::post('/iletisim', [\App\Http\Controllers\ContactController::class, 'store
 Route::get('/iletisim', [\App\Http\Controllers\ContactController::class, 'index'])
     ->name('iletisim');
 
+Route::get('/acik-riza-metni', function () {
+    return Inertia::render('acik-riza-metni');
+})->name('acik-riza-metni');
+
+Route::get('/kvkk-aydinlatma-metni', function () {
+    return Inertia::render('kvkk-aydinlatma-metni');
+})->name('kvkk-aydinlatma-metni');
+
+
 Route::get('/kullanim-kosullari', function () {
     return Inertia::render('kullanim-kosullari');
 })->name('kullanim-kosullari');
