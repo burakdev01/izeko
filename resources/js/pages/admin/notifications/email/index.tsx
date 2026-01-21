@@ -2,7 +2,7 @@ import AdminPageHeader from '@/components/admin/admin-page-header';
 import DashboardStatsCard from '@/components/admin/dashboard-stats-card';
 import AdminLayout from '@/layouts/admin-layout';
 import { Head, router } from '@inertiajs/react';
-import { AlertCircle, CheckCircle, Filter, Mail, Search } from 'lucide-react';
+import { AlertCircle, CheckCircle, Mail, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 type Notification = {
@@ -19,11 +19,17 @@ type EmailNotificationsIndexProps = {
     filters: {
         search?: string;
     };
+    stats: {
+        today: number;
+        month: number;
+        failed: number;
+    };
 };
 
 export default function EmailNotificationsIndex({
     notifications,
     filters,
+    stats,
 }: EmailNotificationsIndexProps) {
     const [searchQuery, setSearchQuery] = useState(filters.search || '');
 
@@ -56,21 +62,21 @@ export default function EmailNotificationsIndex({
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     <DashboardStatsCard
                         title="Bugün Gönderilen"
-                        value="145"
+                        value={stats.today.toString()}
                         icon={Mail}
                         color="blue"
                         change="%12 Artış"
                     />
                     <DashboardStatsCard
                         title="Bu Ay Gönderilen"
-                        value="12,345"
+                        value={stats.month.toLocaleString()}
                         icon={CheckCircle}
                         color="green"
                         change="%5 Artış"
                     />
                     <DashboardStatsCard
                         title="Bugün Başarısız"
-                        value="2"
+                        value={stats.failed.toString()}
                         icon={AlertCircle}
                         color="red"
                         change="%2 Azalış"
@@ -90,10 +96,10 @@ export default function EmailNotificationsIndex({
                         />
                     </div>
                     <div className="flex items-center gap-2">
-                        <button className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50">
+                        {/* <button className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50">
                             <Filter className="h-4 w-4" />
                             Filtrele
-                        </button>
+                        </button> */}
                         {/* <button className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50">
                             <Download className="h-4 w-4" />
                             Dışa Aktar

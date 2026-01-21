@@ -26,9 +26,16 @@ class NotificationController extends Controller
 
         $notifications = $query->orderByDesc('created_at')->get();
 
+        $stats = [
+            'today' => Notification::where('type', 'email')->whereDate('created_at', today())->count(),
+            'month' => Notification::where('type', 'email')->whereMonth('created_at', now()->month)->count(),
+            'failed' => Notification::where('type', 'email')->where('status', 'failed')->count(), // Assuming status column exists or we might need to add it logic later if not present in migration
+        ];
+
         return Inertia::render('admin/notifications/email/index', [
             'notifications' => $notifications,
             'filters' => $request->only(['search']),
+            'stats' => $stats,
         ]);
     }
 
@@ -89,9 +96,16 @@ class NotificationController extends Controller
 
         $notifications = $query->orderByDesc('created_at')->get();
 
+        $stats = [
+            'today' => Notification::where('type', 'sms')->whereDate('created_at', today())->count(),
+            'month' => Notification::where('type', 'sms')->whereMonth('created_at', now()->month)->count(),
+            'failed' => Notification::where('type', 'sms')->where('status', 'failed')->count(),
+        ];
+
         return Inertia::render('admin/notifications/sms/index', [
             'notifications' => $notifications,
             'filters' => $request->only(['search']),
+            'stats' => $stats,
         ]);
     }
 

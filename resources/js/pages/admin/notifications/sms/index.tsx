@@ -2,14 +2,7 @@ import AdminPageHeader from '@/components/admin/admin-page-header';
 import DashboardStatsCard from '@/components/admin/dashboard-stats-card';
 import AdminLayout from '@/layouts/admin-layout';
 import { Head, router } from '@inertiajs/react';
-import {
-    AlertCircle,
-    CheckCircle,
-    Download,
-    Filter,
-    MessageSquare,
-    Search,
-} from 'lucide-react';
+import { AlertCircle, CheckCircle, MessageSquare, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 type Notification = {
@@ -26,11 +19,17 @@ type SmsNotificationsIndexProps = {
     filters: {
         search?: string;
     };
+    stats: {
+        today: number;
+        month: number;
+        failed: number;
+    };
 };
 
 export default function SmsNotificationsIndex({
     notifications,
     filters,
+    stats,
 }: SmsNotificationsIndexProps) {
     const [searchQuery, setSearchQuery] = useState(filters.search || '');
 
@@ -63,24 +62,24 @@ export default function SmsNotificationsIndex({
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     <DashboardStatsCard
                         title="Bugün Gönderilen"
-                        value="85"
+                        value={stats.today.toString()}
                         icon={MessageSquare}
                         color="blue"
-                        change="%8 Artış"
+                        change=""
                     />
                     <DashboardStatsCard
                         title="Bu Ay Gönderilen"
-                        value="5,432"
+                        value={stats.month.toLocaleString()}
                         icon={CheckCircle}
                         color="green"
-                        change="%3 Artış"
+                        change=""
                     />
                     <DashboardStatsCard
                         title="Bugün Başarısız"
-                        value="1"
+                        value={stats.failed.toString()}
                         icon={AlertCircle}
                         color="red"
-                        change="%1 Azalış"
+                        change=""
                         trend="down"
                     />
                 </div>
@@ -97,14 +96,14 @@ export default function SmsNotificationsIndex({
                         />
                     </div>
                     <div className="flex items-center gap-2">
-                        <button className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50">
+                        {/* <button className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50">
                             <Filter className="h-4 w-4" />
                             Filtrele
                         </button>
                         <button className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50">
                             <Download className="h-4 w-4" />
                             Dışa Aktar
-                        </button>
+                        </button> */}
                     </div>
                 </div>
 

@@ -12,5 +12,6 @@ class Notification extends Model
         'message',
         'recipient_count',
         'audience',
+        'status',
     ];
 }
