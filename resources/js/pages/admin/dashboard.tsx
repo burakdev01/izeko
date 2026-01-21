@@ -43,7 +43,7 @@ export default function AdminDashboard({
     const userName = auth?.user?.name || 'Admin';
 
     return (
-        <AdminLayout title="Dashboard">
+        <AdminLayout title="Anasayfa">
             <Head title="Panel Özeti" />
 
             <div className="space-y-8">
@@ -57,7 +57,7 @@ export default function AdminDashboard({
                             İşte bugünkü panel özetiniz ve istatistikler.
                         </p>
                     </div>
-                    <div className="flex gap-3">
+                    <div className="flex hidden gap-3">
                         <Link
                             href={route('admin.ilanlar.create')}
                             className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-red-700 hover:shadow-md active:scale-95"
@@ -162,7 +162,7 @@ export default function AdminDashboard({
                                                     </td>
                                                     <td className="px-6 py-4">
                                                         <span
-                                                            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                                                            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-center text-xs font-medium ${
                                                                 item.status ===
                                                                 'active'
                                                                     ? 'bg-green-100 text-green-800'
@@ -280,12 +280,14 @@ export default function AdminDashboard({
                                 Bu ay toplam {stats.activities} yeni faaliyet ve{' '}
                                 {stats.streams} canlı yayın gerçekleştirildi.
                             </p>
-                            <Link
-                                href={route('admin.faaliyetler.index')}
-                                className="mt-6 inline-flex w-full items-center justify-center rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50"
-                            >
-                                Raporu Görüntüle
-                            </Link>
+                            <div className="hidden">
+                                <Link
+                                    href={route('admin.faaliyetler.index')}
+                                    className="mt-6 inline-flex w-full items-center justify-center rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50"
+                                >
+                                    Raporu Görüntüle
+                                </Link>
+                            </div>
                         </div>
                     </div>
                 </div>

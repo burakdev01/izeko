@@ -250,7 +250,7 @@ const SidebarItem = ({
 };
 
 export default function AdminLayout({
-    title = 'Dashboard',
+    title = 'Anasayfa',
     children,
 }: AdminLayoutProps) {
     const page = usePage();
