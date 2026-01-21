@@ -76,7 +76,7 @@ export function MembershipSection() {
 
                 {/* Sağ */}
                 <div className="flex items-center justify-center">
-                    <MembershipImage image="https://izeko.org.tr/app/themes/default/assets/images/oda-uyelerimiz.jpg" />
+                    <MembershipImage image="https://i.hizliresim.com/s0dpphs.png" />
                 </div>
             </div>
         </section>
