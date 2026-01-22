@@ -120,11 +120,11 @@ export default function HeroSlideForm({
                         initialPreview={slide?.image ?? null}
                         removeName="remove_image"
                         onChange={(file) =>
-                            setData((data) => ({
+                            setData({
                                 ...data,
                                 image_file: file,
                                 remove_image: file === null,
-                            }))
+                            })
                         }
                         error={errors.image_file}
                     />
@@ -138,11 +138,11 @@ export default function HeroSlideForm({
                         helperText="MP4, WebM veya OGG yükleyebilirsiniz."
                         removeName="remove_video"
                         onChange={(file) =>
-                            setData((data) => ({
+                            setData({
                                 ...data,
                                 video_file: file,
                                 remove_video: file === null,
-                            }))
+                            })
                         }
                         error={errors.video_file}
                     />
