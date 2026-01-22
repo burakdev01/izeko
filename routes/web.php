@@ -409,18 +409,17 @@ Route::get('/admin/login', function (Request $request) {
 Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
     function () {
         Route::get('/', function () {
-            $listings = \App\Models\Listing::with(['user', 'office'])
-                ->latest()
+            $users = \App\Models\User::where('status', 'pending')
+                ->orderByDesc('created_at')
                 ->take(5)
                 ->get()
-                ->map(fn ($listing) => [
-                    'id' => $listing->id,
-                    'title' => $listing->title,
-                    'office' => $listing->office->name ?? '-',
-                    'user' => $listing->user->name ?? '-',
-                    'price' => $listing->price,
-                    'status' => $listing->listing_status,
-                    'date' => $listing->created_at->format('d.m.Y'),
+                ->map(fn ($user) => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'surname' => $user->surname,
+                    'email' => $user->email,
+                    'phone' => $user->phone_number,
+                    'date' => $user->created_at->format('d.m.Y'),
                 ]);
 
             return Inertia::render('admin/dashboard', [
@@ -434,7 +433,7 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
                     'streams' => LiveStream::count(),
                     'posts' => BlogPost::count(),
                 ],
-                'recentListings' => $listings,
+                'recentUsers' => $users,
             ]);
         })->name('dashboard');
 

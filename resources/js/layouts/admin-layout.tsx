@@ -69,7 +69,7 @@ const navGroups: NavGroup[] = [
                         icon: CheckCircle,
                     },
                     {
-                        href: '/admin/ilanlar?status=passive',
+                        href: '/admin/ilanlar?status=inactive',
                         label: 'Pasif İlanlar',
                         icon: XCircle,
                     },

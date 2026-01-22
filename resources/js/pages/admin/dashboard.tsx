@@ -5,9 +5,8 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import {
     Activity,
     Building2,
-    FileText,
     Home,
-    Megaphone,
+    Mail,
     Play,
     Plus,
     Users,
@@ -24,21 +23,17 @@ type DashboardProps = {
         streams: number;
         posts: number;
     };
-    recentListings: Array<{
+    recentUsers: Array<{
         id: number;
-        title: string;
-        office: string;
-        user: string;
-        price: number;
-        status: string;
+        name: string;
+        surname: string;
+        email: string;
+        phone: string;
         date: string;
     }>;
 };
 
-export default function AdminDashboard({
-    stats,
-    recentListings,
-}: DashboardProps) {
+export default function AdminDashboard({ stats, recentUsers }: DashboardProps) {
     const { auth } = usePage<SharedData>().props;
     const userName = auth?.user?.name || 'Admin';
 
@@ -69,7 +64,7 @@ export default function AdminDashboard({
                 </div>
 
                 {/* Stats Grid */}
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
                     <DashboardStatsCard
                         title="Toplam İlan"
                         value={stats.listings}
@@ -105,15 +100,15 @@ export default function AdminDashboard({
                 </div>
 
                 <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-                    {/* Main Content - Recent Listings */}
+                    {/* Main Content - Recent Users */}
                     <div className="lg:col-span-2">
                         <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
                             <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
-                                <h3 className="font-semibold text-gray-900">
-                                    Son Eklenen İlanlar
-                                </h3>
+                                Onay Bekleyen Kullanıcılar
                                 <Link
-                                    href={route('admin.ilanlar.index')}
+                                    href={route('admin.kullanicilar.index', {
+                                        status: 'pending',
+                                    })}
                                     className="text-sm font-medium text-red-600 hover:text-red-700 hover:underline"
                                 >
                                     Tümünü Gör
@@ -124,62 +119,48 @@ export default function AdminDashboard({
                                     <thead className="bg-gray-50 text-xs text-gray-700 uppercase">
                                         <tr>
                                             <th className="px-6 py-3">
-                                                İlan Başlığı
+                                                Ad Soyad
                                             </th>
-                                            <th className="px-6 py-3">Fiyat</th>
                                             <th className="px-6 py-3">
-                                                Ekleyen
+                                                E-posta
                                             </th>
-                                            <th className="px-6 py-3">Ofis</th>
-                                            <th className="px-6 py-3">Durum</th>
+                                            <th className="px-6 py-3">
+                                                Telefon
+                                            </th>
+                                            <th className="px-6 py-3">Tarih</th>
+                                            <th className="px-6 py-3">İşlem</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {recentListings.length > 0 ? (
-                                            recentListings.map((item) => (
+                                        {recentUsers.length > 0 ? (
+                                            recentUsers.map((user) => (
                                                 <tr
-                                                    key={item.id}
+                                                    key={user.id}
                                                     className="border-b bg-white hover:bg-gray-50 md:border-none"
                                                 >
                                                     <td className="px-6 py-4 font-medium text-gray-900">
-                                                        {item.title}
-                                                    </td>
-                                                    <td className="px-6 py-4 font-bold text-gray-900">
-                                                        {new Intl.NumberFormat(
-                                                            'tr-TR',
-                                                            {
-                                                                style: 'currency',
-                                                                currency: 'TRY',
-                                                                maximumFractionDigits: 0,
-                                                            },
-                                                        ).format(item.price)}
+                                                        {user.name}{' '}
+                                                        {user.surname}
                                                     </td>
                                                     <td className="px-6 py-4">
-                                                        {item.user}
+                                                        {user.email}
                                                     </td>
                                                     <td className="px-6 py-4">
-                                                        {item.office}
+                                                        {user.phone}
                                                     </td>
                                                     <td className="px-6 py-4">
-                                                        <span
-                                                            className={`inline-flex w-full items-center justify-center rounded-full px-2.5 py-0.5 text-center text-xs font-medium ${
-                                                                item.status ===
-                                                                'active'
-                                                                    ? 'bg-green-100 text-green-800'
-                                                                    : item.status ===
-                                                                        'pending'
-                                                                      ? 'bg-yellow-100 text-yellow-800'
-                                                                      : 'bg-gray-100 text-gray-800'
-                                                            }`}
+                                                        {user.date}
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <Link
+                                                            href={route(
+                                                                'admin.kullanicilar.edit',
+                                                                user.id,
+                                                            )}
+                                                            className="inline-flex w-full items-center justify-center rounded-lg bg-green-600 px-3 py-1.5 text-center text-xs font-semibold text-white transition-colors hover:bg-green-700"
                                                         >
-                                                            {item.status ===
-                                                            'active'
-                                                                ? 'Yayında'
-                                                                : item.status ===
-                                                                    'pending'
-                                                                  ? 'Onay Bekliyor'
-                                                                  : 'Pasif'}
-                                                        </span>
+                                                            Onayla
+                                                        </Link>
                                                     </td>
                                                 </tr>
                                             ))
@@ -189,8 +170,7 @@ export default function AdminDashboard({
                                                     colSpan={5}
                                                     className="px-6 py-8 text-center text-gray-500"
                                                 >
-                                                    Henüz ilan girişi
-                                                    yapılmamış.
+                                                    Onay bekleyen kullanıcı yok.
                                                 </td>
                                             </tr>
                                         )}
@@ -208,45 +188,49 @@ export default function AdminDashboard({
                             </h3>
                             <div className="grid grid-cols-1 gap-3">
                                 <Link
-                                    href={route('admin.kullanicilar.index')}
+                                    href={route('admin.ilanlar.index', {
+                                        status: 'pending',
+                                    })}
                                     className="group flex w-full items-center justify-between rounded-xl border border-gray-200 bg-gray-50 p-4 transition-all hover:border-red-200 hover:bg-white hover:shadow-md"
                                 >
                                     <div className="flex items-center gap-3">
                                         <div className="rounded-lg bg-blue-100 p-2 text-blue-600 transition-colors group-hover:bg-red-100 group-hover:text-red-600">
-                                            <Users size={20} />
+                                            <Home size={20} />
                                         </div>
                                         <span className="font-medium text-gray-700 group-hover:text-gray-900">
-                                            Üye Onayla
+                                            İlan Onayla
                                         </span>
                                     </div>
                                     <Plus className="text-gray-400 group-hover:text-red-500" />
                                 </Link>
 
                                 <Link
-                                    href={route('admin.duyurular.create')}
+                                    href={route(
+                                        'admin.notifications.email.create',
+                                    )}
                                     className="group flex w-full items-center justify-between rounded-xl border border-gray-200 bg-gray-50 p-4 transition-all hover:border-red-200 hover:bg-white hover:shadow-md"
                                 >
                                     <div className="flex items-center gap-3">
                                         <div className="rounded-lg bg-orange-100 p-2 text-orange-600 transition-colors group-hover:bg-red-100 group-hover:text-red-600">
-                                            <Megaphone size={20} />
+                                            <Mail size={20} />
                                         </div>
                                         <span className="font-medium text-gray-700 group-hover:text-gray-900">
-                                            Duyuru Yayınla
+                                            Toplu Email Gönder
                                         </span>
                                     </div>
                                     <Plus className="text-gray-400 group-hover:text-red-500" />
                                 </Link>
 
                                 <Link
-                                    href={route('admin.haberler.create')}
+                                    href={route('admin.kullanicilar.index')}
                                     className="group flex w-full items-center justify-between rounded-xl border border-gray-200 bg-gray-50 p-4 transition-all hover:border-red-200 hover:bg-white hover:shadow-md"
                                 >
                                     <div className="flex items-center gap-3">
                                         <div className="rounded-lg bg-purple-100 p-2 text-purple-600 transition-colors group-hover:bg-red-100 group-hover:text-red-600">
-                                            <FileText size={20} />
+                                            <Users size={20} />
                                         </div>
                                         <span className="font-medium text-gray-700 group-hover:text-gray-900">
-                                            Blog Yazısı Ekle
+                                            Tüm Kullanıcılar
                                         </span>
                                     </div>
                                     <Plus className="text-gray-400 group-hover:text-red-500" />

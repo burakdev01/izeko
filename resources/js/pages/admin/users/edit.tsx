@@ -9,7 +9,7 @@ type User = {
     surname: string;
     email: string;
     phone_number: string;
-    is_active: boolean;
+    status: 'active' | 'pending' | 'passive';
 };
 
 type UserEditProps = {
@@ -22,7 +22,7 @@ export default function UserEdit({ user }: UserEditProps) {
         surname: user.surname || '',
         email: user.email,
         phone_number: user.phone_number || '',
-        is_active: user.is_active,
+        status: user.status,
     });
 
     const submit = (e: React.FormEvent) => {
@@ -125,10 +125,10 @@ export default function UserEdit({ user }: UserEditProps) {
                                 <label className="flex cursor-pointer items-center space-x-2">
                                     <input
                                         type="radio"
-                                        name="is_active"
-                                        checked={data.is_active === true}
+                                        name="status"
+                                        checked={data.status === 'active'}
                                         onChange={() =>
-                                            setData('is_active', true)
+                                            setData('status', 'active')
                                         }
                                         className="h-4 w-4 border-gray-300 text-[#da1f25] focus:ring-[#da1f25]"
                                     />
@@ -140,21 +140,37 @@ export default function UserEdit({ user }: UserEditProps) {
                                 <label className="flex cursor-pointer items-center space-x-2">
                                     <input
                                         type="radio"
-                                        name="is_active"
-                                        checked={data.is_active === false}
+                                        name="status"
+                                        checked={data.status === 'pending'}
                                         onChange={() =>
-                                            setData('is_active', false)
+                                            setData('status', 'pending')
                                         }
                                         className="h-4 w-4 border-gray-300 text-[#da1f25] focus:ring-[#da1f25]"
                                     />
                                     <span className="text-sm text-gray-700">
-                                        Pasif / Onay Bekliyor
+                                        Onay Bekliyor
+                                    </span>
+                                </label>
+
+                                <label className="flex cursor-pointer items-center space-x-2">
+                                    <input
+                                        type="radio"
+                                        name="status"
+                                        checked={data.status === 'passive'}
+                                        onChange={() =>
+                                            setData('status', 'passive')
+                                        }
+                                        className="h-4 w-4 border-gray-300 text-[#da1f25] focus:ring-[#da1f25]"
+                                    />
+                                    <span className="text-sm text-gray-700">
+                                        Pasif
                                     </span>
                                 </label>
                             </div>
                             <InputError
                                 className="mt-2"
-                                message={errors.is_active}
+                                // @ts-ignore
+                                message={errors.status}
                             />
                         </div>
                     </div>

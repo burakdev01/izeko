@@ -88,71 +88,6 @@ const listingsData: Listing[] = [
         image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400',
         badges: ['premium'],
     },
-    {
-        id: 2,
-        title: "🏠 AY EMLAKTAN AKÇAY'DA AYRI MUTFAK SATILIK 2+1 GENİŞ LÜKS DAİRE ⭐",
-        price: 4050000,
-        date: new Date('2025-12-04'),
-        area: 110,
-        netArea: 95,
-        rooms: '2+1',
-        location: 'Balıkesir Edremit',
-        city: 'Balıkesir',
-        image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400',
-        badges: ['emlak'],
-    },
-    {
-        id: 3,
-        title: "⭐ Kağıthane Meydan'a 1dk. 1+1 Full Tadilatlı Satılık Daire 🏠",
-        price: 2750000,
-        date: new Date('2025-12-08'),
-        area: 45,
-        netArea: 38,
-        rooms: '1+1',
-        location: 'İstanbul Kağıthane',
-        city: 'İstanbul',
-        image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400',
-        badges: ['premium'],
-    },
-    {
-        id: 4,
-        title: 'ESENYURT CUMHURİYET MAH BUTİK SİTE İÇİNDE SIFIR SATILIK 3+1DAİRE 🏠',
-        price: 6450000,
-        date: new Date('2025-12-09'),
-        area: 150,
-        netArea: 130,
-        rooms: '3+1',
-        location: 'İstanbul Esenyurt',
-        city: 'İstanbul',
-        image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400',
-        badges: ['premium', 'insaat'],
-    },
-    {
-        id: 5,
-        title: '🏠 DENİZ MANZARALI LÜKS VİLLA FULL EŞYALI SATILIK ⭐',
-        price: 15500000,
-        date: new Date('2025-12-07'),
-        area: 320,
-        netArea: 280,
-        rooms: '5+2',
-        location: 'Antalya Alanya',
-        city: 'Antalya',
-        image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400',
-        badges: ['emlak'],
-    },
-    {
-        id: 6,
-        title: '⭐ ŞEHİR MERKEZİNDE YATIRIMLIK FIRSAT DAİRE 🏠',
-        price: 3200000,
-        date: new Date('2025-12-06'),
-        area: 85,
-        netArea: 70,
-        rooms: '2+1',
-        location: 'Ankara Çankaya',
-        city: 'Ankara',
-        image: 'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400',
-        badges: ['premium'],
-    },
 ];
 
 const categories: Category[] = [
@@ -189,11 +124,11 @@ const roomOptions: RoomOption[] = [
 ];
 
 const tabs: Tab[] = [
-    { id: 'all', label: 'Tümü' },
-    { id: 'sahibinden', label: 'Sahibinden' },
-    { id: 'emlak', label: 'Emlak Ofisinden' },
-    { id: 'insaat', label: 'İnşaat Firmasından' },
-    { id: 'bankadan', label: 'Bankadan' },
+    // { id: 'all', label: 'Tümü' },
+    // { id: 'sahibinden', label: 'Sahibinden' },
+    // { id: 'emlak', label: 'Emlak Ofisinden' },
+    // { id: 'insaat', label: 'İnşaat Firmasından' },
+    // { id: 'bankadan', label: 'Bankadan' },
 ];
 
 const viewOptions: ViewOption[] = [
@@ -565,6 +500,7 @@ function ListingsHeader({
     activeTab,
     onSelect,
 }: ListingsHeaderProps) {
+    return null;
     return (
         <div className="mb-5 rounded-lg bg-white p-5 shadow-[0_2px_8px_rgba(0,0,0,0.1)]">
             <h1 className="mb-3.75 text-[24px] text-[#d92025] max-[480px]:text-[20px]">

@@ -26,6 +26,11 @@ const teamMembers: TeamMember[] = [
         image: 'https://izeko.org.tr/app/themes/default/assets/images/room-team/sezen-tayis.jpg',
     },
     {
+        name: 'Barış KIRKURT',
+        title: 'Oda Personeli',
+        image: 'https://izeko.org.tr/app/themes/default/assets/images/room-team/baris-kirkurt.jpg',
+    },
+    {
         name: 'Yeşim Gedikoğlu',
         title: 'Sosyal Medya Uzmanı',
         image: 'https://placehold.co/300x300',

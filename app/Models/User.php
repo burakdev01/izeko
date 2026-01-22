@@ -27,7 +27,7 @@ class User extends Authenticatable
         'cover_photo_path',
         'password',
         'is_admin',
-        'is_active',
+        'status',
     ];
 
     /**
@@ -54,7 +54,6 @@ class User extends Authenticatable
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
             'is_admin' => 'boolean',
-            'is_active' => 'boolean',
         ];
     }
     public function offices()

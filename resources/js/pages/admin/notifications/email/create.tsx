@@ -102,21 +102,6 @@ export default function EmailCreate({ users, offices }: EmailCreateProps) {
                                     <input
                                         type="radio"
                                         name="audience"
-                                        value="all"
-                                        checked={data.audience === 'all'}
-                                        onChange={(e) =>
-                                            setData('audience', e.target.value)
-                                        }
-                                        className="h-4 w-4 border-gray-300 text-[#da1f25] focus:ring-[#da1f25]"
-                                    />
-                                    <span className="text-sm font-medium text-gray-700">
-                                        Tüm Herkes
-                                    </span>
-                                </label>
-                                <label className="flex cursor-pointer items-center space-x-2 rounded-lg border border-gray-200 p-4 hover:bg-gray-50">
-                                    <input
-                                        type="radio"
-                                        name="audience"
                                         value="offices"
                                         checked={data.audience === 'offices'}
                                         onChange={(e) =>

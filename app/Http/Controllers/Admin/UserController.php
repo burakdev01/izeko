@@ -15,12 +15,8 @@ class UserController extends Controller
         $query = User::query();
 
         // Filter by status
-        if ($request->has('status')) {
-            if ($request->status === 'active') {
-                $query->where('is_active', true);
-            } elseif ($request->status === 'pending' || $request->status === 'passive') {
-                $query->where('is_active', false);
-            }
+        if ($request->has('status') && in_array($request->status, ['active', 'pending', 'passive'])) {
+            $query->where('status', $request->status);
         }
 
         if ($request->filled('search')) {
@@ -55,7 +51,7 @@ class UserController extends Controller
             'surname' => 'nullable|string|max:255',
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'phone_number' => 'nullable|string|max:255',
-            'is_active' => 'required|boolean',
+            'status' => 'required|in:active,pending,passive',
         ]);
 
         $user->update($validated);

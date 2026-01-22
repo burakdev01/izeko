@@ -11,7 +11,7 @@ type User = {
     surname: string;
     email: string;
     phone_number: string;
-    is_active: boolean;
+    status: 'active' | 'pending' | 'passive';
     created_at: string;
 };
 
@@ -30,19 +30,37 @@ export default function UsersIndex({ users, filters }: UsersIndexProps) {
                 return 'Onay Bekleyen Kullanıcılar';
             case 'active':
                 return 'Aktif Kullanıcılar';
+            case 'passive':
+                return 'Pasif Kullanıcılar';
             default:
                 return 'Tüm Kullanıcılar';
         }
     };
 
-    const getStatusLabel = (isActive: boolean) => {
-        return isActive ? 'Aktif' : 'Pasif / Onay Bekliyor';
+    const getStatusLabel = (status: string) => {
+        switch (status) {
+            case 'active':
+                return 'Aktif';
+            case 'pending':
+                return 'Onay Bekliyor';
+            case 'passive':
+                return 'Pasif';
+            default:
+                return status;
+        }
     };
 
-    const getStatusColor = (isActive: boolean) => {
-        return isActive
-            ? 'bg-green-100 text-green-800'
-            : 'bg-yellow-100 text-yellow-800';
+    const getStatusColor = (status: string) => {
+        switch (status) {
+            case 'active':
+                return 'bg-green-100 text-green-800';
+            case 'pending':
+                return 'bg-yellow-100 text-yellow-800';
+            case 'passive':
+                return 'bg-gray-100 text-gray-800';
+            default:
+                return 'bg-gray-100 text-gray-800';
+        }
     };
 
     const [searchQuery, setSearchQuery] = useState(filters.search || '');
@@ -140,10 +158,10 @@ export default function UsersIndex({ users, filters }: UsersIndexProps) {
                                         <td className="px-6 py-4 text-center">
                                             <span
                                                 className={`inline-flex rounded-full px-2 text-xs leading-5 font-semibold ${getStatusColor(
-                                                    user.is_active,
+                                                    user.status,
                                                 )}`}
                                             >
-                                                {getStatusLabel(user.is_active)}
+                                                {getStatusLabel(user.status)}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-center">
