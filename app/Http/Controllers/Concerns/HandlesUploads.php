@@ -36,13 +36,25 @@ trait HandlesUploads
         string $directory,
         string $disk = 'public',
     ): ?string {
+        \Illuminate\Support\Facades\Log::info('Storing file for field: ' . $field);
         if (! $request->hasFile($field)) {
+             \Illuminate\Support\Facades\Log::warning('No file found for field: ' . $field);
             return null;
         }
 
-        $path = $request->file($field)->store($directory, $disk);
-
-        return basename($path);
+        try {
+            $path = $request->file($field)->store($directory, $disk);
+            if ($path) {
+                \Illuminate\Support\Facades\Log::info('File stored successfully at: ' . $path);
+                return basename($path);
+            } else {
+                \Illuminate\Support\Facades\Log::error('Failed to store file in directory: ' . $directory);
+                return null;
+            }
+        } catch (\Exception $e) {
+             \Illuminate\Support\Facades\Log::error('Exception storing file: ' . $e->getMessage());
+             throw $e;
+        }
     }
 
     protected function storePublicImageNameAsWebp(
@@ -51,19 +63,32 @@ trait HandlesUploads
         string $directory,
         string $disk = 'public',
     ): ?string {
+        \Illuminate\Support\Facades\Log::info('Storing image as WebP for field: ' . $field);
         $file = $request->file($field);
 
         if (! $file) {
+            \Illuminate\Support\Facades\Log::warning('No file found for field: ' . $field);
             return null;
         }
 
-        $webpContents = $this->convertImageToWebp($file, $field);
-        $fileName = $this->webpFileName($file);
-        $path = rtrim($directory, '/').'/'.$fileName;
+        try {
+            $webpContents = $this->convertImageToWebp($file, $field);
+            $fileName = $this->webpFileName($file);
+            $path = rtrim($directory, '/').'/'.$fileName;
 
-        Storage::disk($disk)->put($path, $webpContents);
-
-        return $fileName;
+            $result = Storage::disk($disk)->put($path, $webpContents);
+            
+            if ($result) {
+                \Illuminate\Support\Facades\Log::info('Image stored successfully at: ' . $path);
+                return $fileName;
+            } else {
+                \Illuminate\Support\Facades\Log::error('Failed to store image at: ' . $path);
+                return null;
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Exception storing image: ' . $e->getMessage());
+            throw $e;
+        }
     }
 
     protected function storePublicImageAsWebp(

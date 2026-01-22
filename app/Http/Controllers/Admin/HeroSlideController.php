@@ -33,9 +33,6 @@ class HeroSlideController extends Controller
 
     public function store(Request $request)
     {
-        \Illuminate\Support\Facades\Log::info('HeroSlide Store Request:', $request->all());
-        \Illuminate\Support\Facades\Log::info('HeroSlide Files:', $request->allFiles());
-        
         $validated = $this->validateSlide($request);
 
         if (

@@ -54,17 +54,17 @@ export default function HeroSlidesIndex({ slides }: HeroSlidesIndexProps) {
                         <table className="w-full">
                             <thead className="border-b border-gray-200 bg-gray-50">
                                 <tr>
-                                    <th className="w-12 px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500" />
-                                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                    <th className="w-12 px-4 py-3 text-center text-xs font-medium tracking-wider text-gray-500 uppercase" />
+                                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                                         Başlık
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                                         Tür
                                     </th>
-                                    <th className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500">
+                                    <th className="px-6 py-3 text-center text-xs font-medium tracking-wider text-gray-500 uppercase">
                                         Önizleme
                                     </th>
-                                    <th className="w-24 px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500">
+                                    <th className="w-24 px-6 py-3 text-center text-xs font-medium tracking-wider text-gray-500 uppercase">
                                         İşlemler
                                     </th>
                                 </tr>
@@ -117,11 +117,6 @@ export default function HeroSlidesIndex({ slides }: HeroSlidesIndexProps) {
                                                             {slide.subtitle}
                                                         </span>
                                                     ) : null}
-                                                    {slide.video ? (
-                                                        <span className="max-w-xs truncate text-xs text-gray-400">
-                                                            {slide.video}
-                                                        </span>
-                                                    ) : null}
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
@@ -139,11 +134,18 @@ export default function HeroSlidesIndex({ slides }: HeroSlidesIndexProps) {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center justify-center">
-                                                    <img
-                                                        src={preview}
-                                                        alt={slide.title}
-                                                        className="h-12 w-12 rounded-lg object-cover"
-                                                    />
+                                                    {!hasVideo && (
+                                                        <img
+                                                            src={preview}
+                                                            alt={slide.title}
+                                                            className="h-12 w-12 rounded-lg object-cover"
+                                                        />
+                                                    )}
+                                                    {hasVideo && (
+                                                        <span className="text-gray-400">
+                                                            -
+                                                        </span>
+                                                    )}
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
