@@ -19,6 +19,16 @@ class ContactController extends Controller
         try {
             \Illuminate\Support\Facades\Log::info('Contact form submission received', $request->all());
 
+            // Google reCAPTCHA Verification
+            $url = 'https://www.google.com/recaptcha/api/siteverify';
+            $privatekey = "6Ld_jFIsAAAAAMQq2TGJ8YU5j-ryeK5CxZmZCrA0";
+            $response = file_get_contents($url."?secret=".$privatekey."&response=".$request->input('g-recaptcha-response')."&remoteip=".$request->ip());
+            $data = json_decode($response);
+
+            if (!$data->success) {
+                return Redirect::back()->withErrors(['message' => 'Doğrulama başarısız. Lütfen robot olmadığınızı doğrulayın.']);
+            }
+
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|max:255',

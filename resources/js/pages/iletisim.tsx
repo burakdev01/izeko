@@ -6,6 +6,12 @@ import { useForm } from '@inertiajs/react';
 import { Mail, MapPin, Phone, Users } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
+declare global {
+    interface Window {
+        grecaptcha: any;
+    }
+}
+
 export default function Iletisim() {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
@@ -14,6 +20,7 @@ export default function Iletisim() {
         subject: '',
         message: '',
         kvkk_consent: false,
+        'g-recaptcha-response': '',
     });
 
     const submit: FormEventHandler = (e) => {
@@ -22,7 +29,13 @@ export default function Iletisim() {
             onSuccess: () => reset(),
             onError: (err) => {
                 console.error(err);
-                alert('Form gönderilemedi: ' + JSON.stringify(err));
+                if (err.message) {
+                    alert(err.message);
+                } else {
+                    alert(
+                        'Form gönderilemedi. Lütfen bilgilerinizi kontrol ediniz.',
+                    );
+                }
             },
         });
     };
@@ -343,15 +356,37 @@ export default function Iletisim() {
 
                                     <div className="md:col-span-2">
                                         <div
+                                            ref={(el) => {
+                                                if (el && window.grecaptcha) {
+                                                    try {
+                                                        window.grecaptcha.render(
+                                                            el,
+                                                            {
+                                                                sitekey:
+                                                                    '6Ld_jFIsAAAAAHE1UCcc3hpFR1ZfBMUKmmbXttvA',
+                                                                callback: (
+                                                                    token: string,
+                                                                ) => {
+                                                                    setData(
+                                                                        'g-recaptcha-response',
+                                                                        token,
+                                                                    );
+                                                                },
+                                                            },
+                                                        );
+                                                    } catch (e) {
+                                                        // Already rendered or error
+                                                    }
+                                                }
+                                            }}
                                             className="g-recaptcha"
-                                            data-sitekey="6Ld_jFIsAAAAAHE1UCcc3hpFR1ZfBMUKmmbXttvA"
                                         ></div>
                                     </div>
                                     <div className="md:col-span-2">
                                         <button
                                             type="submit"
                                             disabled={processing}
-                                            className="mt-2 inline-flex items-center justify-center rounded-lg bg-red-600 px-8 py-3 font-semibold text-white transition hover:bg-red-700 disabled:opacity-50"
+                                            className="mt-2 inline-flex cursor-pointer items-center justify-center rounded-lg bg-red-600 px-8 py-3 font-semibold text-white transition hover:bg-red-700 disabled:opacity-50"
                                         >
                                             {processing
                                                 ? 'Gönderiliyor...'
