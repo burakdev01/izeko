@@ -11,7 +11,7 @@ export const heroSlides: HeroSlideData[] = [
     {
         id: 1,
         title: 'İZEKO CRM NEDİR?',
-        subtitle: 'Türkiye’nin ilk ve tek esnaf odası özel CRM çözümü!',
+        subtitle: 'aaaTürkiye’nin ilk ve tek esnaf odası özel CRM çözümü!',
         video: 'https://izeko.org.tr/files/system//IOFaZiyIqP3i62Z4BUZN2auVlcWSYqrrDg0x3jTk.mp4',
     },
 ];
