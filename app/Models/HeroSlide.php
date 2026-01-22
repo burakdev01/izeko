@@ -5,14 +5,14 @@ namespace App\Models;
 use App\Models\Concerns\LogsAdminRequestContext;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class HeroSlide extends Model
 {
-    use HasFactory, LogsActivity, LogsAdminRequestContext, SoftDeletes;
+    use HasFactory, LogsActivity, LogsAdminRequestContext;
 
     /**
      * The attributes that are mass assignable.
@@ -38,6 +38,33 @@ class HeroSlide extends Model
         return [
             'sort_order' => 'integer',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::deleted(function (HeroSlide $slide) {
+            $slide->deleteMediaFile($slide->image);
+            $slide->deleteMediaFile($slide->video);
+            $slide->deleteMediaFile($slide->poster);
+        });
+    }
+
+    public function deleteMediaFile(?string $filename): void
+    {
+        if (! $filename) {
+            return;
+        }
+
+        // Check if it's a full URL (external)
+        if (str_starts_with($filename, 'http')) {
+            return;
+        }
+
+        $path = 'hero-slides/'.$filename;
+
+        if (Storage::disk('uploads')->exists($path)) {
+            Storage::disk('uploads')->delete($path);
+        }
     }
 
     public function getActivitylogOptions(): LogOptions
