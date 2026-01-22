@@ -127,7 +127,7 @@ export default function SpotlightCreate() {
                                                     e.target.value,
                                                 )
                                             }
-                                            placeholder="Varsayılan: İçerik Başlığı"
+                                            placeholder="Seo Başlığı"
                                             className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500"
                                         />
                                     </div>
@@ -146,7 +146,7 @@ export default function SpotlightCreate() {
                                                     e.target.value,
                                                 )
                                             }
-                                            placeholder="Varsayılan: İçerik Özeti"
+                                            placeholder="Seo Açıklaması"
                                             className="w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500"
                                         />
                                     </div>
