@@ -15,7 +15,7 @@ class Spotlight extends Model
         'active',
         'seo_title',
         'seo_description',
-        'seo_keywords',
+
         'sort_order',
     ];
 

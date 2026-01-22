@@ -149,7 +149,11 @@ class AnnouncementController extends Controller
             'id' => $announcement->id,
             'title' => $announcement->title,
             'content' => $announcement->content,
-            'image' => $announcement->image,
+            'image' => $announcement->image ? (
+                str_starts_with($announcement->image, 'http') 
+                    ? $announcement->image 
+                    : config('filesystems.disks.uploads.url') . '/announcements/' . $announcement->image
+            ) : null,
             'link' => $announcement->link,
             'seo_title' => $announcement->seo_title,
             'seo_description' => $announcement->seo_description,

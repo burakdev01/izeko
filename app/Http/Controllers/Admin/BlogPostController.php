@@ -151,7 +151,11 @@ class BlogPostController extends Controller
             'id' => $post->id,
             'title' => $post->title,
             'content' => $post->content,
-            'image' => $post->image,
+            'image' => $post->image ? (
+                str_starts_with($post->image, 'http') 
+                    ? $post->image 
+                    : config('filesystems.disks.uploads.url') . '/blogs/' . $post->image
+            ) : null,
             'active' => $post->active,
             'seo_title' => $post->seo_title,
             'seo_description' => $post->seo_description,

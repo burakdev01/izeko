@@ -30,7 +30,7 @@ class Announcement extends Model
         'active',
         'seo_title',
         'seo_description',
-        'seo_keywords',
+
         'seo_url',
         'sort_order',
     ];

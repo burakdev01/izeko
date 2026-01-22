@@ -14,7 +14,7 @@ type BlogPost = {
     active?: boolean;
     seo_title?: string | null;
     seo_description?: string | null;
-    seo_keywords?: string | null;
+
     seo_url?: string | null;
 };
 
@@ -42,7 +42,6 @@ export default function BlogPostForm({
     const [seoDescription, setSeoDescription] = useState(
         post?.seo_description ?? '',
     );
-    const [seoKeywords, setSeoKeywords] = useState(post?.seo_keywords ?? '');
 
     const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newTitle = e.target.value;
@@ -160,30 +159,6 @@ export default function BlogPostForm({
                                                     className="mt-2"
                                                     message={
                                                         errors.seo_description
-                                                    }
-                                                />
-                                            </div>
-
-                                            <div>
-                                                <label className="mb-2 block text-sm font-medium text-gray-700">
-                                                    SEO Keywords:
-                                                </label>
-                                                <textarea
-                                                    name="seo_keywords"
-                                                    rows={2}
-                                                    value={seoKeywords}
-                                                    onChange={(event) =>
-                                                        setSeoKeywords(
-                                                            event.target.value,
-                                                        )
-                                                    }
-                                                    placeholder="Anahtar kelimeler (virgül ile ayırın)"
-                                                    className="w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500"
-                                                />
-                                                <InputError
-                                                    className="mt-2"
-                                                    message={
-                                                        errors.seo_keywords
                                                     }
                                                 />
                                             </div>
