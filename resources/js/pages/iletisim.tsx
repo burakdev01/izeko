@@ -26,7 +26,10 @@ export default function Iletisim() {
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         post(route('iletisim.store'), {
-            onSuccess: () => reset(),
+            onSuccess: () => {
+                reset();
+                alert('Mesajınız başarıyla gönderildi.');
+            },
             onError: (err) => {
                 console.error(err);
                 if (err.message) {
