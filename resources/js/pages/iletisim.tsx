@@ -295,6 +295,7 @@ export default function Iletisim() {
                                             </div>
                                         )}
                                     </div>
+
                                     <div className="md:col-span-2">
                                         <label className="flex items-start gap-2">
                                             <input
@@ -340,6 +341,12 @@ export default function Iletisim() {
                                         )}
                                     </div>
 
+                                    <div className="md:col-span-2">
+                                        <div
+                                            className="g-recaptcha"
+                                            data-sitekey="6Ld_jFIsAAAAAHE1UCcc3hpFR1ZfBMUKmmbXttvA"
+                                        ></div>
+                                    </div>
                                     <div className="md:col-span-2">
                                         <button
                                             type="submit"
