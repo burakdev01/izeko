@@ -141,29 +141,55 @@ const navGroups: NavGroup[] = [
                 icon: SlidersHorizontal,
             },
             {
-                href: '/admin/board-members',
-                label: 'Yönetim Kurulu',
-                icon: Users,
-            },
-            {
-                href: '/admin/chairman-message',
-                label: 'Yön. Kur. Başkanımız',
-                icon: User,
-            },
-            {
-                href: '/admin/regional-managers',
-                label: 'Bölge Sorumlularımız',
-                icon: MapPin,
-            },
-            {
-                href: '/admin/bank-accounts',
-                label: 'Oda Hesap Numaraları',
-                icon: Banknote,
-            },
-            {
-                href: '/admin/supervisory-board',
-                label: 'Denetim Kurulu',
-                icon: Users,
+                label: 'Kurumsal',
+                icon: Building,
+                children: [
+                    {
+                        href: '/admin/about-izeko/edit',
+                        label: 'izeko.org.tr Nedir?',
+                        icon: HelpCircle,
+                    },
+                    {
+                        href: '/admin/why-choose-us/edit',
+                        label: 'Neden Emlak Ofisi',
+                        icon: HelpCircle,
+                    },
+                    {
+                        href: '/admin/chairman-message',
+                        label: 'Yön. Kur. Başkanımız',
+                        icon: User,
+                    },
+                    {
+                        href: '/admin/board-members',
+                        label: 'Yönetim Kurulu',
+                        icon: Users,
+                    },
+                    {
+                        href: '/admin/supervisory-board',
+                        label: 'Denetim Kurulu',
+                        icon: Users,
+                    },
+                    {
+                        href: '/admin/regional-managers',
+                        label: 'Bölge Sorumlularımız',
+                        icon: MapPin,
+                    },
+                    {
+                        href: '/admin/bank-accounts',
+                        label: 'Oda Hesap Numaraları',
+                        icon: Banknote,
+                    },
+                    {
+                        href: '/admin/registration-fees',
+                        label: 'Kayıt Ücretleri',
+                        icon: BookOpen,
+                    },
+                    {
+                        href: '/admin/chamber-registration/edit',
+                        label: 'Oda Kayıt İşlemleri',
+                        icon: HelpCircle,
+                    },
+                ],
             },
             {
                 href: '/admin/haberler',

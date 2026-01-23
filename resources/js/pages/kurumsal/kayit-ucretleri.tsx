@@ -3,7 +3,21 @@ import { ArticleLayout } from '@/components/content/ArticleLayout';
 import Footer from '@/components/footer/Footer';
 import { Navbar } from '@/components/navbar/Navbar';
 
-export default function KayitUcretleri() {
+type RegistrationFee = {
+    id: number;
+    category: string;
+    newspaper_fee: string | null;
+    tax_fee: string | null;
+    registration_fee: string | null;
+    service_fee: string | null;
+    total: string | null;
+};
+
+type Props = {
+    fees: RegistrationFee[];
+};
+
+export default function KayitUcretleri({ fees }: Props) {
     return (
         <>
             <TopBar />
@@ -50,70 +64,39 @@ export default function KayitUcretleri() {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100 text-base font-medium">
-                                <tr>
-                                    <td className="py-6 pr-6 font-semibold text-gray-600">
-                                        YENİ KAYIT
-                                    </td>
-                                    <td className="py-6 pr-6">328,00</td>
-                                    <td className="py-6 pr-6">1.858,05</td>
-                                    <td className="py-6 pr-6">2.674,00</td>
-                                    <td className="py-6 pr-6">266,00</td>
-                                    <td className="py-6 text-right">
-                                        6.063,05
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td className="py-6 pr-6 font-semibold text-gray-600">
-                                        SİCİL TERK
-                                    </td>
-                                    <td className="py-6 pr-6">76,00</td>
-                                    <td className="py-6 pr-6">442,65</td>
-                                    <td className="py-6 pr-6"> </td>
-                                    <td className="py-6 pr-6"> </td>
-                                    <td className="py-6 text-right">518,65</td>
-                                </tr>
-                                <tr>
-                                    <td className="py-6 pr-6 font-semibold text-gray-600">
-                                        MESLEK TERK
-                                    </td>
-                                    <td className="py-6 pr-6">76,00</td>
-                                    <td className="py-6 pr-6">442,65</td>
-                                    <td className="py-6 pr-6"> </td>
-                                    <td className="py-6 pr-6"> </td>
-                                    <td className="py-6 text-right">518,65</td>
-                                </tr>
-                                <tr>
-                                    <td className="py-6 pr-6 font-semibold text-gray-600">
-                                        TADİL
-                                    </td>
-                                    <td className="py-6 pr-6">115,00</td>
-                                    <td className="py-6 pr-6">1.514,65</td>
-                                    <td className="py-6 pr-6"> </td>
-                                    <td className="py-6 pr-6">261,00</td>
-                                    <td className="py-6 text-right">
-                                        1.890,65
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td className="py-6 pr-6 font-semibold text-gray-600">
-                                        TASDİKNAME
-                                    </td>
-                                    <td className="py-6 pr-6"> </td>
-                                    <td className="py-6 pr-6">376,55</td>
-                                    <td className="py-6 pr-6"> </td>
-                                    <td className="py-6 pr-6">261,00</td>
-                                    <td className="py-6 text-right">637,55</td>
-                                </tr>
-                                <tr>
-                                    <td className="py-6 pr-6 font-semibold text-gray-600">
-                                        İHALE
-                                    </td>
-                                    <td className="py-6 pr-6"> </td>
-                                    <td className="py-6 pr-6"> </td>
-                                    <td className="py-6 pr-6"> </td>
-                                    <td className="py-6 pr-6">261,00</td>
-                                    <td className="py-6 text-right">261,00</td>
-                                </tr>
+                                {fees.length > 0 ? (
+                                    fees.map((fee) => (
+                                        <tr key={fee.id}>
+                                            <td className="py-6 pr-6 font-semibold text-gray-600">
+                                                {fee.category}
+                                            </td>
+                                            <td className="py-6 pr-6">
+                                                {fee.newspaper_fee}
+                                            </td>
+                                            <td className="py-6 pr-6">
+                                                {fee.tax_fee}
+                                            </td>
+                                            <td className="py-6 pr-6">
+                                                {fee.registration_fee}
+                                            </td>
+                                            <td className="py-6 pr-6">
+                                                {fee.service_fee}
+                                            </td>
+                                            <td className="py-6 text-right">
+                                                {fee.total}
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td
+                                            colSpan={6}
+                                            className="py-12 text-center text-gray-500"
+                                        >
+                                            Henüz kayıt ücreti eklenmemiş.
+                                        </td>
+                                    </tr>
+                                )}
                             </tbody>
                         </table>
                     </div>

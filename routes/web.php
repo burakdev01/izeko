@@ -237,19 +237,38 @@ Route::get('/kurumsal/oda-hesap-numaralari', function () {
 })->name('kurumsal.oda-hesap-numaralari');
 
 Route::get('/kurumsal/kayit-ucretleri', function () {
-    return Inertia::render('kurumsal/kayit-ucretleri');
+    $fees = \App\Models\RegistrationFee::where('active', true)
+        ->orderBy('sort_order')
+        ->orderByDesc('updated_at')
+        ->get();
+
+    return Inertia::render('kurumsal/kayit-ucretleri', [
+        'fees' => $fees,
+    ]);
 })->name('kurumsal.kayit-ucretleri');
 
 Route::get('/kurumsal/neden-emlak-ofisi', function () {
-    return Inertia::render('kurumsal/neden-emlak-ofisi');
+    $item = \App\Models\WhyChooseUs::first();
+
+    return Inertia::render('kurumsal/neden-emlak-ofisi', [
+        'item' => $item,
+    ]);
 })->name('kurumsal.neden-emlak-ofisi');
 
 Route::get('/kurumsal/izeko-nedir', function () {
-    return Inertia::render('kurumsal/izeko-nedir');
+    $item = \App\Models\AboutIzeko::first();
+
+    return Inertia::render('kurumsal/izeko-nedir', [
+        'item' => $item,
+    ]);
 })->name('kurumsal.izeko-nedir');
 
 Route::get('/kurumsal/oda-kayit-islemleri', function () {
-    return Inertia::render('kurumsal/oda-kayit-islemleri');
+    $item = \App\Models\ChamberRegistration::first();
+
+    return Inertia::render('kurumsal/oda-kayit-islemleri', [
+        'item' => $item,
+    ]);
 })->name('kurumsal.oda-kayit-islemleri');
 
 Route::get('/faaliyetler', function () {
@@ -584,6 +603,23 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
             ->name('bank-accounts.reorder');
         Route::resource('bank-accounts', \App\Http\Controllers\Admin\BankAccountController::class)
             ->parameters(['bank-accounts' => 'bankAccount']);
+
+        Route::patch('registration-fees/reorder', [\App\Http\Controllers\Admin\RegistrationFeeController::class, 'reorder'])
+            ->name('registration-fees.reorder');
+        Route::resource('registration-fees', \App\Http\Controllers\Admin\RegistrationFeeController::class)
+            ->parameters(['registration-fees' => 'registrationFee']);
+
+        // Why Choose Us
+        Route::get('why-choose-us/edit', [\App\Http\Controllers\Admin\WhyChooseUsController::class, 'edit'])->name('why-choose-us.edit');
+        Route::post('why-choose-us/update', [\App\Http\Controllers\Admin\WhyChooseUsController::class, 'update'])->name('why-choose-us.update');
+
+        // About Izeko
+        Route::get('about-izeko/edit', [\App\Http\Controllers\Admin\AboutIzekoController::class, 'edit'])->name('about-izeko.edit');
+        Route::post('about-izeko/update', [\App\Http\Controllers\Admin\AboutIzekoController::class, 'update'])->name('about-izeko.update');
+
+        // Chamber Registration
+        Route::get('chamber-registration/edit', [\App\Http\Controllers\Admin\ChamberRegistrationController::class, 'edit'])->name('chamber-registration.edit');
+        Route::post('chamber-registration/update', [\App\Http\Controllers\Admin\ChamberRegistrationController::class, 'update'])->name('chamber-registration.update');
     },
 );
 
