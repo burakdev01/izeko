@@ -26,13 +26,15 @@ export function Navbar() {
                     <DesktopMenu items={navItems} />
 
                     <div className="flex items-center gap-3">
-                        <Link
-                            href="/crm"
+                        <a
+                            target="_blank"
+                            rel="noreferrer"
+                            href="https://izeko-crm.vercel.app/"
                             className="flex items-center gap-1.5 rounded-md bg-red-600 px-3 py-2 text-xs font-medium text-white hover:bg-red-700 lg:px-4 lg:text-sm xl:px-6 xl:text-base"
                         >
                             <User size={16} />
                             Oda CRM Giriş
-                        </Link>
+                        </a>
 
                         <button
                             onClick={() => setIsMenuOpen((v) => !v)}
