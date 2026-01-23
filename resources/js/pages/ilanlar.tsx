@@ -2,6 +2,7 @@ import TopBar from '@/components/contact-header';
 import { ArticleLayout } from '@/components/content/ArticleLayout';
 import Footer from '@/components/footer/Footer';
 import { Navbar } from '@/components/navbar/Navbar';
+import { Link } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
 
 type ListingBadge = 'premium' | 'sahibinden' | 'emlak' | 'insaat' | 'bankadan';
@@ -576,7 +577,8 @@ function ListingControls({
 
 function ListingCard({ listing, classes }: ListingCardProps) {
     return (
-        <div
+        <Link
+            href={`/ilanlar/${listing.id}`}
             className={`cursor-pointer gap-3 overflow-hidden rounded-lg bg-white p-3 shadow-[0_2px_8px_rgba(0,0,0,0.1)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] ${classes.card}`}
         >
             <img
@@ -636,7 +638,7 @@ function ListingCard({ listing, classes }: ListingCardProps) {
                     </div>
                 </div>
             </div>
-        </div>
+        </Link>
     );
 }
 

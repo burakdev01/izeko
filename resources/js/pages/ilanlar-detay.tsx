@@ -631,7 +631,12 @@ function AgentCard({ profile, info }: AgentCardProps) {
 function MapPlaceholder() {
     return (
         <div className="mt-3.75 flex h-55 w-full items-center justify-center rounded-[10px] border border-[#eee] bg-[linear-gradient(135deg,#f5f5f5,#eaeaea)] text-sm text-[#999]">
-            Harita bileşeni için yer
+            <iframe
+                title="Google Map"
+                src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d12503.55755994515!2d27.137323!3d38.420921!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14bbd8faa98c91e5%3A0x29cea2dd9f2a22f7!2s%C4%B0zmir%20Emlak%20Komisyoncular%C4%B1%20Odas%C4%B1!5e0!3m2!1sen!2str!4v1768855278766!5m2!1sen!2str"
+                class="h-full w-full border-0"
+                loading="lazy"
+            ></iframe>
         </div>
     );
 }
