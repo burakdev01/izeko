@@ -138,6 +138,11 @@ const navGroups: NavGroup[] = [
                 icon: SlidersHorizontal,
             },
             {
+                href: '/admin/board-members',
+                label: 'Yönetim Kurulu',
+                icon: Users,
+            },
+            {
                 href: '/admin/haberler',
                 label: 'Blog Yönetimi',
                 icon: BookOpen,

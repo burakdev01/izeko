@@ -151,7 +151,23 @@ Route::get('/kurumsal/yonetim-kurulu-baskanimiz', function () {
 })->name('kurumsal.yonetim-kurulu-baskanimiz');
 
 Route::get('/kurumsal/yonetim-kurulu', function () {
-    return Inertia::render('kurumsal/yonetim-kurulu');
+    $members = \App\Models\BoardMember::where('active', true)
+        ->orderBy('sort_order')
+        ->orderByDesc('updated_at')
+        ->get()
+        ->map(fn ($member) => [
+            'name' => $member->name,
+            'title' => $member->title,
+            'image' => $member->image ? (
+                str_starts_with($member->image, 'http')
+                    ? $member->image
+                    : config('filesystems.disks.uploads.url') . '/board_members/' . $member->image
+            ) : null,
+        ]);
+
+    return Inertia::render('kurumsal/yonetim-kurulu', [
+        'members' => $members,
+    ]);
 })->name('kurumsal.yonetim-kurulu');
 
 Route::get('/kurumsal/denetim-kurulu', function () {
@@ -449,6 +465,8 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
             ->name('hero-slides.reorder');
         Route::patch('sss/reorder', [FaqController::class, 'reorder'])
             ->name('sss.reorder');
+        Route::patch('board-members/reorder', [\App\Http\Controllers\Admin\BoardMemberController::class, 'reorder'])
+            ->name('board-members.reorder');
 
         Route::resource('haberler', BlogPostController::class)
             ->parameters(['haberler' => 'blogPost']);
@@ -496,6 +514,9 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
         Route::resource('iletisim', \App\Http\Controllers\Admin\ContactMessageController::class)
             ->parameters(['iletisim' => 'contactMessage'])
             ->only(['index', 'show', 'destroy']);
+
+        Route::resource('board-members', \App\Http\Controllers\Admin\BoardMemberController::class)
+            ->parameters(['board-members' => 'boardMember']);
     },
 );
 
