@@ -122,8 +122,7 @@ const listingPrice = '8.900.000 TL';
 const agentProfile: AgentProfile = {
     name: 'Leyal Grup Satış Ofisi',
     role: 'Yetkili Gayrimenkul Danışmanı',
-    avatarUrl:
-        'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?w=200',
+    avatarUrl: 'https://i.hizliresim.com/dk47as1.jpg',
     phone: '+90 (532) 555 12 34',
     email: 'info@leyalgrup.com',
 };
