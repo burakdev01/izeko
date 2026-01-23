@@ -6,26 +6,12 @@ import { Navbar } from '@/components/navbar/Navbar';
 type Member = {
     name: string;
     title: string;
-    image: string;
+    image: string | null;
 };
 
-const members: Member[] = [
-    {
-        name: 'Ergun KÖSECİOĞULLARI',
-        title: 'Denetim Kurulu Başkanı',
-        image: 'https://izeko.org.tr/app/themes/default/assets/images/supervisor-realtors/ergun-koseciogullari.png',
-    },
-    {
-        name: 'Adem UÇAR',
-        title: 'Denetim Kurulu Üyesi',
-        image: 'https://izeko.org.tr/app/themes/default/assets/images/supervisor-realtors/adem-ucar.jpg',
-    },
-    {
-        name: 'Muhittin TOMAN',
-        title: 'Denetim Kurulu Üyesi',
-        image: 'https://izeko.org.tr/app/themes/default/assets/images/supervisor-realtors/muhittin-toman.jpg',
-    },
-];
+type Props = {
+    members: Member[];
+};
 
 const Card = ({ member }: { member: Member }) => (
     <div className="overflow-hidden rounded-lg bg-white shadow-md transition-shadow duration-300 hover:shadow-xl">
@@ -33,11 +19,13 @@ const Card = ({ member }: { member: Member }) => (
         <div className="flex flex-col items-center p-6 text-center">
             <div className="relative mb-4">
                 <div className="h-32 w-32 overflow-hidden rounded-full bg-gray-200 ring-4 ring-gray-100">
-                    <img
-                        src={member.image}
-                        alt={member.name}
-                        className="h-full w-full object-cover"
-                    />
+                    {member.image && (
+                        <img
+                            src={member.image}
+                            alt={member.name}
+                            className="h-full w-full object-cover"
+                        />
+                    )}
                 </div>
             </div>
             <h3 className="mb-2 text-xl font-bold text-gray-900">
@@ -51,7 +39,7 @@ const Card = ({ member }: { member: Member }) => (
     </div>
 );
 
-export default function DenetimKurulu() {
+export default function DenetimKurulu({ members }: Props) {
     return (
         <>
             <TopBar />
@@ -63,11 +51,17 @@ export default function DenetimKurulu() {
             >
                 <div className="bg-gray-50 p-4 sm:p-6 lg:p-8">
                     <div className="mx-auto max-w-7xl">
-                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                            {members.map((member) => (
-                                <Card key={member.name} member={member} />
-                            ))}
-                        </div>
+                        {members.length === 0 ? (
+                            <div className="py-10 text-center text-gray-500">
+                                Henüz denetim kurulu üyesi eklenmemiş.
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                                {members.map((member, index) => (
+                                    <Card key={index} member={member} />
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
             </ArticleLayout>

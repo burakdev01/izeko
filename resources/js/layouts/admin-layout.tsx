@@ -5,6 +5,7 @@ import {
 } from '@/components/ui/collapsible';
 import { Head, Link, usePage } from '@inertiajs/react';
 import {
+    Banknote,
     BookOpen,
     Building,
     CalendarCheck,
@@ -16,11 +17,13 @@ import {
     List,
     LogOut,
     Mail,
+    MapPin,
     Megaphone,
     Menu,
     MessageSquare,
     Radio,
     SlidersHorizontal,
+    User,
     Users,
     X,
     XCircle,
@@ -140,6 +143,26 @@ const navGroups: NavGroup[] = [
             {
                 href: '/admin/board-members',
                 label: 'Yönetim Kurulu',
+                icon: Users,
+            },
+            {
+                href: '/admin/chairman-message',
+                label: 'Yön. Kur. Başkanımız',
+                icon: User,
+            },
+            {
+                href: '/admin/regional-managers',
+                label: 'Bölge Sorumlularımız',
+                icon: MapPin,
+            },
+            {
+                href: '/admin/bank-accounts',
+                label: 'Oda Hesap Numaraları',
+                icon: Banknote,
+            },
+            {
+                href: '/admin/supervisory-board',
+                label: 'Denetim Kurulu',
                 icon: Users,
             },
             {

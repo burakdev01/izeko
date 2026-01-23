@@ -31,7 +31,8 @@ export default function BoardMemberForm({
     submitLabel = 'Kaydet',
     cancelHref = '/admin/board-members',
     member,
-}: BoardMemberFormProps) {
+    showImage = true,
+}: BoardMemberFormProps & { showImage?: boolean }) {
     const [name, setName] = useState(member?.name ?? '');
     const [roleTitle, setRoleTitle] = useState(member?.title ?? '');
     const [active, setActive] = useState(member?.active ?? true);
@@ -107,16 +108,18 @@ export default function BoardMemberForm({
                                     onChange={setActive}
                                 />
 
-                                <AdminMediaUpload
-                                    label="Duyuru Görseli"
-                                    name="image_file"
-                                    initialPreview={member?.image ?? null}
-                                    error={
-                                        errors.image ||
-                                        errors.image_file ||
-                                        undefined
-                                    }
-                                />
+                                {showImage && (
+                                    <AdminMediaUpload
+                                        label="Duyuru Görseli"
+                                        name="image_file"
+                                        initialPreview={member?.image ?? null}
+                                        error={
+                                            errors.image ||
+                                            errors.image_file ||
+                                            undefined
+                                        }
+                                    />
+                                )}
                             </div>
                         </div>
                     </div>

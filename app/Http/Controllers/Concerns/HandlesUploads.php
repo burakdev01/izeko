@@ -122,44 +122,24 @@ trait HandlesUploads
         UploadedFile $file,
         string $field,
     ): string {
-        if (! function_exists('imagewebp')) {
+        try {
+            $manager = new \Intervention\Image\ImageManager(
+                new \Intervention\Image\Drivers\Gd\Driver()
+            );
+
+            $image = $manager->read($file->getRealPath());
+            
+            // Encode to WebP with 80% quality
+            $encoded = $image->toWebp(80);
+
+            return (string) $encoded;
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('WebP conversion failed: ' . $e->getMessage());
+            
             throw ValidationException::withMessages([
-                $field => 'WebP desteği bulunamadı.',
+                $field => 'Görsel WebP formatına çevrilemedi: ' . $e->getMessage(),
             ]);
         }
-
-        $contents = file_get_contents($file->getRealPath());
-
-        if ($contents === false) {
-            throw ValidationException::withMessages([
-                $field => 'Görsel okunamadı.',
-            ]);
-        }
-
-        $image = imagecreatefromstring($contents);
-
-        if (! $image) {
-            throw ValidationException::withMessages([
-                $field => 'Görsel işlenemedi.',
-            ]);
-        }
-
-        imagepalettetotruecolor($image);
-        imagealphablending($image, true);
-        imagesavealpha($image, true);
-
-        ob_start();
-        $success = imagewebp($image, null, 85);
-        $webpContents = ob_get_clean();
-        imagedestroy($image);
-
-        if (! $success || $webpContents === false) {
-            throw ValidationException::withMessages([
-                $field => 'Görsel WebP formatına çevrilemedi.',
-            ]);
-        }
-
-        return $webpContents;
     }
 
     private function webpFileName(UploadedFile $file): string

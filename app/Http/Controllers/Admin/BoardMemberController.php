@@ -6,6 +6,7 @@ use App\Http\Controllers\Concerns\HandlesUploads;
 use App\Http\Controllers\Controller;
 use App\Models\BoardMember;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class BoardMemberController extends Controller
@@ -73,6 +74,9 @@ class BoardMemberController extends Controller
         );
 
         if ($image) {
+            if ($boardMember->image) {
+                Storage::disk('uploads')->delete('board_members/' . $boardMember->image);
+            }
             $validated['image'] = $image;
         } elseif (! $request->filled('image')) {
             $validated['image'] = $boardMember->image;
@@ -87,6 +91,10 @@ class BoardMemberController extends Controller
 
     public function destroy(BoardMember $boardMember)
     {
+        if ($boardMember->image) {
+            Storage::disk('uploads')->delete('board_members/' . $boardMember->image);
+        }
+
         $boardMember->delete();
 
         return redirect()

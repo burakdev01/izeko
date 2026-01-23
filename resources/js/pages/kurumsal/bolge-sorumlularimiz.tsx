@@ -4,32 +4,19 @@ import Footer from '@/components/footer/Footer';
 import { Navbar } from '@/components/navbar/Navbar';
 import { useState } from 'react';
 
-export default function BolgeSorumlularimiz() {
+type Manager = {
+    name: string;
+    region: string;
+};
+
+type Props = {
+    managers: Manager[];
+};
+
+export default function BolgeSorumlularimiz({ managers }: Props) {
     const [searchTerm, setSearchTerm] = useState('');
 
-    const regions = [
-        { region: 'Alsancak Bölge Sorumlusu', name: 'Nezih DİNDAR' },
-        { region: 'Balçova Bölge Sorumlusu', name: 'Yusuf ÇOKYAŞAR' },
-        { region: 'Bayraklı Bölge Sorumlusu', name: 'Aytekin DELİBAŞ' },
-        { region: 'Bornova Bölge Sorumlusu', name: 'Serkan ÇELİK' },
-        { region: 'Buca Bölge Sorumlusu', name: 'Ebru YAZICI' },
-        { region: 'Çiğli Bölge Sorumlusu', name: 'Ayhan DEMİRCİ' },
-        { region: 'Dikili Bölge Sorumlusu', name: 'Belgin ÇİFTLER' },
-        { region: 'Foça Bölge Sorumlusu', name: 'Kenan DÜZGÜN' },
-        { region: 'Gaziemir Bölge Sorumlusu', name: 'Ahmet ARSLAN' },
-        { region: 'Hatay Bölge Sorumlusu', name: 'Şükran ŞAHİN' },
-        { region: 'Karşıyaka Bölge Sorumlusu', name: 'Münir ÖNDER' },
-        { region: 'Kemalpaşa Bölge Sorumlusu', name: 'Kenan SEMET' },
-        { region: 'Kemalpaşa Bölge Temsilcisi', name: 'Kenan Semet' },
-        { region: 'Menderes Bölge Sorumlusu', name: 'Furkan ÖZER' },
-        { region: 'Menderes Bölge Temsilcisi', name: 'Deniz Budak' },
-        { region: 'Menemen Bölge Sorumlusu', name: 'Gül AKMAN' },
-        { region: 'Narlıdere Bölge Sorumlusu', name: 'İbrahim GÜDÜCÜ' },
-        { region: 'Seferihisar Bölge Sorumlusu', name: 'Atilla AKGÜN' },
-        { region: 'Urla Bölge Sorumlusu', name: 'Süleyman ALKAN' },
-    ];
-
-    const filteredRegions = regions.filter(
+    const filteredRegions = managers.filter(
         (item) =>
             item.region.toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.name.toLowerCase().includes(searchTerm.toLowerCase()),

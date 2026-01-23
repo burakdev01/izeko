@@ -147,7 +147,13 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/kurumsal/yonetim-kurulu-baskanimiz', function () {
-    return Inertia::render('kurumsal/yonetim-kurulu-baskanimiz');
+    $message = \App\Models\ChairmanMessage::first();
+
+    return Inertia::render('kurumsal/yonetim-kurulu-baskanimiz', [
+        'data' => $message ? [
+            'content' => $message->content,
+        ] : null,
+    ]);
 })->name('kurumsal.yonetim-kurulu-baskanimiz');
 
 Route::get('/kurumsal/yonetim-kurulu', function () {
@@ -171,7 +177,19 @@ Route::get('/kurumsal/yonetim-kurulu', function () {
 })->name('kurumsal.yonetim-kurulu');
 
 Route::get('/kurumsal/denetim-kurulu', function () {
-    return Inertia::render('kurumsal/denetim-kurulu');
+    $members = \App\Models\SupervisoryBoardMember::where('active', true)
+        ->orderBy('sort_order')
+        ->orderByDesc('updated_at')
+        ->get()
+        ->map(fn ($member) => [
+            'name' => $member->name,
+            'title' => $member->title,
+            'image' => $member->image ? config('filesystems.disks.uploads.url') . '/supervisory_board_members/' . $member->image : null,
+        ]);
+
+    return Inertia::render('kurumsal/denetim-kurulu', [
+        'members' => $members,
+    ]);
 })->name('kurumsal.denetim-kurulu');
 
 Route::get('/kurumsal/oda-ekibimiz', function () {
@@ -179,11 +197,43 @@ Route::get('/kurumsal/oda-ekibimiz', function () {
 })->name('kurumsal.oda-ekibimiz');
 
 Route::get('/kurumsal/bolge-sorumlularimiz', function () {
-    return Inertia::render('kurumsal/bolge-sorumlularimiz');
+    $managers = \App\Models\RegionalManager::where('active', true)
+        ->orderBy('sort_order')
+        ->orderByDesc('updated_at')
+        ->get()
+        ->map(fn ($manager) => [
+            'name' => $manager->name,
+            'region' => $manager->title, // Map title to region for frontend compatibility
+        ]);
+
+    return Inertia::render('kurumsal/bolge-sorumlularimiz', [
+        'managers' => $managers,
+    ]);
 })->name('kurumsal.bolge-sorumlularimiz');
 
 Route::get('/kurumsal/oda-hesap-numaralari', function () {
-    return Inertia::render('kurumsal/oda-hesap-numaralari');
+    $accounts = \App\Models\BankAccount::where('active', true)
+        ->orderBy('sort_order')
+        ->orderByDesc('updated_at')
+        ->get()
+        ->map(fn ($account) => [
+            'bank_name' => $account->bank_name,
+            'branch_name' => $account->branch_name,
+            'branch_code' => $account->branch_code,
+            'account_no' => $account->account_no,
+            'iban' => $account->iban,
+            'account_name' => $account->account_name,
+            'description' => $account->description,
+            'image' => $account->image ? (
+                str_starts_with($account->image, 'http')
+                    ? $account->image
+                    : config('filesystems.disks.uploads.url') . '/bank_accounts/' . $account->image
+            ) : null,
+        ]);
+
+    return Inertia::render('kurumsal/oda-hesap-numaralari', [
+        'accounts' => $accounts,
+    ]);
 })->name('kurumsal.oda-hesap-numaralari');
 
 Route::get('/kurumsal/kayit-ucretleri', function () {
@@ -517,6 +567,23 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
 
         Route::resource('board-members', \App\Http\Controllers\Admin\BoardMemberController::class)
             ->parameters(['board-members' => 'boardMember']);
+
+        Route::get('chairman-message', [\App\Http\Controllers\Admin\ChairmanMessageController::class, 'edit'])->name('chairman-message.edit');
+        Route::post('chairman-message', [\App\Http\Controllers\Admin\ChairmanMessageController::class, 'update'])->name('chairman-message.update');
+
+        Route::post('supervisory-board/reorder', [\App\Http\Controllers\Admin\SupervisoryBoardMemberController::class, 'reorder'])->name('supervisory-board.reorder');
+        Route::resource('supervisory-board', \App\Http\Controllers\Admin\SupervisoryBoardMemberController::class)
+            ->parameters(['supervisory-board' => 'supervisoryBoardMember']);
+
+        Route::patch('regional-managers/reorder', [\App\Http\Controllers\Admin\RegionalManagerController::class, 'reorder'])
+            ->name('regional-managers.reorder');
+        Route::resource('regional-managers', \App\Http\Controllers\Admin\RegionalManagerController::class)
+            ->parameters(['regional-managers' => 'regionalManager']);
+
+        Route::patch('bank-accounts/reorder', [\App\Http\Controllers\Admin\BankAccountController::class, 'reorder'])
+            ->name('bank-accounts.reorder');
+        Route::resource('bank-accounts', \App\Http\Controllers\Admin\BankAccountController::class)
+            ->parameters(['bank-accounts' => 'bankAccount']);
     },
 );
 
