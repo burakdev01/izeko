@@ -26,7 +26,6 @@ export default function MansetDetay({ spotlight }: SpotlightDetailProps) {
     return (
         <>
             <Head>
-                <title>{spotlight.seo_title || spotlight.title}</title>
                 {spotlight.seo_description ? (
                     <meta
                         name="description"
@@ -41,6 +40,7 @@ export default function MansetDetay({ spotlight }: SpotlightDetailProps) {
             <Navbar />
             <ArticleLayout
                 title={spotlight.title}
+                headTitle={spotlight.seo_title || spotlight.title}
                 heroImage="https://izeko.org.tr/app/themes/default/assets/images/izeko-banner.jpg"
                 heroPosition="center 30%"
                 breadcrumbLabel={spotlight.title}

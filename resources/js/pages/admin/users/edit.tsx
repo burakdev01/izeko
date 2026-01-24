@@ -1,181 +1,956 @@
-import AdminFormHeader from '@/components/admin/admin-form-header';
-import InputError from '@/components/input-error';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
 import AdminLayout from '@/layouts/admin-layout';
-import { Head, useForm } from '@inertiajs/react';
+import { User } from '@/types';
+import { Head, Link, useForm } from '@inertiajs/react';
+import axios from 'axios';
+import {
+    AlertCircle,
+    ArrowLeft,
+    Building2,
+    CheckCircle2,
+    FileText,
+    MapPin,
+    Plus,
+    Save,
+    Shield,
+    User as UserIcon,
+} from 'lucide-react';
+import { FormEventHandler, useEffect, useState } from 'react';
 
-type User = {
+interface Office {
     id: number;
     name: string;
-    surname: string;
-    email: string;
-    phone_number: string;
-    status: 'active' | 'pending' | 'passive';
-};
+}
 
-type UserEditProps = {
-    user: User;
-};
+interface Role {
+    id: number;
+    name: string;
+}
 
-export default function UserEdit({ user }: UserEditProps) {
+interface Props {
+    user: User & {
+        surname?: string;
+        phone_number?: string;
+        status?: string;
+        address?: {
+            province_id?: string | number;
+            district_id?: string | number;
+            neighborhood_id?: string | number;
+            description?: string;
+        };
+        staff_details?: {
+            license_number?: string;
+            chamber_registration_number?: string;
+            tax_number?: string;
+            tax_office?: string;
+            national_id_number?: string;
+            title?: string;
+        };
+        user_offices?: {
+            office_id: number;
+            role?: { id: number };
+        }[];
+    };
+    offices: Office[];
+    roles: Role[];
+    provinces: { id: number; name: string }[];
+}
+
+export default function EditUser({ user, offices, roles, provinces }: Props) {
     const { data, setData, put, processing, errors } = useForm({
-        name: user.name,
+        name: user.name || '',
         surname: user.surname || '',
-        email: user.email,
+        email: user.email || '',
         phone_number: user.phone_number || '',
-        status: user.status,
+        status: user.status || 'active',
+        password: '',
+
+        address: {
+            province_id: user.address?.province_id || '',
+            district_id: user.address?.district_id || '',
+            neighborhood_id: user.address?.neighborhood_id || '',
+            description: user.address?.description || '',
+        },
+
+        staff_details: {
+            license_number: user.staff_details?.license_number || '',
+            chamber_registration_number:
+                user.staff_details?.chamber_registration_number || '',
+            tax_number: user.staff_details?.tax_number || '',
+            tax_office: user.staff_details?.tax_office || '',
+            national_id_number: user.staff_details?.national_id_number || '',
+            title: user.staff_details?.title || '',
+        },
+
+        offices:
+            user.user_offices?.map((uo) => ({
+                office_id: String(uo.office_id),
+                role_id: uo.role?.id ? String(uo.role.id) : '',
+            })) || [],
     });
 
-    const submit = (e: React.FormEvent) => {
+    const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        put(`/admin/kullanicilar/${user.id}`);
+        put(route('admin.kullanicilar.update', user.id));
+    };
+
+    const [districts, setDistricts] = useState<{ id: number; name: string }[]>(
+        [],
+    );
+    const [neighborhoods, setNeighborhoods] = useState<
+        { id: number; name: string }[]
+    >([]);
+
+    useEffect(() => {
+        if (data.address.province_id) {
+            axios
+                .get(
+                    route('admin.locations.districts', {
+                        province: data.address.province_id,
+                    }),
+                )
+                .then((res) => {
+                    setDistricts(res.data);
+                });
+        }
+    }, [data.address.province_id]);
+
+    useEffect(() => {
+        if (data.address.district_id) {
+            axios
+                .get(
+                    route('admin.locations.neighborhoods', {
+                        district: data.address.district_id,
+                    }),
+                )
+                .then((res) => {
+                    setNeighborhoods(res.data);
+                });
+        }
+    }, [data.address.district_id]);
+
+    const addOffice = () => {
+        setData('offices', [...data.offices, { office_id: '', role_id: '' }]);
+    };
+
+    const removeOffice = (index: number) => {
+        const newOffices = [...data.offices];
+        newOffices.splice(index, 1);
+        setData('offices', newOffices);
+    };
+
+    const updateOffice = (
+        index: number,
+        field: 'office_id' | 'role_id',
+        value: string,
+    ) => {
+        const newOffices = [...data.offices];
+        newOffices[index][field] = value;
+        setData('offices', newOffices);
     };
 
     return (
-        <AdminLayout title="Kullanıcı Düzenle">
-            <Head title="Kullanıcı Düzenle" />
+        <AdminLayout>
+            <Head title={`${user.name} ${user.surname || ''} - Düzenle`} />
 
-            <form onSubmit={submit} className="space-y-6">
-                <AdminFormHeader
-                    title="Kullanıcı Düzenle"
-                    description="Kullanıcı bilgilerini ve durumunu güncelleyin."
-                    submitLabel="Güncelle"
-                    cancelHref="/admin/kullanicilar"
-                    processing={processing}
-                />
-
-                <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
-                    <div className="grid grid-cols-1 gap-6 p-6 md:grid-cols-2">
-                        <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">
-                                Ad
-                            </label>
-                            <input
-                                type="text"
-                                value={data.name}
-                                onChange={(e) =>
-                                    setData('name', e.target.value)
-                                }
-                                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition outline-none focus:border-transparent focus:ring-2 focus:ring-[#da1f25]"
-                            />
-                            <InputError
-                                className="mt-2"
-                                message={errors.name}
-                            />
+            <div className="container mx-auto space-y-8 py-8 md:py-10">
+                {/* Header Section */}
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <div>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <Link
+                                href={route('admin.kullanicilar.index')}
+                                className="flex items-center hover:text-foreground"
+                            >
+                                <ArrowLeft className="mr-1 h-4 w-4" />
+                                Kullanıcılar
+                            </Link>
+                            <span>/</span>
+                            <span>Düzenle</span>
                         </div>
-
-                        <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">
-                                Soyad
-                            </label>
-                            <input
-                                type="text"
-                                value={data.surname}
-                                onChange={(e) =>
-                                    setData('surname', e.target.value)
-                                }
-                                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition outline-none focus:border-transparent focus:ring-2 focus:ring-[#da1f25]"
-                            />
-                            <InputError
-                                className="mt-2"
-                                message={errors.surname}
-                            />
-                        </div>
-
-                        <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">
-                                E-posta
-                            </label>
-                            <input
-                                type="email"
-                                value={data.email}
-                                onChange={(e) =>
-                                    setData('email', e.target.value)
-                                }
-                                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition outline-none focus:border-transparent focus:ring-2 focus:ring-[#da1f25]"
-                            />
-                            <InputError
-                                className="mt-2"
-                                message={errors.email}
-                            />
-                        </div>
-
-                        <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">
-                                Telefon
-                            </label>
-                            <input
-                                type="text"
-                                value={data.phone_number}
-                                onChange={(e) =>
-                                    setData('phone_number', e.target.value)
-                                }
-                                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition outline-none focus:border-transparent focus:ring-2 focus:ring-[#da1f25]"
-                            />
-                            <InputError
-                                className="mt-2"
-                                message={errors.phone_number}
-                            />
-                        </div>
-
-                        <div className="col-span-1 md:col-span-2">
-                            <label className="mb-2 block text-sm font-medium text-gray-700">
-                                Durum
-                            </label>
-                            <div className="flex space-x-4">
-                                <label className="flex cursor-pointer items-center space-x-2">
-                                    <input
-                                        type="radio"
-                                        name="status"
-                                        checked={data.status === 'active'}
-                                        onChange={() =>
-                                            setData('status', 'active')
-                                        }
-                                        className="h-4 w-4 border-gray-300 text-[#da1f25] focus:ring-[#da1f25]"
-                                    />
-                                    <span className="text-sm text-gray-700">
-                                        Aktif
-                                    </span>
-                                </label>
-
-                                <label className="flex cursor-pointer items-center space-x-2">
-                                    <input
-                                        type="radio"
-                                        name="status"
-                                        checked={data.status === 'pending'}
-                                        onChange={() =>
-                                            setData('status', 'pending')
-                                        }
-                                        className="h-4 w-4 border-gray-300 text-[#da1f25] focus:ring-[#da1f25]"
-                                    />
-                                    <span className="text-sm text-gray-700">
-                                        Onay Bekliyor
-                                    </span>
-                                </label>
-
-                                <label className="flex cursor-pointer items-center space-x-2">
-                                    <input
-                                        type="radio"
-                                        name="status"
-                                        checked={data.status === 'passive'}
-                                        onChange={() =>
-                                            setData('status', 'passive')
-                                        }
-                                        className="h-4 w-4 border-gray-300 text-[#da1f25] focus:ring-[#da1f25]"
-                                    />
-                                    <span className="text-sm text-gray-700">
-                                        Pasif
-                                    </span>
-                                </label>
-                            </div>
-                            <InputError
-                                className="mt-2"
-                                // @ts-ignore
-                                message={errors.status}
-                            />
-                        </div>
+                        <h1 className="mt-2 text-3xl font-bold tracking-tight">
+                            {user.name} {user.surname}
+                        </h1>
+                        <p className="text-muted-foreground">
+                            Kullanıcının profil, yetki ve diğer bilgilerini
+                            yönetin.
+                        </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Button
+                            variant="outline"
+                            onClick={() => window.history.back()}
+                            disabled={processing}
+                        >
+                            İptal
+                        </Button>
+                        <Button
+                            onClick={submit}
+                            disabled={processing}
+                            className="bg-[#da1f25] hover:bg-[#b0181d]"
+                        >
+                            <Save className="mr-2 h-4 w-4" />
+                            Değişiklikleri Kaydet
+                        </Button>
                     </div>
                 </div>
-            </form>
+
+                <form onSubmit={submit}>
+                    <div className="grid min-h-[500px] gap-8 py-6 lg:grid-cols-12">
+                        {/* Main Content - Tabs */}
+                        <div className="lg:col-span-8">
+                            <Tabs defaultValue="profil" className="w-full">
+                                <TabsList className="mb-6 grid h-14 w-full grid-cols-4 gap-2 bg-muted/50 p-2">
+                                    <TabsTrigger
+                                        value="profil"
+                                        className="h-full data-[state=active]:bg-white data-[state=active]:text-[#da1f25] data-[state=active]:shadow-sm"
+                                    >
+                                        <UserIcon className="mr-2 h-4 w-4" />
+                                        Profil
+                                    </TabsTrigger>
+                                    <TabsTrigger
+                                        value="kurumsal"
+                                        className="h-full data-[state=active]:bg-white data-[state=active]:text-[#da1f25] data-[state=active]:shadow-sm"
+                                    >
+                                        <Building2 className="mr-2 h-4 w-4" />
+                                        Ofis & Yetki
+                                    </TabsTrigger>
+                                    <TabsTrigger
+                                        value="iletisim"
+                                        className="h-full data-[state=active]:bg-white data-[state=active]:text-[#da1f25] data-[state=active]:shadow-sm"
+                                    >
+                                        <MapPin className="mr-2 h-4 w-4" />
+                                        Adres Bilgileri
+                                    </TabsTrigger>
+                                    <TabsTrigger
+                                        value="resmi"
+                                        className="h-full data-[state=active]:bg-white data-[state=active]:text-[#da1f25] data-[state=active]:shadow-sm"
+                                    >
+                                        <FileText className="mr-2 h-4 w-4" />
+                                        Resmi Belge
+                                    </TabsTrigger>
+                                </TabsList>
+
+                                {/* PROFIL TAB */}
+                                <TabsContent value="profil">
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle className="text-xl">
+                                                Kişisel Bilgiler
+                                            </CardTitle>
+                                            <CardDescription>
+                                                Kullanıcının ad, soyad ve temel
+                                                iletişim bilgileri.
+                                            </CardDescription>
+                                        </CardHeader>
+                                        <CardContent className="grid gap-6 md:grid-cols-2">
+                                            <div className="space-y-2">
+                                                <Label htmlFor="name">
+                                                    Ad{' '}
+                                                    <span className="text-red-500">
+                                                        *
+                                                    </span>
+                                                </Label>
+                                                <Input
+                                                    id="name"
+                                                    value={data.name}
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            'name',
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    placeholder="Örn: Ahmet"
+                                                />
+                                                {errors.name && (
+                                                    <p className="text-sm text-red-500">
+                                                        {errors.name}
+                                                    </p>
+                                                )}
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="surname">
+                                                    Soyad
+                                                </Label>
+                                                <Input
+                                                    id="surname"
+                                                    value={data.surname}
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            'surname',
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    placeholder="Örn: Yılmaz"
+                                                />
+                                                {errors.surname && (
+                                                    <p className="text-sm text-red-500">
+                                                        {errors.surname}
+                                                    </p>
+                                                )}
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="email">
+                                                    E-posta{' '}
+                                                    <span className="text-red-500">
+                                                        *
+                                                    </span>
+                                                </Label>
+                                                <Input
+                                                    id="email"
+                                                    type="email"
+                                                    value={data.email}
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            'email',
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    placeholder="user@example.com"
+                                                />
+                                                {errors.email && (
+                                                    <p className="text-sm text-red-500">
+                                                        {errors.email}
+                                                    </p>
+                                                )}
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="phone_number">
+                                                    Telefon
+                                                </Label>
+                                                <Input
+                                                    id="phone_number"
+                                                    value={data.phone_number}
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            'phone_number',
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    placeholder="05XX XXX XX XX"
+                                                />
+                                                {errors.phone_number && (
+                                                    <p className="text-sm text-red-500">
+                                                        {errors.phone_number}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                </TabsContent>
+
+                                {/* KURUMSAL TAB */}
+                                <TabsContent value="kurumsal">
+                                    <Card>
+                                        <CardHeader className="flex flex-row items-center justify-between">
+                                            <div className="space-y-1">
+                                                <CardTitle className="text-xl">
+                                                    Ofis ve Yetkilendirme
+                                                </CardTitle>
+                                                <CardDescription>
+                                                    Kullanıcının bağlı olduğu
+                                                    ofisler ve bu ofislerdeki
+                                                    rolleri.
+                                                </CardDescription>
+                                            </div>
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={addOffice}
+                                                className="border-dashed"
+                                            >
+                                                <Plus className="mr-2 h-4 w-4" />
+                                                Ofis Ekle
+                                            </Button>
+                                        </CardHeader>
+                                        <CardContent className="space-y-4">
+                                            {data.offices.length === 0 && (
+                                                <div className="rounded-lg border-2 border-dashed bg-muted/20 py-10 text-center text-muted-foreground">
+                                                    <Building2 className="mx-auto mb-3 h-10 w-10 text-muted-foreground/50" />
+                                                    <p>
+                                                        Henüz bir ofis
+                                                        tanımlanmamış.
+                                                    </p>
+                                                    <Button
+                                                        variant="link"
+                                                        onClick={addOffice}
+                                                    >
+                                                        Şimdi Ekle
+                                                    </Button>
+                                                </div>
+                                            )}
+                                            {data.offices.map(
+                                                (officeItem, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className="group relative flex flex-col gap-4 rounded-xl border bg-card p-4 transition-all hover:shadow-md md:flex-row md:items-center"
+                                                    >
+                                                        <div className="flex-1 space-y-2">
+                                                            <Label>
+                                                                Ofis Seçimi
+                                                            </Label>
+                                                            <Select
+                                                                value={
+                                                                    officeItem.office_id
+                                                                }
+                                                                onValueChange={(
+                                                                    val,
+                                                                ) =>
+                                                                    updateOffice(
+                                                                        index,
+                                                                        'office_id',
+                                                                        val,
+                                                                    )
+                                                                }
+                                                            >
+                                                                <SelectTrigger>
+                                                                    <SelectValue placeholder="Bir ofis seçin" />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    {offices.map(
+                                                                        (
+                                                                            office,
+                                                                        ) => {
+                                                                            const isSelected =
+                                                                                data.offices.some(
+                                                                                    (
+                                                                                        uo,
+                                                                                        i,
+                                                                                    ) =>
+                                                                                        i !==
+                                                                                            index &&
+                                                                                        uo.office_id ===
+                                                                                            String(
+                                                                                                office.id,
+                                                                                            ),
+                                                                                );
+                                                                            return (
+                                                                                <SelectItem
+                                                                                    key={
+                                                                                        office.id
+                                                                                    }
+                                                                                    value={String(
+                                                                                        office.id,
+                                                                                    )}
+                                                                                    disabled={
+                                                                                        isSelected
+                                                                                    }
+                                                                                >
+                                                                                    {
+                                                                                        office.name
+                                                                                    }{' '}
+                                                                                    {isSelected &&
+                                                                                        '(Seçildi)'}
+                                                                                </SelectItem>
+                                                                            );
+                                                                        },
+                                                                    )}
+                                                                </SelectContent>
+                                                            </Select>
+                                                        </div>
+                                                        <div className="flex-1 space-y-2">
+                                                            <Label>
+                                                                Atanan Yetki
+                                                            </Label>
+                                                            <Select
+                                                                value={
+                                                                    officeItem.role_id
+                                                                }
+                                                                onValueChange={(
+                                                                    val,
+                                                                ) =>
+                                                                    updateOffice(
+                                                                        index,
+                                                                        'role_id',
+                                                                        val,
+                                                                    )
+                                                                }
+                                                            >
+                                                                <SelectTrigger>
+                                                                    <SelectValue placeholder="Yetki seçin" />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    {roles.map(
+                                                                        (
+                                                                            role,
+                                                                        ) => (
+                                                                            <SelectItem
+                                                                                key={
+                                                                                    role.id
+                                                                                }
+                                                                                value={String(
+                                                                                    role.id,
+                                                                                )}
+                                                                            >
+                                                                                {
+                                                                                    role.name
+                                                                                }
+                                                                            </SelectItem>
+                                                                        ),
+                                                                    )}
+                                                                </SelectContent>
+                                                            </Select>
+                                                        </div>
+
+                                                        <Button
+                                                            type="button"
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            className="h-10 w-full shrink-0 border-red-100 bg-red-50 py-2 text-red-600 hover:bg-red-100 hover:text-red-700 md:mt-3 md:w-10"
+                                                            onClick={() =>
+                                                                removeOffice(
+                                                                    index,
+                                                                )
+                                                            }
+                                                            title="Ofis bağlantısını kaldır"
+                                                        >
+                                                            Sil
+                                                        </Button>
+                                                    </div>
+                                                ),
+                                            )}
+                                            {errors.offices && (
+                                                <p className="flex items-center gap-2 text-sm font-medium text-red-500">
+                                                    <AlertCircle className="h-4 w-4" />{' '}
+                                                    {errors.offices}
+                                                </p>
+                                            )}
+                                        </CardContent>
+                                    </Card>
+                                </TabsContent>
+
+                                {/* ILETISIM TAB */}
+                                <TabsContent value="iletisim">
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle className="text-xl">
+                                                Adres ve Konum
+                                            </CardTitle>
+                                            <CardDescription>
+                                                Detaylı adres bilgileri ve konum
+                                                verileri.
+                                            </CardDescription>
+                                        </CardHeader>
+                                        <CardContent className="grid gap-6 md:grid-cols-3">
+                                            <div className="space-y-2">
+                                                <Label>İl</Label>
+                                                <Select
+                                                    value={String(
+                                                        data.address
+                                                            .province_id,
+                                                    )}
+                                                    onValueChange={(val) => {
+                                                        setData('address', {
+                                                            ...data.address,
+                                                            province_id: val,
+                                                            district_id: '',
+                                                            neighborhood_id: '',
+                                                        });
+                                                        setDistricts([]);
+                                                        setNeighborhoods([]);
+                                                    }}
+                                                >
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="İl seçiniz" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {provinces.map(
+                                                            (province) => (
+                                                                <SelectItem
+                                                                    key={
+                                                                        province.id
+                                                                    }
+                                                                    value={String(
+                                                                        province.id,
+                                                                    )}
+                                                                >
+                                                                    {
+                                                                        province.name
+                                                                    }
+                                                                </SelectItem>
+                                                            ),
+                                                        )}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>İlçe</Label>
+                                                <Select
+                                                    value={String(
+                                                        data.address
+                                                            .district_id,
+                                                    )}
+                                                    onValueChange={(val) => {
+                                                        setData('address', {
+                                                            ...data.address,
+                                                            district_id: val,
+                                                            neighborhood_id: '',
+                                                        });
+                                                        setNeighborhoods([]);
+                                                    }}
+                                                    disabled={
+                                                        !data.address
+                                                            .province_id
+                                                    }
+                                                >
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="İlçe seçiniz" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {districts.map(
+                                                            (district) => (
+                                                                <SelectItem
+                                                                    key={
+                                                                        district.id
+                                                                    }
+                                                                    value={String(
+                                                                        district.id,
+                                                                    )}
+                                                                >
+                                                                    {
+                                                                        district.name
+                                                                    }
+                                                                </SelectItem>
+                                                            ),
+                                                        )}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>Mahalle</Label>
+                                                <Select
+                                                    value={String(
+                                                        data.address
+                                                            .neighborhood_id,
+                                                    )}
+                                                    onValueChange={(val) =>
+                                                        setData('address', {
+                                                            ...data.address,
+                                                            neighborhood_id:
+                                                                val,
+                                                        })
+                                                    }
+                                                    disabled={
+                                                        !data.address
+                                                            .district_id
+                                                    }
+                                                >
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Mahalle seçiniz" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {neighborhoods.map(
+                                                            (neighborhood) => (
+                                                                <SelectItem
+                                                                    key={
+                                                                        neighborhood.id
+                                                                    }
+                                                                    value={String(
+                                                                        neighborhood.id,
+                                                                    )}
+                                                                >
+                                                                    {
+                                                                        neighborhood.name
+                                                                    }
+                                                                </SelectItem>
+                                                            ),
+                                                        )}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                            <div className="col-span-full space-y-2">
+                                                <Label>Açık Adres</Label>
+                                                <Textarea
+                                                    value={
+                                                        data.address.description
+                                                    }
+                                                    onChange={(e) =>
+                                                        setData('address', {
+                                                            ...data.address,
+                                                            description:
+                                                                e.target.value,
+                                                        })
+                                                    }
+                                                    placeholder="Cadde, sokak, bina ve kapı no..."
+                                                    className="min-h-[100px] resize-none"
+                                                />
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                </TabsContent>
+
+                                {/* RESMI BELGE TAB */}
+                                <TabsContent value="resmi">
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle className="text-xl">
+                                                Resmi ve Yasal Bilgiler
+                                            </CardTitle>
+                                            <CardDescription>
+                                                Vergi, sicil ve yetki belgesi
+                                                bilgileri.
+                                            </CardDescription>
+                                        </CardHeader>
+                                        <CardContent className="grid gap-6 md:grid-cols-2">
+                                            <div className="space-y-2">
+                                                <Label>Yetki Belge No</Label>
+                                                <Input
+                                                    value={
+                                                        data.staff_details
+                                                            .license_number
+                                                    }
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            'staff_details',
+                                                            {
+                                                                ...data.staff_details,
+                                                                license_number:
+                                                                    e.target
+                                                                        .value,
+                                                            },
+                                                        )
+                                                    }
+                                                    placeholder="YB0000000"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>Oda Sicil No</Label>
+                                                <Input
+                                                    value={
+                                                        data.staff_details
+                                                            .chamber_registration_number
+                                                    }
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            'staff_details',
+                                                            {
+                                                                ...data.staff_details,
+                                                                chamber_registration_number:
+                                                                    e.target
+                                                                        .value,
+                                                            },
+                                                        )
+                                                    }
+                                                />
+                                            </div>
+                                            <Separator className="col-span-full md:hidden" />
+                                            <div className="space-y-2">
+                                                <Label>Vergi No</Label>
+                                                <Input
+                                                    value={
+                                                        data.staff_details
+                                                            .tax_number
+                                                    }
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            'staff_details',
+                                                            {
+                                                                ...data.staff_details,
+                                                                tax_number:
+                                                                    e.target
+                                                                        .value,
+                                                            },
+                                                        )
+                                                    }
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>Vergi Dairesi</Label>
+                                                <Input
+                                                    value={
+                                                        data.staff_details
+                                                            .tax_office
+                                                    }
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            'staff_details',
+                                                            {
+                                                                ...data.staff_details,
+                                                                tax_office:
+                                                                    e.target
+                                                                        .value,
+                                                            },
+                                                        )
+                                                    }
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>T.C. Kimlik No</Label>
+                                                <Input
+                                                    value={
+                                                        data.staff_details
+                                                            .national_id_number
+                                                    }
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            'staff_details',
+                                                            {
+                                                                ...data.staff_details,
+                                                                national_id_number:
+                                                                    e.target
+                                                                        .value,
+                                                            },
+                                                        )
+                                                    }
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>Unvan / Pozisyon</Label>
+                                                <Input
+                                                    value={
+                                                        data.staff_details.title
+                                                    }
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            'staff_details',
+                                                            {
+                                                                ...data.staff_details,
+                                                                title: e.target
+                                                                    .value,
+                                                            },
+                                                        )
+                                                    }
+                                                    placeholder="Örn: Senior Broker"
+                                                />
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                </TabsContent>
+                            </Tabs>
+                        </div>
+
+                        {/* Right Content - Status & Layout */}
+                        <div className="space-y-6 lg:col-span-4">
+                            {/* Summary Card */}
+                            <Card className="border-l-4 border-l-[#da1f25]">
+                                <CardHeader className="pb-3">
+                                    <div className="flex items-center justify-between">
+                                        <CardTitle className="text-base text-muted-foreground">
+                                            Hesap Durumu
+                                        </CardTitle>
+                                        {data.status === 'active' ? (
+                                            <Badge className="border-green-200 bg-green-100 text-green-700 hover:bg-green-100">
+                                                Aktif
+                                            </Badge>
+                                        ) : data.status === 'pending' ? (
+                                            <Badge className="border-yellow-200 bg-yellow-100 text-yellow-700 hover:bg-yellow-100">
+                                                Onay Bekliyor
+                                            </Badge>
+                                        ) : (
+                                            <Badge className="border-gray-200 bg-gray-100 text-gray-700 hover:bg-gray-100">
+                                                Pasif
+                                            </Badge>
+                                        )}
+                                    </div>
+                                    <CardDescription className="text-xs">
+                                        Bu kullanıcının sisteme erişim durumunu
+                                        kontrol edin.
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label>Durum Değiştir</Label>
+                                        <Select
+                                            value={data.status}
+                                            onValueChange={(val) =>
+                                                setData('status', val)
+                                            }
+                                        >
+                                            <SelectTrigger>
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="active">
+                                                    <div className="flex items-center gap-2">
+                                                        <CheckCircle2 className="h-4 w-4 text-green-500" />
+                                                        <span>Aktif</span>
+                                                    </div>
+                                                </SelectItem>
+                                                <SelectItem value="pending">
+                                                    <div className="flex items-center gap-2">
+                                                        <AlertCircle className="h-4 w-4 text-yellow-500" />
+                                                        <span>
+                                                            Onay Bekliyor
+                                                        </span>
+                                                    </div>
+                                                </SelectItem>
+                                                <SelectItem value="passive">
+                                                    <div className="flex items-center gap-2">
+                                                        <Shield className="h-4 w-4 text-gray-500" />
+                                                        <span>
+                                                            Pasif / Engelli
+                                                        </span>
+                                                    </div>
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            {/* Security Card */}
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle className="flex items-center gap-2 text-lg">
+                                        <Shield className="h-4 w-4 text-[#da1f25]" />
+                                        Güvenlik
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="password">
+                                            Şifre Değiştir
+                                        </Label>
+                                        <Input
+                                            id="password"
+                                            type="password"
+                                            value={data.password}
+                                            onChange={(e) =>
+                                                setData(
+                                                    'password',
+                                                    e.target.value,
+                                                )
+                                            }
+                                            placeholder="Yeni şifre belirle..."
+                                            className="bg-muted/30"
+                                        />
+                                        {errors.password && (
+                                            <p className="text-sm text-red-500">
+                                                {errors.password}
+                                            </p>
+                                        )}
+                                        <p className="text-xs text-muted-foreground">
+                                            Sadece şifreyi değiştirmek
+                                            isterseniz doldurun.
+                                        </p>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </AdminLayout>
     );
 }

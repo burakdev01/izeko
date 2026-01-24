@@ -166,6 +166,10 @@ export default function UsersIndex({ users, filters }: UsersIndexProps) {
                                         </td>
                                         <td className="px-6 py-4 text-center">
                                             <AdminRowActions
+                                                viewHref={route(
+                                                    'admin.kullanicilar.show',
+                                                    user.id,
+                                                )}
                                                 editHref={`/admin/kullanicilar/${user.id}/edit`}
                                                 deleteHref={`/admin/kullanicilar/${user.id}`}
                                             />

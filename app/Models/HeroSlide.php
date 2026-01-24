@@ -26,6 +26,7 @@ class HeroSlide extends Model
         'video',
         'poster',
         'sort_order',
+        'seo_description',
     ];
 
     /**

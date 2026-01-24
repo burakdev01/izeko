@@ -10,6 +10,7 @@ type HeroSlide = {
     image?: string | null;
     video?: string | null;
     poster?: string | null;
+    seo_description?: string | null;
 };
 
 type HeroSlideFormProps = {
@@ -35,6 +36,7 @@ export default function HeroSlideForm({
         _method: method,
         title: slide?.title ?? '',
         subtitle: slide?.subtitle ?? '',
+        seo_description: slide?.seo_description ?? '',
         image_file: null as File | null,
         video_file: null as File | null,
         remove_image: false,
@@ -105,6 +107,29 @@ export default function HeroSlideForm({
                             </div>
 
                             <div>
+                                <label className="mb-2 block text-sm font-medium text-gray-700">
+                                    SEO Açıklaması (Meta Description)
+                                </label>
+                                <textarea
+                                    name="seo_description"
+                                    rows={3}
+                                    value={data.seo_description}
+                                    onChange={(e) =>
+                                        setData(
+                                            'seo_description',
+                                            e.target.value,
+                                        )
+                                    }
+                                    placeholder="SEO için açıklama metni"
+                                    className="w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition outline-none focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                                />
+                                <InputError
+                                    className="mt-2"
+                                    message={errors.seo_description}
+                                />
+                            </div>
+
+                            <div className="pt-4">
                                 <p className="text-sm text-gray-500">
                                     Görsel veya video dosyası yükleyin.
                                 </p>

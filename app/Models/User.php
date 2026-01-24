@@ -71,4 +71,24 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsToMany(Office::class, 'user_offices');
     }
+
+    public function userOffices()
+    {
+        return $this->hasMany(UserOffice::class);
+    }
+
+    public function address()
+    {
+        return $this->hasOne(Address::class);
+    }
+
+    public function staffDetails()
+    {
+        return $this->hasOne(StaffDetail::class);
+    }
+
+    public function files()
+    {
+        return $this->hasMany(File::class);
+    }
 }

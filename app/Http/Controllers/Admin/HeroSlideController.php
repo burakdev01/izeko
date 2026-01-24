@@ -176,6 +176,7 @@ class HeroSlideController extends Controller
             'poster_file' => $posterFileRules,
             'remove_image' => ['nullable', 'boolean'],
             'remove_video' => ['nullable', 'boolean'],
+            'seo_description' => ['nullable', 'string', 'max:1000'],
         ]);
 
         $hasImageFile = $request->hasFile('image_file');
@@ -208,6 +209,7 @@ class HeroSlideController extends Controller
             'video' => $slide->mediaUrl($slide->video),
             'poster' => $slide->mediaUrl($slide->poster),
             'sort_order' => $slide->sort_order,
+            'seo_description' => $slide->seo_description,
         ];
     }
 

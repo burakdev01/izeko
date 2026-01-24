@@ -674,6 +674,10 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
         Route::resource('chamber-teams', \App\Http\Controllers\Admin\ChamberTeamController::class)
             ->parameters(['chamber-teams' => 'chamberTeam']);
 
+        // Location Routes
+        Route::get('/locations/provinces/{province}/districts', [\App\Http\Controllers\Admin\LocationController::class, 'getDistricts'])->name('locations.districts');
+        Route::get('/locations/districts/{district}/neighborhoods', [\App\Http\Controllers\Admin\LocationController::class, 'getNeighborhoods'])->name('locations.neighborhoods');
+
         // Why Choose Us
         Route::get('why-choose-us/edit', [\App\Http\Controllers\Admin\WhyChooseUsController::class, 'edit'])->name('why-choose-us.edit');
         Route::post('why-choose-us/update', [\App\Http\Controllers\Admin\WhyChooseUsController::class, 'update'])->name('why-choose-us.update');
