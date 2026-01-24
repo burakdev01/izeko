@@ -1,4 +1,5 @@
 import AdminFormHeader from '@/components/admin/admin-form-header';
+import AdminMediaUpload from '@/components/admin/admin-media-upload';
 import RichTextEditor from '@/components/admin/rich-text-editor';
 import AdminLayout from '@/layouts/admin-layout';
 import { useForm } from '@inertiajs/react';
@@ -6,6 +7,7 @@ import { useForm } from '@inertiajs/react';
 type ChairmanMessage = {
     id: number;
     content: string;
+    image?: string | null;
 };
 
 type Props = {
@@ -16,6 +18,7 @@ export default function ChairmanMessageEdit({ message }: Props) {
     const { data, setData, post, processing, errors, recentlySuccessful } =
         useForm({
             content: message?.content ?? '',
+            image_file: null as File | null,
         });
 
     const submit = (e: React.FormEvent) => {
@@ -40,8 +43,8 @@ export default function ChairmanMessageEdit({ message }: Props) {
                     </div>
                 )}
 
-                <div className="flex flex-col gap-6">
-                    <div className="space-y-6">
+                <div className="flex flex-col gap-6 md:grid md:grid-cols-3">
+                    <div className="space-y-6 md:col-span-2">
                         <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
                             <div className="space-y-4 p-6">
                                 <div>
@@ -63,6 +66,18 @@ export default function ChairmanMessageEdit({ message }: Props) {
                                     )}
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <div className="space-y-6">
+                        <div className="space-y-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+                            <AdminMediaUpload
+                                label="Başkan Görseli"
+                                name="image_file"
+                                initialPreview={message?.image ?? null}
+                                error={errors.image_file}
+                                onChange={(file) => setData('image_file', file)}
+                            />
                         </div>
                     </div>
                 </div>

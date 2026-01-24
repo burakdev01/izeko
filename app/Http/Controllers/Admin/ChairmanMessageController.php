@@ -10,6 +10,8 @@ use Inertia\Inertia;
 
 class ChairmanMessageController extends Controller
 {
+    use \App\Http\Controllers\Concerns\HandlesUploads;
+
     public function edit()
     {
         $message = ChairmanMessage::first();
@@ -18,6 +20,11 @@ class ChairmanMessageController extends Controller
             'message' => $message ? [
                 'id' => $message->id,
                 'content' => $message->content,
+                'image' => $message->image ? (
+                    str_starts_with($message->image, 'http')
+                        ? $message->image
+                        : config('filesystems.disks.uploads.url') . '/chairman_message/' . $message->image
+                ) : null,
             ] : null,
         ]);
     }
@@ -26,9 +33,28 @@ class ChairmanMessageController extends Controller
     {
         $validated = $request->validate([
             'content' => ['required', 'string'],
+            'image_file' => ['nullable', 'image', 'max:5120'], // 5MB max
         ]);
 
         $message = ChairmanMessage::firstOrNew();
+
+        // Handle Image Upload
+        if ($request->hasFile('image_file')) {
+            $imageName = $this->storePublicImageNameAsWebp(
+                $request,
+                'image_file',
+                'chairman_message',
+                'uploads'
+            );
+
+            if ($imageName) {
+                // Delete old image if exists
+                if ($message->image) {
+                    Storage::disk('uploads')->delete('chairman_message/' . $message->image);
+                }
+                $message->image = $imageName;
+            }
+        }
 
         $message->content = $validated['content'];
         $message->save();
