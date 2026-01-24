@@ -28,6 +28,6 @@ class LogSuccessfulLogin
                 'user_agent' => $request->userAgent(),
                 'guard' => $event->guard,
             ])
-            ->log('login');
+            ->log('Admin giriş yaptı (' . $request->ip() . ')');
     }
 }

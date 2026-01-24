@@ -523,6 +523,41 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
                     'date' => $user->created_at->format('d.m.Y'),
                 ]);
 
+            $listings = \App\Models\Listing::where('listing_status', 'pending')
+                ->with('user')
+                ->orderByDesc('created_at')
+                ->take(5)
+                ->get()
+                ->map(fn ($listing) => [
+                    'id' => $listing->id,
+                    'title' => $listing->title,
+                    'price' => number_format($listing->price, 0, ',', '.') . ' ₺',
+                    'location' => $listing->district . '/' . $listing->city,
+                    'owner' => $listing->user ? $listing->user->name . ' ' . $listing->user->surname : 'Silinmiş Üye',
+                    'date' => $listing->created_at->format('d.m.Y'),
+                ]);
+
+            $activities = \Spatie\Activitylog\Models\Activity::with(['causer', 'subject'])
+                ->orderByDesc('created_at')
+                ->take(10)
+                ->get()
+                ->map(fn ($activity) => [
+                    'id' => $activity->id,
+                    'description' => $activity->description,
+                    'subject_type' => class_basename($activity->subject_type),
+                    'subject_id' => $activity->subject_id,
+                    'subject_name' => match (class_basename($activity->subject_type)) {
+                        'User' => $activity->subject?->name . ' ' . $activity->subject?->surname,
+                        'Office', 'ContactMessage' => $activity->subject?->name,
+                        'Faq' => $activity->subject?->question,
+                        default => $activity->subject?->title ?? 'Silinmiş Kayıt',
+                    },
+                    'causer_name' => trim($activity->causer ? $activity->causer->name . ' ' . $activity->causer->surname : 'Sistem'),
+                    'created_at' => $activity->created_at->diffForHumans(),
+                    'properties' => $activity->properties,
+                    'event' => $activity->event,
+                ]);
+
             return Inertia::render('admin/dashboard', [
                 'stats' => [
                     'users' => \App\Models\User::count(),
@@ -533,8 +568,11 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
                     'activities' => Activity::count(),
                     'streams' => LiveStream::count(),
                     'posts' => BlogPost::count(),
+                    'offices' => \App\Models\Office::count(),
                 ],
                 'recentUsers' => $users,
+                'recentListings' => $listings,
+                'activityLogs' => $activities,
             ]);
         })->name('dashboard');
 
@@ -641,6 +679,40 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
         // Chamber Registration
         Route::get('chamber-registration/edit', [\App\Http\Controllers\Admin\ChamberRegistrationController::class, 'edit'])->name('chamber-registration.edit');
         Route::post('chamber-registration/update', [\App\Http\Controllers\Admin\ChamberRegistrationController::class, 'update'])->name('chamber-registration.update');
+        Route::get('/api/activities', function (Request $request) {
+            $offset = (int) $request->query('offset', 10);
+            $limit = (int) $request->query('limit', 10);
+
+            \Illuminate\Support\Facades\Log::info("Activity API Request: Offset=$offset, Limit=$limit");
+
+            $activities = \Spatie\Activitylog\Models\Activity::with(['causer', 'subject'])
+                ->orderByDesc('created_at')
+                ->skip($offset)
+                ->take($limit)
+                ->get()
+                ->map(fn ($activity) => [
+                    'id' => $activity->id,
+                    'description' => $activity->description,
+                    'subject_type' => class_basename($activity->subject_type),
+                    'subject_id' => $activity->subject_id,
+                    'subject_name' => match (class_basename($activity->subject_type)) {
+                        'User' => $activity->subject?->name . ' ' . $activity->subject?->surname,
+                        'Office', 'ContactMessage' => $activity->subject?->name,
+                        'Faq' => $activity->subject?->question,
+                        default => $activity->subject?->title ?? 'Silinmiş Kayıt',
+                    },
+                    'causer_name' => trim($activity->causer ? $activity->causer->name . ' ' . $activity->causer->surname : 'Sistem'),
+                    'created_at' => $activity->created_at->diffForHumans(),
+                    'properties' => $activity->properties,
+                    'event' => $activity->event,
+                ])
+                ->values();
+
+            return response()->json([
+                'activities' => $activities,
+                'hasMore' => $activities->count() === $limit,
+            ]);
+        })->name('api.activities');
     },
 );
 

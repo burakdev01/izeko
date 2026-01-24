@@ -1,16 +1,9 @@
+import ActivityTimeline from '@/components/admin/activity-timeline';
 import DashboardStatsCard from '@/components/admin/dashboard-stats-card';
 import AdminLayout from '@/layouts/admin-layout';
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
-import {
-    Activity,
-    Building2,
-    Home,
-    Mail,
-    Play,
-    Plus,
-    Users,
-} from 'lucide-react';
+import { Building2, Home, Mail, Play, Plus, Users } from 'lucide-react';
 
 type DashboardProps = {
     stats: {
@@ -31,9 +24,33 @@ type DashboardProps = {
         phone: string;
         date: string;
     }>;
+    recentListings: Array<{
+        id: number;
+        title: string;
+        price: string;
+        location: string;
+        owner: string;
+        date: string;
+    }>;
+    activityLogs: Array<{
+        id: number;
+        description: string;
+        subject_type: string;
+        subject_id: number;
+        subject_name?: string;
+        causer_name: string;
+        created_at: string;
+        event: string;
+        properties: any;
+    }>;
 };
 
-export default function AdminDashboard({ stats, recentUsers }: DashboardProps) {
+export default function AdminDashboard({
+    stats,
+    recentUsers,
+    recentListings,
+    activityLogs,
+}: DashboardProps) {
     const { auth } = usePage<SharedData>().props;
     const userName = auth?.user?.name || 'Admin';
 
@@ -74,12 +91,12 @@ export default function AdminDashboard({ stats, recentUsers }: DashboardProps) {
                         href={route('admin.ilanlar.index')}
                     />
                     <DashboardStatsCard
-                        title="Aktif İlan"
-                        value={stats.active_listings}
+                        title="Toplam Ofis"
+                        value={stats.offices}
                         icon={Building2}
-                        change="Yayında"
+                        change="Tüm Ofisler"
                         color="green"
-                        href={route('admin.ilanlar.index')}
+                        href={route('admin.ofisler.index')}
                     />
                     <DashboardStatsCard
                         title="Bekleyen İlan"
@@ -90,10 +107,10 @@ export default function AdminDashboard({ stats, recentUsers }: DashboardProps) {
                         href={route('admin.ilanlar.index')}
                     />
                     <DashboardStatsCard
-                        title="Toplam Üye"
+                        title="Toplam Kullanıcı"
                         value={stats.users}
                         icon={Users}
-                        change="Tüm Üyeler"
+                        change="Tüm Kullanıcılar"
                         color="purple"
                         href={route('admin.kullanicilar.index')}
                     />
@@ -178,6 +195,86 @@ export default function AdminDashboard({ stats, recentUsers }: DashboardProps) {
                                 </table>
                             </div>
                         </div>
+
+                        <div className="mt-8 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+                            <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
+                                Onay Bekleyen İlanlar
+                                <Link
+                                    href={route('admin.ilanlar.index', {
+                                        status: 'pending',
+                                    })}
+                                    className="text-sm font-medium text-red-600 hover:text-red-700 hover:underline"
+                                >
+                                    Tümünü Gör
+                                </Link>
+                            </div>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left text-sm text-gray-500">
+                                    <thead className="bg-gray-50 text-xs text-gray-700 uppercase">
+                                        <tr>
+                                            <th className="px-6 py-3">
+                                                Başlık
+                                            </th>
+                                            <th className="px-6 py-3">Fiyat</th>
+                                            <th className="px-6 py-3">Konum</th>
+                                            <th className="px-6 py-3">
+                                                İlan Sahibi
+                                            </th>
+                                            <th className="px-6 py-3">Tarih</th>
+                                            <th className="px-6 py-3">İşlem</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {recentListings.length > 0 ? (
+                                            recentListings.map((listing) => (
+                                                <tr
+                                                    key={listing.id}
+                                                    className="border-b bg-white hover:bg-gray-50 md:border-none"
+                                                >
+                                                    <td className="px-6 py-4 font-medium text-gray-900">
+                                                        <div className="line-clamp-1 max-w-[200px]">
+                                                            {listing.title}
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        {listing.price}
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        {listing.location}
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        {listing.owner}
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        {listing.date}
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <Link
+                                                            href={route(
+                                                                'admin.ilanlar.edit',
+                                                                listing.id,
+                                                            )}
+                                                            className="inline-flex w-full items-center justify-center rounded-lg bg-green-600 px-3 py-1.5 text-center text-xs font-semibold text-white transition-colors hover:bg-green-700"
+                                                        >
+                                                            İncele
+                                                        </Link>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td
+                                                    colSpan={6}
+                                                    className="px-6 py-8 text-center text-gray-500"
+                                                >
+                                                    Onay bekleyen ilan yok.
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Sidebar - Quick Actions */}
@@ -253,25 +350,11 @@ export default function AdminDashboard({ stats, recentUsers }: DashboardProps) {
                             </div>
                         </div>
 
-                        <div className="rounded-2xl bg-gradient-to-br from-red-600 to-red-700 p-6 text-white shadow-lg">
-                            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm">
-                                <Activity className="h-6 w-6 text-white" />
-                            </div>
-                            <h3 className="text-lg font-bold">
-                                Faaliyet Raporu
+                        <div className="mt-8 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+                            <h3 className="mb-6 font-semibold text-gray-900">
+                                Son İşlemler
                             </h3>
-                            <p className="mt-2 text-sm text-red-100 opacity-90">
-                                Bu ay toplam {stats.activities} yeni faaliyet ve{' '}
-                                {stats.streams} canlı yayın gerçekleştirildi.
-                            </p>
-                            <div className="hidden">
-                                <Link
-                                    href={route('admin.faaliyetler.index')}
-                                    className="mt-6 inline-flex w-full items-center justify-center rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50"
-                                >
-                                    Raporu Görüntüle
-                                </Link>
-                            </div>
+                            <ActivityTimeline logs={activityLogs} />
                         </div>
                     </div>
                 </div>

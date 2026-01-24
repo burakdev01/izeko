@@ -75,7 +75,7 @@ export default function AdminLogin({
                                 </label>
                                 <input
                                     id="email"
-                                    type="email"
+                                    type="text"
                                     name="email"
                                     value={data.email}
                                     onChange={(e) =>
