@@ -193,7 +193,23 @@ Route::get('/kurumsal/denetim-kurulu', function () {
 })->name('kurumsal.denetim-kurulu');
 
 Route::get('/kurumsal/oda-ekibimiz', function () {
-    return Inertia::render('kurumsal/oda-ekibimiz');
+    $members = \App\Models\ChamberTeam::where('active', true)
+        ->orderBy('sort_order')
+        ->orderByDesc('updated_at')
+        ->get()
+        ->map(fn ($member) => [
+            'name' => $member->name,
+            'title' => $member->title,
+            'image' => $member->image ? (
+                str_starts_with($member->image, 'http')
+                    ? $member->image
+                    : config('filesystems.disks.uploads.url') . '/chamber_teams/' . $member->image
+            ) : null,
+        ]);
+
+    return Inertia::render('kurumsal/oda-ekibimiz', [
+        'members' => $members,
+    ]);
 })->name('kurumsal.oda-ekibimiz');
 
 Route::get('/kurumsal/bolge-sorumlularimiz', function () {
@@ -608,6 +624,11 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
             ->name('registration-fees.reorder');
         Route::resource('registration-fees', \App\Http\Controllers\Admin\RegistrationFeeController::class)
             ->parameters(['registration-fees' => 'registrationFee']);
+
+        Route::patch('chamber-teams/reorder', [\App\Http\Controllers\Admin\ChamberTeamController::class, 'reorder'])
+            ->name('chamber-teams.reorder');
+        Route::resource('chamber-teams', \App\Http\Controllers\Admin\ChamberTeamController::class)
+            ->parameters(['chamber-teams' => 'chamberTeam']);
 
         // Why Choose Us
         Route::get('why-choose-us/edit', [\App\Http\Controllers\Admin\WhyChooseUsController::class, 'edit'])->name('why-choose-us.edit');

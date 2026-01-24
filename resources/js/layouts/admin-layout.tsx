@@ -189,6 +189,11 @@ const navGroups: NavGroup[] = [
                         label: 'Oda Kayıt İşlemleri',
                         icon: HelpCircle,
                     },
+                    {
+                        href: '/admin/chamber-teams',
+                        label: 'Oda Ekibimiz',
+                        icon: Users,
+                    },
                 ],
             },
             {

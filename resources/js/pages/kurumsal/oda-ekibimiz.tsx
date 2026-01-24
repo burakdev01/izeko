@@ -6,36 +6,14 @@ import { Navbar } from '@/components/navbar/Navbar';
 type TeamMember = {
     name: string;
     title: string;
-    image: string;
+    image?: string | null;
 };
 
-const teamMembers: TeamMember[] = [
-    {
-        name: 'Melihat ÇETİN',
-        title: 'Genel Sekreter',
-        image: 'https://izeko.org.tr/app/themes/default/assets/images/room-team/melihat-cetin.jpg',
-    },
-    {
-        name: 'Adem DEMİR',
-        title: 'Oda Personeli',
-        image: 'https://izeko.org.tr/app/themes/default/assets/images/room-team/adem-demir.jpg',
-    },
-    {
-        name: 'Sezen TAYİŞ',
-        title: 'Oda Personeli',
-        image: 'https://izeko.org.tr/app/themes/default/assets/images/room-team/sezen-tayis.jpg',
-    },
-    {
-        name: 'Barış KIRKURT',
-        title: 'Oda Personeli',
-        image: 'https://izeko.org.tr/app/themes/default/assets/images/room-team/baris-kirkurt.jpg',
-    },
-    {
-        name: 'Yeşim Gedikoğlu',
-        title: 'Sosyal Medya Uzmanı',
-        image: 'https://placehold.co/300x300',
-    },
-];
+type PageProps = {
+    members: TeamMember[];
+};
+
+const placeholderImage = 'https://via.placeholder.com/300x300?text=Uye';
 
 const Card = ({ member }: { member: TeamMember }) => (
     <div className="overflow-hidden rounded-lg bg-white shadow-md transition-shadow duration-300 hover:shadow-xl">
@@ -44,7 +22,7 @@ const Card = ({ member }: { member: TeamMember }) => (
             <div className="relative mb-4">
                 <div className="h-32 w-32 overflow-hidden rounded-full bg-gray-200 ring-4 ring-gray-100">
                     <img
-                        src={member.image}
+                        src={member.image || placeholderImage}
                         alt={member.name}
                         className="h-full w-full object-cover"
                     />
@@ -61,7 +39,7 @@ const Card = ({ member }: { member: TeamMember }) => (
     </div>
 );
 
-export default function OdaEkibimiz() {
+export default function OdaEkibimiz({ members }: PageProps) {
     return (
         <>
             <TopBar />
@@ -74,8 +52,8 @@ export default function OdaEkibimiz() {
                 <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
                     <div className="mx-auto max-w-7xl">
                         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                            {teamMembers.map((member) => (
-                                <Card key={member.name} member={member} />
+                            {members.map((member, index) => (
+                                <Card key={index} member={member} />
                             ))}
                         </div>
                     </div>
