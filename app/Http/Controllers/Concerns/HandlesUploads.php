@@ -76,6 +76,11 @@ trait HandlesUploads
             $fileName = $this->webpFileName($file);
             $path = rtrim($directory, '/').'/'.$fileName;
 
+            // Ensure directory exists
+            if (!Storage::disk($disk)->exists($directory)) {
+                Storage::disk($disk)->makeDirectory($directory);
+            }
+
             $result = Storage::disk($disk)->put($path, $webpContents);
             
             if ($result) {
