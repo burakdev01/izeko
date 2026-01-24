@@ -123,11 +123,7 @@ trait HandlesUploads
         string $field,
     ): string {
         try {
-            $manager = new \Intervention\Image\ImageManager(
-                new \Intervention\Image\Drivers\Gd\Driver()
-            );
-
-            $image = $manager->read($file->getRealPath());
+            $image = \Intervention\Image\Laravel\Facades\Image::read($file->getRealPath());
             
             // Encode to WebP with 80% quality
             $encoded = $image->toWebp(80);
