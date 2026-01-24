@@ -100,6 +100,9 @@ const getMessage = (log: ActivityLog) => {
     const nameSuffix = log.subject_name ? `: ${log.subject_name}` : '';
 
     if (log.description === 'created') {
+        if (log.subject_type === 'ContactMessage') {
+            return 'Yeni iletişim mesajı geldi.';
+        }
         return `Yeni ${subjectName} eklendi${nameSuffix}`;
     }
     if (log.description === 'updated') {
@@ -280,9 +283,12 @@ export default function ActivityTimeline({
                                                 <span className="font-medium">
                                                     {getMessage(log)}
                                                 </span>{' '}
-                                                <span className="text-xs font-normal text-gray-500 italic">
-                                                    ({log.causer_name})
-                                                </span>
+                                                {log.subject_type !==
+                                                    'ContactMessage' && (
+                                                    <span className="text-xs font-normal text-gray-500 italic">
+                                                        ({log.causer_name})
+                                                    </span>
+                                                )}
                                             </p>
                                         </div>
                                         <div className="text-right text-xs whitespace-nowrap text-gray-500">
