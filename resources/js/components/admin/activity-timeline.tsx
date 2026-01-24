@@ -50,6 +50,18 @@ const getIcon = (type: string) => {
             return HelpCircle;
         case 'ContactMessage':
             return MessageSquare;
+        case 'BoardMember':
+        case 'SupervisoryBoardMember':
+        case 'ChamberTeam':
+        case 'RegionalManager':
+            return User;
+        case 'BankAccount':
+        case 'RegistrationFee':
+        case 'ChairmanMessage':
+        case 'WhyChooseUs':
+        case 'AboutIzeko':
+        case 'ChamberRegistration':
+            return FileText;
         default:
             return Activity;
     }
@@ -95,13 +107,23 @@ const getMessage = (log: ActivityLog) => {
             Faq: 'SSS',
             ContactMessage: 'İletişim Mesajı',
             Spotlight: 'Manşet',
+            BoardMember: 'Yönetim Kurulu Üyesi',
+            ChairmanMessage: 'Başkan Mesajı',
+            SupervisoryBoardMember: 'Denetim Kurulu Üyesi',
+            ChamberTeam: 'Oda Ekibi Üyesi',
+            RegionalManager: 'Bölge Sorumlusu',
+            BankAccount: 'Banka Hesabı',
+            RegistrationFee: 'Kayıt Ücreti',
+            WhyChooseUs: 'Neden Emlak Ofisi',
+            AboutIzeko: 'İzeko Hakkında',
+            ChamberRegistration: 'Oda Kayıt Bilgisi',
         }[log.subject_type] || log.subject_type;
 
     const nameSuffix = log.subject_name ? `: ${log.subject_name}` : '';
 
     if (log.description === 'created') {
         if (log.subject_type === 'ContactMessage') {
-            return 'Yeni iletişim mesajı geldi.';
+            return 'Yeni iletişim mesajı geldi';
         }
         return `Yeni ${subjectName} eklendi${nameSuffix}`;
     }
@@ -156,27 +178,37 @@ const getMessage = (log: ActivityLog) => {
             return `${subjectName} pasife alındı${nameSuffix}`;
         }
 
-        // Spotlight (active field in DB is 'active', but cast to boolean)
-        // Check if DB uses 'active' or 'is_active'. Model casts 'active', let's check migration/fillable.
-        // Spotlight has 'active' in fillable.
+        // Generic check for 'active' changes (Spotlight, Board Members, etc.)
         if (
-            log.subject_type === 'Spotlight' &&
             log.properties?.attributes?.active === true &&
             log.properties?.old?.active === false
         ) {
             return `${subjectName} aktif edildi${nameSuffix}`;
         }
         if (
-            log.subject_type === 'Spotlight' &&
             log.properties?.attributes?.active === false &&
             log.properties?.old?.active === true
         ) {
             return `${subjectName} pasife alındı${nameSuffix}`;
         }
 
+        // Special handling for single-page corporate models
+        const singlePageModels = [
+            'AboutIzeko',
+            'WhyChooseUs',
+            'ChamberRegistration',
+            'ChairmanMessage',
+        ];
+        if (singlePageModels.includes(log.subject_type)) {
+            return `${log.subject_name} sayfası güncellendi`;
+        }
+
         return `${subjectName} güncellendi${nameSuffix}`;
     }
     if (log.description === 'deleted') {
+        if (log.subject_type === 'RegistrationFee') {
+            return `${subjectName} sayfası düzenlendi`;
+        }
         return `${subjectName} silindi`;
     }
 
