@@ -151,4 +151,74 @@ class NotificationController extends Controller
         return redirect()->route('admin.notifications.sms.index')
             ->with('success', 'SMS gönderimi başlatıldı.');
     }
+
+    public function pushIndex(Request $request)
+    {
+        $query = Notification::where('type', 'push');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('subject', 'like', "%{$search}%")
+                  ->orWhere('message', 'like', "%{$search}%");
+            });
+        }
+
+        $notifications = $query->orderByDesc('created_at')->get();
+
+        $stats = [
+            'today' => Notification::where('type', 'push')->whereDate('created_at', today())->count(),
+            'month' => Notification::where('type', 'push')->whereMonth('created_at', now()->month)->count(),
+            'failed' => Notification::where('type', 'push')->where('status', 'failed')->count(),
+        ];
+
+        return Inertia::render('admin/notifications/push/index', [
+            'notifications' => $notifications,
+            'filters' => $request->only(['search']),
+            'stats' => $stats,
+        ]);
+    }
+
+    public function pushCreate()
+    {
+        return Inertia::render('admin/notifications/push/create', [
+            'users' => User::select('id', 'name', 'email')->get(),
+            'offices' => Office::select('id', 'name')->get(),
+        ]);
+    }
+
+    public function pushStore(Request $request)
+    {
+        $validated = $request->validate([
+            'subject' => 'required|string',
+            'message' => 'required|string',
+            'audience' => 'required|in:all,offices,users,custom',
+            'selected_users' => 'array',
+            'selected_users.*' => 'exists:users,id',
+            'selected_offices' => 'array',
+            'selected_offices.*' => 'exists:offices,id',
+        ]);
+
+        $recipientCount = 0;
+        if ($validated['audience'] === 'all') {
+            $recipientCount = User::count();
+        } elseif ($validated['audience'] === 'offices') {
+            $recipientCount = Office::count();
+        } elseif ($validated['audience'] === 'users' || $validated['audience'] === 'custom') {
+            $recipientCount = count($validated['selected_users'] ?? []);
+        } elseif ($request->has('selected_offices')) {
+             $recipientCount += count($validated['selected_offices'] ?? []);
+        }
+
+        Notification::create([
+            'type' => 'push',
+            'subject' => $validated['subject'],
+            'message' => $validated['message'],
+            'recipient_count' => $recipientCount,
+            'audience' => $validated['audience'],
+        ]);
+
+        return redirect()->route('admin.notifications.push.index')
+            ->with('success', 'Push bildirimi gönderimi başlatıldı.');
+    }
 }

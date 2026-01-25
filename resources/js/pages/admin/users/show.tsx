@@ -160,8 +160,8 @@ export default function ShowUser({ user }: Props) {
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="overflow-hidden rounded-lg border border-gray-200">
-                            <table className="min-w-full divide-y divide-gray-200">
+                        <div className="overflow-hidden rounded-lg border border-gray-200 md:w-fit">
+                            <table className="min-w-full divide-y divide-gray-200 md:w-auto">
                                 <tbody className="divide-y divide-gray-200 bg-white">
                                     {/* Oda Yetki Belgesi Example if specific types needed, otherwise listing generic files */}
                                     {user.files && user.files.length > 0 ? (

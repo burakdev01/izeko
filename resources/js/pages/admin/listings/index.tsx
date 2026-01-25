@@ -244,11 +244,10 @@ export default function ListingsIndex({
                                                 <span>
                                                     {new Intl.NumberFormat(
                                                         'tr-TR',
-                                                        {
-                                                            style: 'currency',
-                                                            currency: 'TRY',
-                                                        },
-                                                    ).format(listing.price)}
+                                                    ).format(
+                                                        listing.price,
+                                                    )}{' '}
+                                                    TL
                                                 </span>
                                                 <span className="lg:hidden">
                                                     Ofis: #{listing.office_id}
@@ -259,10 +258,10 @@ export default function ListingsIndex({
                                             #{listing.office_id}
                                         </td>
                                         <td className="hidden px-6 py-4 text-sm text-gray-600 md:table-cell">
-                                            {new Intl.NumberFormat('tr-TR', {
-                                                style: 'currency',
-                                                currency: 'TRY',
-                                            }).format(listing.price)}
+                                            {new Intl.NumberFormat(
+                                                'tr-TR',
+                                            ).format(listing.price)}{' '}
+                                            TL
                                         </td>
                                         <td className="hidden px-6 py-4 text-sm text-gray-600 xl:table-cell">
                                             {listing.visit_count}
@@ -280,7 +279,8 @@ export default function ListingsIndex({
                                         </td>
                                         <td className="px-6 py-4 text-center">
                                             <AdminRowActions
-                                                editHref={`/admin/ilanlar/${listing.id}/edit`}
+                                                viewHref={`/admin/ilanlar/${listing.id}`}
+                                                // editHref={`/admin/ilanlar/${listing.id}/edit`}
                                                 deleteHref={`/admin/ilanlar/${listing.id}`}
                                             />
                                         </td>

@@ -30,6 +30,7 @@ class Listing extends Model
         'visit_count',
         'listing_status',
         'sort_order',
+        'main_photo_path',
     ];
 
     protected $casts = [
@@ -49,5 +50,20 @@ class Listing extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function address()
+    {
+        return $this->hasOne(Address::class);
+    }
+
+    public function attributes()
+    {
+        return $this->hasMany(ListingAttribute::class);
     }
 }

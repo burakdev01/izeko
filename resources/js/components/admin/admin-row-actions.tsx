@@ -3,7 +3,7 @@ import { Eye, Pencil, Trash2 } from 'lucide-react';
 
 type AdminRowActionsProps = {
     viewHref?: string;
-    editHref: string;
+    editHref?: string;
     deleteHref: string;
 };
 
@@ -22,12 +22,14 @@ export default function AdminRowActions({
                     <Eye className="h-4 w-4" />
                 </Link>
             )}
-            <Link
-                href={editHref}
-                className="text-[#da1f25] transition hover:text-[#b0181d]"
-            >
-                <Pencil className="h-4 w-4" />
-            </Link>
+            {editHref && (
+                <Link
+                    href={editHref}
+                    className="text-[#da1f25] transition hover:text-[#b0181d]"
+                >
+                    <Pencil className="h-4 w-4" />
+                </Link>
+            )}
             <Link
                 href={deleteHref}
                 method="delete"

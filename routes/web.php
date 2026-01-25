@@ -613,6 +613,9 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
         Route::patch('ilanlar/reorder', [ListingController::class, 'reorder'])
             ->name('ilanlar.reorder');
 
+        Route::patch('ilanlar/{listing}/status', [ListingController::class, 'updateStatus'])
+            ->name('ilanlar.status');
+
         Route::resource('ilanlar', ListingController::class)
             ->parameters(['ilanlar' => 'listing']);
 
@@ -635,6 +638,13 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
             ->name('notifications.sms.create');
         Route::post('bildirimler/sms', [\App\Http\Controllers\Admin\NotificationController::class, 'smsStore'])
             ->name('notifications.sms.store');
+
+        Route::get('bildirimler/push', [\App\Http\Controllers\Admin\NotificationController::class, 'pushIndex'])
+            ->name('notifications.push.index'); // Fixed name to match pattern
+        Route::get('bildirimler/push/yeni', [\App\Http\Controllers\Admin\NotificationController::class, 'pushCreate'])
+            ->name('notifications.push.create');
+        Route::post('bildirimler/push', [\App\Http\Controllers\Admin\NotificationController::class, 'pushStore'])
+            ->name('notifications.push.store');
         Route::patch('spotlights/reorder', [SpotlightController::class, 'reorder'])
             ->name('spotlights.reorder');
         Route::resource('spotlights', SpotlightController::class)

@@ -76,8 +76,23 @@ interface Props {
     provinces: { id: number; name: string }[];
 }
 
-export default function EditUser({ user, offices, roles, provinces }: Props) {
-    const { data, setData, put, processing, errors } = useForm({
+export default function EditUser({
+    user,
+    offices,
+    roles,
+    provinces,
+}: Props & {
+    user: {
+        files?: {
+            id: number;
+            file_type: string;
+            file_path: string;
+            name: string;
+            is_deleted: number;
+        }[];
+    };
+}) {
+    const { data, setData, post, processing, errors } = useForm({
         name: user.name || '',
         surname: user.surname || '',
         email: user.email || '',
@@ -107,11 +122,23 @@ export default function EditUser({ user, offices, roles, provinces }: Props) {
                 office_id: String(uo.office_id),
                 role_id: uo.role?.id ? String(uo.role.id) : '',
             })) || [],
+
+        oda_yetki_belgesi: null as File | null,
+        yetki_belgesi: null as File | null,
+        vergi_levhasi: null as File | null,
+        _method: 'PUT',
     });
+
+    // Helper to get existing file
+    const getExistingFile = (type: string) => {
+        return user.files?.find((f) => f.file_type === type && !f.is_deleted);
+    };
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        put(route('admin.kullanicilar.update', user.id));
+        post(route('admin.kullanicilar.update', user.id), {
+            forceFormData: true,
+        });
     };
 
     const [districts, setDistricts] = useState<{ id: number; name: string }[]>(
@@ -816,7 +843,7 @@ export default function EditUser({ user, offices, roles, provinces }: Props) {
                                                 />
                                             </div>
                                             <div className="space-y-2">
-                                                <Label>Unvan / Pozisyon</Label>
+                                                <Label>Ünvan</Label>
                                                 <Input
                                                     value={
                                                         data.staff_details.title
@@ -831,8 +858,138 @@ export default function EditUser({ user, offices, roles, provinces }: Props) {
                                                             },
                                                         )
                                                     }
-                                                    placeholder="Örn: Senior Broker"
                                                 />
+                                            </div>
+
+                                            <Separator className="col-span-full my-4" />
+                                            <div className="col-span-full mb-2">
+                                                <h3 className="text-lg font-medium">
+                                                    Belgeler
+                                                </h3>
+                                                <p className="text-sm text-muted-foreground">
+                                                    Sadece resim dosyaları
+                                                    (.jpg, .png, .webp)
+                                                    yüklenebilir.
+                                                </p>
+                                            </div>
+
+                                            {/* Oda Yetki Belgesi */}
+                                            <div className="space-y-2">
+                                                <Label>Oda Yetki Belgesi</Label>
+                                                {getExistingFile(
+                                                    'oda_yetki_belgesi',
+                                                ) && (
+                                                    <div className="mb-2 text-sm">
+                                                        <a
+                                                            href={`/storage/${getExistingFile('oda_yetki_belgesi')?.file_path}`}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="flex items-center gap-1 text-blue-600 hover:underline"
+                                                        >
+                                                            <FileText className="h-3 w-3" />
+                                                            Mevcut Belgeyi
+                                                            Görüntüle
+                                                        </a>
+                                                    </div>
+                                                )}
+                                                <Input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            'oda_yetki_belgesi',
+                                                            e.target.files
+                                                                ? e.target
+                                                                      .files[0]
+                                                                : null,
+                                                        )
+                                                    }
+                                                />
+                                                {errors.oda_yetki_belgesi && (
+                                                    <p className="text-sm text-red-500">
+                                                        {
+                                                            errors.oda_yetki_belgesi
+                                                        }
+                                                    </p>
+                                                )}
+                                            </div>
+
+                                            {/* Yetki Belgesi */}
+                                            <div className="space-y-2">
+                                                <Label>Yetki Belgesi</Label>
+                                                {getExistingFile(
+                                                    'yetki_belgesi',
+                                                ) && (
+                                                    <div className="mb-2 text-sm">
+                                                        <a
+                                                            href={`/storage/${getExistingFile('yetki_belgesi')?.file_path}`}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="flex items-center gap-1 text-blue-600 hover:underline"
+                                                        >
+                                                            <FileText className="h-3 w-3" />
+                                                            Mevcut Belgeyi
+                                                            Görüntüle
+                                                        </a>
+                                                    </div>
+                                                )}
+                                                <Input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            'yetki_belgesi',
+                                                            e.target.files
+                                                                ? e.target
+                                                                      .files[0]
+                                                                : null,
+                                                        )
+                                                    }
+                                                />
+                                                {errors.yetki_belgesi && (
+                                                    <p className="text-sm text-red-500">
+                                                        {errors.yetki_belgesi}
+                                                    </p>
+                                                )}
+                                            </div>
+
+                                            {/* Vergi Levhası */}
+                                            <div className="space-y-2">
+                                                <Label>Vergi Levhası</Label>
+                                                {getExistingFile(
+                                                    'vergi_levhasi',
+                                                ) && (
+                                                    <div className="mb-2 text-sm">
+                                                        <a
+                                                            href={`/storage/${getExistingFile('vergi_levhasi')?.file_path}`}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="flex items-center gap-1 text-blue-600 hover:underline"
+                                                        >
+                                                            <FileText className="h-3 w-3" />
+                                                            Mevcut Belgeyi
+                                                            Görüntüle
+                                                        </a>
+                                                    </div>
+                                                )}
+                                                <Input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            'vergi_levhasi',
+                                                            e.target.files
+                                                                ? e.target
+                                                                      .files[0]
+                                                                : null,
+                                                        )
+                                                    }
+                                                />
+                                                {errors.vergi_levhasi && (
+                                                    <p className="text-sm text-red-500">
+                                                        {errors.vergi_levhasi}
+                                                    </p>
+                                                )}
                                             </div>
                                         </CardContent>
                                     </Card>

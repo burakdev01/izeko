@@ -42,6 +42,90 @@ class ListingController extends Controller
         ]);
     }
 
+    public function show(Listing $listing)
+    {
+        $listing->load([
+            'category.parent', 
+            'office', 
+            'user', 
+            'address.province', 
+            'address.district', 
+            'address.neighborhood',
+            'attributes.attribute.group',
+            'attributes.option'
+        ]);
+
+        $features = $listing->attributes->map(function ($listingAttr) {
+            $attribute = $listingAttr->attribute;
+            $value = null;
+
+            if (!$attribute) return null;
+
+            switch ($attribute->data_type) {
+                case 'string':
+                    $value = $listingAttr->value_string;
+                    break;
+                case 'number':
+                    $value = $listingAttr->value_int . ($attribute->unit ? ' ' . $attribute->unit : '');
+                    break;
+                case 'boolean':
+                    $value = $listingAttr->value_bool ? 'Evet' : 'Hayır';
+                    break;
+                case 'option':
+                    $value = $listingAttr->option ? $listingAttr->option->name : null;
+                    break;
+            }
+
+            if ($value === null) return null;
+
+            return [
+                'group' => $attribute->group ? $attribute->group->name : 'Genel Özellikler',
+                'name' => $attribute->name,
+                'value' => $value,
+                'sort_order' => $attribute->group ? $attribute->group->sort_order : 9999, // Sort groups
+            ];
+        })->filter()->groupBy('group')->map(function ($items, $groupName) {
+            return [
+                'name' => $groupName,
+                'items' => $items->values(),
+                'sort_order' => $items->first()['sort_order'],
+            ];
+        })->sortBy('sort_order')->values();
+
+        return Inertia::render('admin/listings/show', [
+            'listing' => [
+                'id' => $listing->id,
+                'title' => $listing->title,
+                'description' => $listing->description,
+                'price' => $listing->price,
+                'status' => $listing->listing_status,
+                'main_photo' => $listing->main_photo_path 
+                    ? config('app.url') . '/storage/' . $listing->main_photo_path 
+                    : null,
+                'category' => $listing->category ? [
+                    'id' => $listing->category->id,
+                    'name' => $listing->category->name,
+                    'hierarchy' => ($listing->category->parent ? $listing->category->parent->name . ' > ' : '') . $listing->category->name,
+                ] : null,
+                'office' => $listing->office ? [
+                    'id' => $listing->office->id,
+                    'name' => $listing->office->name,
+                ] : null,
+                'user' => $listing->user ? [
+                    'id' => $listing->user->id,
+                    'name' => $listing->user->name . ' ' . $listing->user->surname,
+                ] : null,
+                'location' => [
+                    'city' => $listing->address?->province?->name ?? '',
+                    'district' => $listing->address?->district?->name ?? '',
+                    'neighborhood' => $listing->address?->neighborhood?->name ?? '',
+                ],
+                'created_at' => optional($listing->created_at)->format('d.m.Y') ?? '',
+                'features' => $features,
+            ],
+        ]);
+    }
+
     public function edit(Listing $listing)
     {
         return Inertia::render('admin/listings/edit', [
@@ -64,6 +148,18 @@ class ListingController extends Controller
 
         return redirect()->route('admin.ilanlar.index')
             ->with('success', 'İlan başarıyla güncellendi.');
+    }
+
+    public function updateStatus(Request $request, Listing $listing)
+    {
+        $validated = $request->validate([
+            'status' => 'required|in:active,inactive,pending',
+        ]);
+
+        $listing->update(['listing_status' => $validated['status']]);
+
+        return redirect()->back()
+            ->with('success', 'İlan durumu güncellendi.');
     }
 
     public function destroy(Listing $listing)

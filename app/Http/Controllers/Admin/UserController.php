@@ -8,8 +8,12 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Validation\Rule;
 
+use App\Http\Controllers\Concerns\HandlesUploads;
+
 class UserController extends Controller
 {
+    use HandlesUploads;
+
     public function index(Request $request)
     {
         $query = User::query()->where('is_admin', false);
@@ -48,7 +52,8 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        $user->load(['address', 'staffDetails', 'userOffices.role']);
+        // Load relationships including files
+        $user->load(['address', 'staffDetails', 'userOffices.role', 'files']);
 
         return Inertia::render('admin/users/edit', [
             'user' => $user,
@@ -67,7 +72,7 @@ class UserController extends Controller
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'phone_number' => 'nullable|string|max:255',
             'status' => 'required|in:active,pending,passive',
-            'password' => 'nullable|string|min:8', // Make sure to handle hashing if provided
+            'password' => 'nullable|string|min:8',
 
             // Address Info (nested in address array)
             'address.province_id' => 'nullable|integer',
@@ -87,6 +92,11 @@ class UserController extends Controller
             'offices' => 'nullable|array',
             'offices.*.office_id' => 'required|exists:offices,id',
             'offices.*.role_id' => 'required|exists:roles,id',
+            
+            // Files
+            'oda_yetki_belgesi' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
+            'yetki_belgesi' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
+            'vergi_levhasi' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
         ]);
 
         // 1. Update User Basic Info
@@ -109,9 +119,6 @@ class UserController extends Controller
         );
 
         // 4. Sync Customer Offices & Roles
-        // Strategy: Delete existing and recreate, or sync. Since complex structure, delete & recreate might be easier but less efficient.
-        // Let's go with a sync-like approach manually.
-        
         $submittedOffices = $request->input('offices', []);
         
         // Remove old associations
@@ -126,9 +133,67 @@ class UserController extends Controller
                 'role_id' => $officeData['role_id'],
             ]);
         }
+        
+        // 5. Handle File Uploads
+        $documentTypes = ['oda_yetki_belgesi', 'yetki_belgesi', 'vergi_levhasi'];
+        $directory = "users/{$user->id}/documents";
+        $fileNames = [
+            'oda_yetki_belgesi' => 'Oda Yetki Belgesi',
+            'yetki_belgesi' => 'Yetki Belgesi',
+            'vergi_levhasi' => 'Vergi Levhası',
+        ];
 
-        return redirect()->route('admin.kullanicilar.index')
-            ->with('success', 'Kullanıcı ve tüm detayları başarıyla güncellendi.');
+        foreach ($documentTypes as $type) {
+            if ($request->hasFile($type)) {
+                try {
+                    // Upload and convert to WebP using trait
+                    $fileName = $this->storePublicImageNameAsWebp($request, $type, $directory);
+                    
+                    if ($fileName) {
+                        $fullPath = $directory . '/' . $fileName;
+
+                        // Check if file of this type already exists
+                        $existingFile = $user->files()
+                            ->where('file_type', $type)
+                            ->first();
+
+                        if ($existingFile) {
+                            // Delete physical file
+                            // path stored is full url or relative? Controller stores: $directory . '/' . $fileName
+                            // storePublicImageNameAsWebp returns filename.
+                            // We constructed $fullPath = "users/{$user->id}/documents" . '/' . $fileName; -> relative path for Storage
+                            
+                            // existingFile->file_path might be stored as relative path based on previous logic "users/.../file.webp"
+                            
+                            try {
+                                if (\Illuminate\Support\Facades\Storage::disk('public')->exists($existingFile->file_path)) {
+                                    \Illuminate\Support\Facades\Storage::disk('public')->delete($existingFile->file_path);
+                                }
+                            } catch (\Exception $e) {
+                                \Illuminate\Support\Facades\Log::warning("Could not delete old file: " . $existingFile->file_path);
+                            }
+
+                            // Hard delete record
+                            $existingFile->delete();
+                        }
+
+                        $user->files()->create([
+                            'name' => $fileNames[$type] ?? $request->file($type)->getClientOriginalName(),
+                            'file_path' => $fullPath,
+                            'file_type' => $type,
+                            'is_deleted' => false,
+                        ]);
+                    }
+                } catch (\Exception $e) {
+                     // Log error but continue? or fail?
+                     \Illuminate\Support\Facades\Log::error("Failed to upload $type: " . $e->getMessage());
+                     // For now continue, maybe flash error.
+                }
+            }
+        }
+
+        return redirect()->route('admin.kullanicilar.edit', $user->id)
+            ->with('success', 'Kullanıcı ve belgeleri başarıyla güncellendi.');
     }
 
     public function destroy(User $user)

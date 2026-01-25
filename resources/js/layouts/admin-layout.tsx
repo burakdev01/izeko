@@ -97,6 +97,11 @@ const navGroups: NavGroup[] = [
                         label: 'SMS Bildirimleri',
                         icon: MessageSquare,
                     },
+                    // {
+                    //     href: '/admin/bildirimler/push',
+                    //     label: 'Push Bildirim',
+                    //     icon: Megaphone,
+                    // },
                 ],
             },
             {
