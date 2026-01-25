@@ -72,7 +72,7 @@ class ListingController extends Controller
                     $value = $listingAttr->value_bool ? 'Evet' : 'Hayır';
                     break;
                 case 'option':
-                    $value = $listingAttr->option ? $listingAttr->option->name : null;
+                    $value = $listingAttr->option ? $listingAttr->option->value : null;
                     break;
             }
 
@@ -100,7 +100,7 @@ class ListingController extends Controller
                 'price' => $listing->price,
                 'status' => $listing->listing_status,
                 'main_photo' => $listing->main_photo_path 
-                    ? config('app.url') . '/storage/' . $listing->main_photo_path 
+                    ? config('app.url') . "/storage/listings/{$listing->id}/" . $listing->main_photo_path 
                     : null,
                 'category' => $listing->category ? [
                     'id' => $listing->category->id,
@@ -133,6 +133,8 @@ class ListingController extends Controller
         ]);
     }
 
+    use \App\Http\Controllers\Concerns\HandlesUploads;
+
     public function update(Request $request, Listing $listing)
     {
         $validated = $request->validate([
@@ -141,8 +143,55 @@ class ListingController extends Controller
             'office_id' => 'required|integer',
             'user_id' => 'required|integer|exists:users,id',
             'price' => 'required|numeric|min:0',
-            'listing_status' => 'required|in:pending,active,inactive',
+            'main_photo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
+            'photos' => 'nullable|array',
+            'photos.*' => 'image|mimes:jpeg,png,jpg,webp|max:10240',
         ]);
+
+        // Handle Main Photo Upload
+        if ($request->hasFile('main_photo')) {
+            $directory = "listings/{$listing->id}";
+            $fileName = $this->storePublicImageNameAsWebp(
+                $request,
+                'main_photo',
+                $directory
+            );
+
+            if ($fileName) {
+                // Delete old photo if exists
+                if ($listing->main_photo_path) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete("listings/{$listing->id}/{$listing->main_photo_path}");
+                }
+                // Save ONLY filename
+                $validated['main_photo_path'] = $fileName;
+            }
+        }
+
+        // Handle Gallery Photos Upload
+        if ($request->hasFile('photos')) {
+            $directory = "listings/{$listing->id}";
+            foreach ($request->file('photos') as $photoFile) {
+                try {
+                    $image = \Intervention\Image\Laravel\Facades\Image::read($photoFile->getRealPath());
+                    $encoded = $image->toWebp(80);
+                    $baseName = pathinfo($photoFile->hashName(), PATHINFO_FILENAME);
+                    $fileName = $baseName . '.webp';
+                    $path = $directory . '/' . $fileName;
+                    
+                    \Illuminate\Support\Facades\Storage::disk('public')->put($path, (string) $encoded);
+                    
+                    // Create Photo Record - Save ONLY filename
+                    $listing->photos()->create([
+                        'photo_path' => $fileName,
+                        'name' => $photoFile->getClientOriginalName(),
+                        'photo_type' => 'gallery',
+                        'sort' => 0,
+                    ]);
+                } catch (\Exception $e) {
+                     \Illuminate\Support\Facades\Log::error('Gallery upload failed: ' . $e->getMessage());
+                }
+            }
+        }
 
         $listing->update($validated);
 

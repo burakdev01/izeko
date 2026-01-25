@@ -20,4 +20,9 @@ class District extends Model
     {
         return $this->hasMany(Neighborhood::class);
     }
+
+    public function listings()
+    {
+        return $this->hasManyThrough(Listing::class, Address::class, 'district_id', 'id', 'id', 'listing_id');
+    }
 }

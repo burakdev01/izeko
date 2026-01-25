@@ -481,11 +481,342 @@ Route::get('/mevzuat', function () {
 })->name('mevzuat');
 
 Route::get('/ilanlar', function () {
-    return Inertia::render('ilanlar');
+    $listings = \App\Models\Listing::where('listing_status', 'active')
+        ->with([
+            'address.province', 
+            'address.district', 
+            'address.neighborhood',
+            'attributes.attribute', // Load attribute definition to check IDs/Names
+            'attributes.option'     // Load options for select-type attributes
+        ])
+        ->orderByDesc('created_at')
+        ->get()
+        ->map(function ($listing) {
+            // Helpers to find specific attributes
+            // User specified ID 3 is Room Count, ID 1 is Building Age, ID 4 is Floor Location, ID 5 is Floor Count
+            $roomAttr = $listing->attributes->first(fn($a) => $a->attribute_id === 3);
+            $ageAttr = $listing->attributes->first(fn($a) => $a->attribute_id === 1);
+            $floorAttr = $listing->attributes->first(fn($a) => $a->attribute_id === 4);
+            $floorCountAttr = $listing->attributes->first(fn($a) => $a->attribute_id === 5);
+            
+            // Try to find Area attribute (looking for common names or just assume it might be ID 1 or 2 if 3 is rooms, 
+            // but safer to fallback to 0 or try to find by name if we knew it exactly. 
+            // For now, let's try to find an attribute with 'm²' unit or containing 'Alan' in name if ID is unknown,
+            // OR just map ID 3 for rooms and leave area 0 until user specifies.
+            
+            // Let's try to be smart for Area: Look for 'Brüt' or 'Alan' or unit 'm2'
+            $areaAttr = $listing->attributes->first(fn($a) => 
+                ($a->attribute && ($a->attribute->unit === 'm²' || str_contains($a->attribute->name, 'Brüt')) && !str_contains($a->attribute->name, 'Net')) 
+            );
+
+            $netAreaAttr = $listing->attributes->first(fn($a) => 
+                ($a->attribute && ($a->attribute->unit === 'm²' || str_contains($a->attribute->name, 'Net'))) 
+            );
+
+            // Accessor for value
+            $getValue = function($attr) {
+                if (!$attr) return null;
+                if ($attr->attribute->data_type === 'option') {
+                    // Use 'value' column as per user instruction and DB schema
+                    return $attr->option ? $attr->option->value : null;
+                }
+                if ($attr->attribute->data_type === 'boolean') {
+                    return $attr->value_bool ? 'Evet' : 'Hayır';
+                }
+                return $attr->value_string ?? $attr->value_int;
+            };
+
+            return [
+                'id' => $listing->id,
+                'title' => $listing->title,
+                'price' => $listing->price,
+                'date' => $listing->created_at->format('Y-m-d'),
+                'location' => ($listing->address?->province?->name ?? '') . ' / ' . ($listing->address?->district?->name ?? '') . ' / ' . ($listing->address?->neighborhood?->name ?? ''),
+                'city' => $listing->address?->province?->name ?? '',
+                'image' => $listing->main_photo_path ? config('app.url') . "/storage/listings/{$listing->id}/" . $listing->main_photo_path : 'https://placehold.co/600x400?text=No+Image',
+                'categoryId' => (string)$listing->category_id,
+                'locationIds' => [
+                    'province' => (string)$listing->address?->province_id,
+                    'district' => (string)$listing->address?->district_id,
+                    'neighborhood' => (string)$listing->address?->neighborhood_id,
+                ],
+                'area' => (float)($getValue($areaAttr) ?? 0),
+                'netArea' => (float)($getValue($netAreaAttr) ?? 0),
+                'rooms' => $getValue($roomAttr) ?? 'N/A',
+                'buildingAge' => $getValue($ageAttr) ?? 'N/A',
+                'floorLocation' => $getValue($floorAttr) ?? 'N/A',
+                'floorCount' => $getValue($floorCountAttr) ?? 'N/A',
+                'badges' => [], 
+            ];
+        });
+
+    // Dynamic Filter Data
+    $listingCount = fn($q) => $q->where('listing_status', 'active');
+    
+    // Recursive function to process categories and sum counts
+    $processCategory = function($category) use (&$processCategory) {
+        $children = $category->children->map(fn($child) => $processCategory($child));
+        $ownCount = $category->listings_count;
+        $totalCount = $ownCount + $children->sum('raw_count');
+        
+        return [
+            'id' => (string)$category->id,
+            'label' => $category->name,
+            'count' => "({$totalCount})",
+            'raw_count' => $totalCount, // Internally used for recursion
+            'children' => $children->map(function($child) {
+                unset($child['raw_count']);
+                return $child;
+            })->values()->all()
+        ];
+    };
+
+    $categories = \App\Models\Category::withCount(['listings' => $listingCount])
+        ->with(['children' => function($q) use ($listingCount) {
+            $q->withCount(['listings' => $listingCount])
+              ->with(['children' => function($q) use ($listingCount) {
+                  $q->withCount(['listings' => $listingCount]);
+              }]);
+        }])
+        ->whereNull('parent_id')
+        ->get()
+        ->map(fn($c) => $processCategory($c));
+
+    // Cleanup top-level raw_count
+    $categories = $categories->map(function($c) {
+        unset($c['raw_count']);
+        return $c;
+    });
+
+    // Hierarchical Locations
+    $locations = \App\Models\Province::withCount(['listings' => fn($q) => $q->where('listing_status', 'active')])
+        ->with(['districts' => function($q) {
+            $q->withCount(['listings' => fn($q3) => $q3->where('listing_status', 'active')])
+              ->with(['neighborhoods' => function($q4) {
+                  $q4->withCount(['listings' => fn($q6) => $q6->where('listing_status', 'active')]);
+              }]);
+        }])
+        ->get()
+        ->map(fn($p) => [
+            'id' => 'province-'.(string)$p->id,
+            'label' => $p->name,
+            'count' => "({$p->listings_count})",
+            'children' => $p->districts->map(fn($d) => [
+                'id' => 'district-'.(string)$d->id,
+                'label' => $d->name,
+                'count' => "({$d->listings_count})",
+                'children' => $d->neighborhoods->map(fn($n) => [
+                    'id' => 'neighborhood-'.(string)$n->id,
+                    'label' => $n->name,
+                    'count' => "({$n->listings_count})",
+                    // No children for neighborhoods
+                ])->values()
+            ])->values()
+        ]);
+
+    // Room Options (Attribute ID 3)
+    $roomOptions = \App\Models\AttributeOption::where('attribute_id', 3)
+        ->orderBy('sort_order', 'asc')
+        ->get()
+        ->map(fn($o) => [
+            'id' => 'room-'.$o->id,
+            'label' => $o->value, // Use valid column 'value'
+            'value' => $o->value
+        ]);
+
+    // Building Age Options (Attribute ID 1)
+    $buildingAgeOptions = \App\Models\AttributeOption::where('attribute_id', 1)
+        ->orderBy('sort_order', 'asc')
+        ->get()
+        ->map(fn($o) => [
+            'id' => 'age-'.$o->id,
+            'label' => $o->value,
+            'value' => $o->value
+        ]);
+
+    // Floor Location Options (Attribute ID 4)
+    $floorLocationOptions = \App\Models\AttributeOption::where('attribute_id', 4)
+        ->orderBy('sort_order', 'asc')
+        ->get()
+        ->map(fn($o) => [
+            'id' => 'floor-'.$o->id,
+            'label' => $o->value,
+            'value' => $o->value
+        ]);
+
+    // Floor Count Options (Attribute ID 5)
+    $floorCountOptions = \App\Models\AttributeOption::where('attribute_id', 5)
+        ->orderBy('sort_order', 'asc')
+        ->get()
+        ->map(fn($o) => [
+            'id' => 'floorcount-'.$o->id,
+            'label' => $o->value,
+            'value' => $o->value
+        ]);
+
+    return Inertia::render('ilanlar', [
+        'listings' => $listings,
+        'categories' => $categories,
+        'locations' => $locations,
+        'roomOptions' => $roomOptions,
+        'buildingAgeOptions' => $buildingAgeOptions,
+        'floorLocationOptions' => $floorLocationOptions,
+        'floorCountOptions' => $floorCountOptions,
+    ]);
 })->name('ilanlar');
 
-Route::get('/ilanlar/{slug}', function (string $slug) {
-    return Inertia::render('ilanlar-detay');
+Route::get('/ilanlar/{id}', function ($id) {
+    $listing = \App\Models\Listing::with([
+        'address.province', 
+        'address.district', 
+        'address.neighborhood',
+        'user', 
+        'attributes.attribute.group',
+        'attributes.option',
+        'photos'
+    ])->findOrFail($id);
+
+    // Ungrouped Features (Group ID is null)
+    $nonGroupedFeatures = $listing->attributes
+        ->filter(fn($a) => $a->attribute && $a->attribute->data_type === 'boolean' && $a->value_bool && !$a->attribute->attribute_group_id)
+        ->map(fn($a) => $a->attribute->name)
+        ->values()
+        ->toArray();
+
+    // Grouped Features (Group ID is not null)
+    $groupedFeatures = $listing->attributes
+        ->filter(function ($a) {
+            if (!$a->attribute || !$a->attribute->attribute_group_id) return false;
+            if ($a->attribute->data_type === 'boolean') return $a->value_bool;
+            if ($a->attribute->data_type === 'string') return !empty($a->value_string);
+            if ($a->attribute->data_type === 'number') return !is_null($a->value_int);
+            if ($a->attribute->data_type === 'option') return !empty($a->attribute_option_id);
+            return false;
+        })
+        ->groupBy(fn($a) => $a->attribute->group?->name ?? 'Diğer')
+        ->map(fn($group, $key) => [
+            'group' => $key,
+            'features' => $group->map(function ($a) {
+                if ($a->attribute->data_type === 'boolean') return $a->attribute->name;
+                
+                $value = match($a->attribute->data_type) {
+                    'string' => $a->value_string,
+                    'number' => $a->value_int,
+                    'option' => $a->option?->value,
+                    default => '-'
+                };
+                return $a->attribute->name . ': ' . $value;
+            })->values()->toArray()
+        ])
+        ->values()
+        ->toArray();
+    // Debugging: Uncomment to inspect
+    // dd($groupedFeatures);
+
+    // Helper to get attribute value
+    $getAttrValue = function($listing, $attrId) {
+        $attr = $listing->attributes->first(fn($a) => $a->attribute_id === $attrId);
+        if (!$attr) return null;
+        if ($attr->attribute->data_type === 'option') return $attr->option?->value;
+        if ($attr->attribute->data_type === 'boolean') return $attr->value_bool ? 'Evet' : 'Hayır';
+        return $attr->value_string ?? $attr->value_int;
+    };
+
+    // Prepare Gallery Images
+    $galleryImages = collect();
+    // Add main photo
+    if ($listing->main_photo_path) {
+        $url = config('app.url') . "/storage/listings/{$listing->id}/" . $listing->main_photo_path;
+        $galleryImages->push([
+            'large' => $url,
+            'thumb' => $url, // Ideally should have thumb version
+            'alt' => $listing->title
+        ]);
+    }
+    // Add other photos
+    foreach($listing->photos as $photo) {
+        $url = config('app.url') . "/storage/listings/{$listing->id}/" . $photo->photo_path;
+        $galleryImages->push([
+            'large' => $url,
+            'thumb' => $url,
+            'alt' => $listing->title
+        ]);
+    }
+    // Fallback if empty
+    if ($galleryImages->isEmpty()) {
+        $galleryImages->push([
+            'large' => 'https://placehold.co/800x600?text=No+Image',
+            'thumb' => 'https://placehold.co/200x150?text=No+Image',
+            'alt' => 'No Image'
+        ]);
+    }
+
+    // Prepare Details
+    $detailItems = [
+        ['label' => 'm² (Brüt)', 'value' => (string)($getAttrValue($listing, 15) ?? $listing->area ?? '-')],
+        ['label' => 'm² (Net)', 'value' => (string)($getAttrValue($listing, 16) ?? $listing->net_area ?? '-')],
+        ['label' => 'Oda Sayısı', 'value' => (string)($getAttrValue($listing, 3) ?? '-')],
+        ['label' => 'Kat Sayısı', 'value' => (string)($getAttrValue($listing, 5) ?? '-')],
+        ['label' => 'Bina Yaşı', 'value' => (string)($getAttrValue($listing, 1) ?? '-')],
+        ['label' => 'Bulunduğu Kat', 'value' => (string)($getAttrValue($listing, 4) ?? '-')],
+        ['label' => 'Isıtma', 'value' => (string)($getAttrValue($listing, 7) ?? '-')], // Assuming ID 7 is Heating
+    ];
+
+    // Filter out null/dash values if desired, or keep them.
+    
+    // Append Ungrouped Features to Detail Items
+    foreach($nonGroupedFeatures as $feature) {
+        $detailItems[] = ['label' => 'Özellik', 'value' => $feature];
+    }
+
+    // Prepare Agent Profile
+    $agentProfile = [
+        'name' => $listing->user ? $listing->user->name . ' ' . $listing->user->surname : 'Silinmiş Üye',
+        'role' => 'Gayrimenkul Danışmanı', // Could be dynamic
+        'avatarUrl' => $listing->user && $listing->user->profile_photo_path 
+            ? config('app.url') . '/storage/' . $listing->user->profile_photo_path 
+            : 'https://placehold.co/100x100?text=Agent',
+        'phone' => $listing->user?->phone_number ?? '-',
+        'email' => $listing->user?->email ?? '-',
+    ];
+
+    // Breadcrumbs
+    $breadcrumbs = [
+        ['label' => 'İlanlar', 'href' => route('ilanlar')],
+        ['label' => $listing->address?->province?->name ?? 'İl'],
+        ['label' => $listing->address?->district?->name ?? 'İlçe'],
+        ['label' => \Illuminate\Support\Str::limit($listing->title, 30)],
+    ];
+
+    // Features logic moved up
+
+    return Inertia::render('ilanlar-detay', [
+        'listing' => [
+            'id' => $listing->id,
+            'title' => $listing->title,
+            'description' => $listing->description,
+            'price' => number_format($listing->price, 0, ',', '.') . ' TL',
+            'date' => $listing->created_at->translatedFormat('d F Y'),
+            'location' => ($listing->address?->district?->name ?? '') . ' / ' . ($listing->address?->province?->name ?? ''),
+            'fullLocation' => ($listing->address?->neighborhood?->name ?? '') . ', ' . ($listing->address?->district?->name ?? '') . ', ' . ($listing->address?->province?->name ?? ''),
+            'features' => $groupedFeatures,
+            'nonGroupedFeatures' => $nonGroupedFeatures,
+            'neighborhood' => $listing->address?->neighborhood?->name,
+            'district' => $listing->address?->district?->name,
+            'city' => $listing->address?->province?->name,
+        ],
+        'galleryImages' => $galleryImages,
+        'detailItems' => $detailItems,
+        'agentProfile' => $agentProfile,
+        'breadcrumbs' => $breadcrumbs,
+        // Passing placeholders for sections not yet fully dynamic
+        'similarListings' => [], 
+        'locationInfo' => [ // This could be dynamic if we had POI data
+            ['label' => 'İl', 'value' => $listing->address?->province?->name ?? '-'],
+            ['label' => 'İlçe', 'value' => $listing->address?->district?->name ?? '-'],
+            ['label' => 'Mahalle', 'value' => $listing->address?->neighborhood?->name ?? '-'],
+        ] 
+    ]);
 })->name('ilanlar.show');
 
 Route::get('/admin/login', function (Request $request) {

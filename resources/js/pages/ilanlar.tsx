@@ -2,7 +2,20 @@ import TopBar from '@/components/contact-header';
 import { ArticleLayout } from '@/components/content/ArticleLayout';
 import Footer from '@/components/footer/Footer';
 import { Navbar } from '@/components/navbar/Navbar';
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { Link } from '@inertiajs/react';
+import { ChevronDown } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 type ListingBadge = 'premium' | 'sahibinden' | 'emlak' | 'insaat' | 'bankadan';
@@ -19,21 +32,51 @@ type Listing = {
     city: string;
     image: string;
     badges: ListingBadge[];
+    categoryId: string;
+    locationIds: {
+        province: string;
+        district: string;
+        neighborhood: string;
+    };
+    buildingAge: string;
+    floorLocation: string;
+    floorCount: string;
 };
 
-type Category = {
+type FilterItem = {
     id: string;
     label: string;
     count: string;
+    children?: FilterItem[];
 };
 
-type LocationOption = {
-    id: string;
-    label: string;
-    count: string;
+// Reusable recursive list component
+type RecursiveFilterListProps = {
+    title: string;
+    items: FilterItem[];
+    activeId: string | null;
+    onSelect: (id: string) => void;
 };
 
 type RoomOption = {
+    id: string;
+    label: string;
+    value: string;
+};
+
+type BuildingAgeOption = {
+    id: string;
+    label: string;
+    value: string;
+};
+
+type FloorLocationOption = {
+    id: string;
+    label: string;
+    value: string;
+};
+
+type FloorCountOption = {
     id: string;
     label: string;
     value: string;
@@ -64,6 +107,9 @@ type PendingFilters = {
     netMin: string;
     netMax: string;
     rooms: string[];
+    buildingAges: string[];
+    floorLocations: string[];
+    floorCounts: string[];
 };
 
 type AppliedFilters = {
@@ -72,57 +118,27 @@ type AppliedFilters = {
     netMin: number | null;
     netMax: number | null;
     rooms: string[];
+    buildingAges: string[];
+    floorLocations: string[];
+    floorCounts: string[];
     location: string | null;
+    category: string | null;
 };
 
-const listingsData: Listing[] = [
-    {
-        id: 1,
-        title: "🏠 LEYALGRUP'TAN ŞAH İBİNDEN, RESMİ HAVUZLU, LÜX TASARIMLI MÜSTAKİL ⭐",
-        price: 8900000,
-        date: new Date('2025-12-09'),
-        area: 200,
-        netArea: 180,
-        rooms: '4+1',
-        location: 'Tekirdağ Marmara',
-        city: 'Tekirdağ',
-        image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400',
-        badges: ['premium'],
-    },
-];
+type RangeFilterProps = {
+    label: string;
+    minValue: string;
+    maxValue: string;
+    onMinChange: (value: string) => void;
+    onMaxChange: (value: string) => void;
+};
 
-const categories: Category[] = [
-    { id: 'konut', label: 'Konut', count: '(245.763)' },
-    { id: 'satilik-daire', label: 'Satılık Daire', count: '(545.763)' },
-    { id: 'rezidans', label: 'Rezidans', count: '(6.582)' },
-    { id: 'mustakil-ev', label: 'Müstakil Ev', count: '(27.557)' },
-    { id: 'villa', label: 'Villa', count: '(61.037)' },
-    { id: 'ciftlik-ev', label: 'Çiftlik Evi', count: '(1.051)' },
-];
-
-const locations: LocationOption[] = [
-    { id: 'istanbul', label: 'İstanbul', count: '(125.430)' },
-    { id: 'ankara', label: 'Ankara', count: '(45.280)' },
-    { id: 'izmir', label: 'İzmir', count: '(38.920)' },
-    { id: 'antalya', label: 'Antalya', count: '(28.450)' },
-];
-
-const roomOptions: RoomOption[] = [
-    { id: 'room-studio', label: 'Stüdyo (1+0)', value: '1+0' },
-    { id: 'room-1-1', label: '1+1', value: '1+1' },
-    { id: 'room-1-5-1', label: '1.5+1', value: '1.5+1' },
-    { id: 'room-2-0', label: '2+0', value: '2+0' },
-    { id: 'room-2-1', label: '2+1', value: '2+1' },
-    { id: 'room-2-5-1', label: '2.5+1', value: '2.5+1' },
-    { id: 'room-3-0', label: '3+0', value: '3+0' },
-    { id: 'room-3-1', label: '3+1', value: '3+1' },
-    { id: 'room-3-5-1', label: '3.5+1', value: '3.5+1' },
-    { id: 'room-4-1', label: '4+1', value: '4+1' },
-    { id: 'room-4-5-1', label: '4.5+1', value: '4.5+1' },
-    { id: 'room-5-1', label: '5+1', value: '5+1' },
-    { id: 'room-5-2', label: '5+2', value: '5+2' },
-    { id: 'room-6-plus', label: '6+1 ve üzeri', value: '6+1' },
-];
+type RoomFilterProps = {
+    options: RoomOption[];
+    selected: string[];
+    onToggle: (value: string) => void;
+};
+// Static data removed in favor of props
 
 const tabs: Tab[] = [
     // { id: 'all', label: 'Tümü' },
@@ -159,45 +175,58 @@ type ListingClasses = {
     detailPrice: string;
 };
 
-type CategoryListProps = {
-    categories: Category[];
-    activeCategory: string;
-    onSelect: (id: string) => void;
-};
+function RecursiveFilterList({
+    title,
+    items,
+    activeId,
+    onSelect,
+}: RecursiveFilterListProps) {
+    const hasActiveDescendant = (
+        item: FilterItem,
+        activeId: string | null,
+    ): boolean => {
+        if (!activeId || !item.children) return false;
+        return item.children.some(
+            (child) =>
+                child.id === activeId || hasActiveDescendant(child, activeId),
+        );
+    };
 
-type RangeFilterProps = {
-    label: string;
-    minValue: string;
-    maxValue: string;
-    onMinChange: (value: string) => void;
-    onMaxChange: (value: string) => void;
-};
+    const renderItem = (item: FilterItem) => {
+        const isActive = activeId === item.id;
+        const isExpanded = isActive || hasActiveDescendant(item, activeId);
 
-type RoomFilterProps = {
-    options: RoomOption[];
-    selected: string[];
-    onToggle: (value: string) => void;
-};
+        return (
+            <div key={item.id} className="flex flex-col">
+                <div
+                    className={`flex cursor-pointer items-center rounded px-2.5 py-2.5 transition-colors duration-200 ${
+                        isActive
+                            ? 'bg-[#fff0f0] font-medium text-[#d92025]'
+                            : 'hover:bg-[#f8f8f8]'
+                    }`}
+                    onClick={() => onSelect(item.id)}
+                >
+                    <span>{item.label}</span>
+                    <span className="ml-auto text-sm text-[#999]">
+                        {item.count}
+                    </span>
+                </div>
+                {isExpanded && item.children && item.children.length > 0 && (
+                    <div className="ml-4 border-l border-gray-100 pl-2">
+                        {item.children.map(renderItem)}
+                    </div>
+                )}
+            </div>
+        );
+    };
 
-type LocationListProps = {
-    locations: LocationOption[];
-    activeLocation: string | null;
-    onToggle: (label: string) => void;
-};
-
-type SidebarProps = {
-    categories: Category[];
-    activeCategory: string;
-    onCategorySelect: (id: string) => void;
-    pendingFilters: PendingFilters;
-    onPendingChange: (next: Partial<PendingFilters>) => void;
-    roomOptions: RoomOption[];
-    onRoomToggle: (value: string) => void;
-    locations: LocationOption[];
-    activeLocation: string | null;
-    onLocationToggle: (label: string) => void;
-    onApply: () => void;
-};
+    return (
+        <div className="mb-6 pb-5">
+            <h3 className="mb-3.75 text-[18px] text-[#d92025]">{title}</h3>
+            <div className="flex flex-col gap-1">{items.map(renderItem)}</div>
+        </div>
+    );
+}
 
 type ListingsHeaderProps = {
     title: string;
@@ -246,15 +275,44 @@ const listingMatchesFilters = (
     if (grossMin !== null && listing.area < grossMin) return false;
     if (grossMax !== null && listing.area > grossMax) return false;
 
-    const netArea = listing.netArea ?? listing.area;
-    if (netMin !== null && netArea < netMin) return false;
-    if (netMax !== null && netArea > netMax) return false;
+    // Use netArea if available, otherwise fallback to gross area for net filters
+    const validNetArea = listing.netArea ?? listing.area;
+    if (netMin !== null && validNetArea < netMin) return false;
+    if (netMax !== null && validNetArea > netMax) return false;
 
     if (rooms.length > 0 && !rooms.includes(listing.rooms)) return false;
+    if (
+        appliedFilters.buildingAges &&
+        appliedFilters.buildingAges.length > 0 &&
+        !appliedFilters.buildingAges.includes(listing.buildingAge)
+    )
+        return false;
+
+    if (
+        appliedFilters.floorLocations &&
+        appliedFilters.floorLocations.length > 0 &&
+        !appliedFilters.floorLocations.includes(listing.floorLocation)
+    )
+        return false;
+
+    if (
+        appliedFilters.floorCounts &&
+        appliedFilters.floorCounts.length > 0 &&
+        !appliedFilters.floorCounts.includes(listing.floorCount)
+    )
+        return false;
 
     if (location) {
-        const listingCity = listing.city || listing.location || '';
-        if (!listingCity.toLowerCase().includes(location)) return false;
+        if (location.startsWith('province-')) {
+            const id = location.replace('province-', '');
+            if (String(listing.locationIds.province) !== id) return false;
+        } else if (location.startsWith('district-')) {
+            const id = location.replace('district-', '');
+            if (String(listing.locationIds.district) !== id) return false;
+        } else if (location.startsWith('neighborhood-')) {
+            const id = location.replace('neighborhood-', '');
+            if (String(listing.locationIds.neighborhood) !== id) return false;
+        }
     }
 
     return true;
@@ -309,38 +367,7 @@ const getListingClasses = (viewType: ViewType): ListingClasses => ({
             : 'text-lg font-semibold text-[#d92025] max-[480px]:text-[16px]',
 });
 
-function CategoryList({
-    categories,
-    activeCategory,
-    onSelect,
-}: CategoryListProps) {
-    return (
-        <div className="mb-6 pb-5">
-            <h3 className="mb-3.75 text-[18px] text-[#d92025]">Emlak</h3>
-            <div className="flex flex-col">
-                {categories.map((category) => {
-                    const isActive = activeCategory === category.id;
-                    return (
-                        <div
-                            key={category.id}
-                            className={`flex cursor-pointer items-center rounded px-2.5 py-2.5 transition-colors duration-200 ${
-                                isActive
-                                    ? 'bg-[#fff0f0] font-medium text-[#d92025]'
-                                    : 'hover:bg-[#f8f8f8]'
-                            }`}
-                            onClick={() => onSelect(category.id)}
-                        >
-                            <span>{category.label}</span>
-                            <span className="ml-auto text-sm text-[#999]">
-                                {category.count}
-                            </span>
-                        </div>
-                    );
-                })}
-            </div>
-        </div>
-    );
-}
+// CategoryList removed (replaced by RecursiveFilterList)
 
 function RangeFilter({
     label,
@@ -376,68 +403,356 @@ function RangeFilter({
 }
 
 function RoomFilter({ options, selected, onToggle }: RoomFilterProps) {
+    const [isOpen, setIsOpen] = useState(true);
+
     return (
         <div className="mb-6 border-b border-[#e8e8e8] pb-5">
-            <div className="mb-4 text-base font-semibold text-[#333]">
-                Oda Sayısı
-            </div>
-            <div className="checkbox-list max-h-62.5 overflow-y-auto">
-                {options.map((option) => (
-                    <label
-                        key={option.id}
-                        htmlFor={option.id}
-                        className="group flex cursor-pointer items-center py-2"
-                    >
-                        <input
-                            id={option.id}
-                            type="checkbox"
-                            value={option.value}
-                            checked={selected.includes(option.value)}
-                            onChange={() => onToggle(option.value)}
-                            className="mr-2.5 h-4.5 w-4.5 cursor-pointer accent-[#d92025]"
-                        />
-                        <span className="flex-1 text-sm text-[#333] group-hover:text-[#d92025]">
-                            {option.label}
-                        </span>
-                    </label>
-                ))}
-            </div>
+            <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+                <CollapsibleTrigger className="group flex w-full cursor-pointer items-center justify-between">
+                    <div className="text-base font-semibold text-[#333]">
+                        Oda Sayısı
+                    </div>
+                    <ChevronDown
+                        className={`h-5 w-5 text-gray-500 transition-transform duration-200 ${
+                            isOpen ? 'rotate-180' : ''
+                        }`}
+                    />
+                </CollapsibleTrigger>
+
+                <CollapsibleContent className="mt-4">
+                    <div className="checkbox-list max-h-62.5 overflow-y-auto">
+                        {options.map((option) => (
+                            <label
+                                key={option.id}
+                                htmlFor={option.id}
+                                className="group/item flex cursor-pointer items-center py-2"
+                            >
+                                <input
+                                    id={option.id}
+                                    type="checkbox"
+                                    value={option.value}
+                                    checked={selected.includes(option.value)}
+                                    onChange={() => onToggle(option.value)}
+                                    className="mr-2.5 h-4.5 w-4.5 cursor-pointer accent-[#d92025]"
+                                />
+                                <span className="flex-1 text-sm text-[#333] group-hover/item:text-[#d92025]">
+                                    {option.label}
+                                </span>
+                            </label>
+                        ))}
+                    </div>
+                </CollapsibleContent>
+            </Collapsible>
         </div>
     );
 }
 
-function LocationList({
-    locations,
-    activeLocation,
+// LocationList replaced by RecursiveFilterList
+
+type SidebarProps = {
+    categories: FilterItem[];
+    activeCategory: string;
+    onCategorySelect: (id: string) => void;
+    pendingFilters: PendingFilters;
+    onPendingChange: (next: Partial<PendingFilters>) => void;
+    roomOptions: RoomOption[];
+    onRoomToggle: (value: string) => void;
+    buildingAgeOptions: BuildingAgeOption[];
+    onBuildingAgeToggle: (value: string) => void;
+    floorLocationOptions: FloorLocationOption[];
+    onFloorLocationToggle: (value: string) => void;
+    floorCountOptions: FloorCountOption[];
+    onFloorCountToggle: (value: string) => void;
+    locations: FilterItem[];
+    activeLocation: string | null;
+    onLocationToggle: (id: string) => void;
+    onApply: () => void;
+};
+
+function BuildingAgeFilter({
+    options,
+    selected,
     onToggle,
-}: LocationListProps) {
+}: {
+    options: BuildingAgeOption[];
+    selected: string[];
+    onToggle: (val: string) => void;
+}) {
+    const [isOpen, setIsOpen] = useState(true);
+
     return (
-        <div className="mb-6 pb-5">
-            <h3 className="mb-3.75 text-[18px] text-[#d92025]">Konum</h3>
-            <div className="flex flex-col">
-                {locations.map((location) => {
-                    const isActive = activeLocation === location.label;
-                    return (
-                        <div
-                            key={location.id}
-                            className={`flex cursor-pointer items-center rounded px-2.5 py-2.5 transition-colors duration-200 ${
-                                isActive
-                                    ? 'bg-[#fff0f0] font-medium text-[#d92025]'
-                                    : 'hover:bg-[#f8f8f8]'
-                            }`}
-                            onClick={() => onToggle(location.label)}
-                        >
-                            <span>{location.label}</span>
-                            <span className="ml-auto text-sm text-[#999]">
-                                {location.count}
-                            </span>
-                        </div>
-                    );
-                })}
-            </div>
+        <div className="mb-6 border-b border-[#e8e8e8] pb-5">
+            <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+                <CollapsibleTrigger className="group flex w-full cursor-pointer items-center justify-between">
+                    <div className="text-base font-semibold text-[#333]">
+                        Bina Yaşı
+                    </div>
+                    <ChevronDown
+                        className={`h-5 w-5 text-gray-500 transition-transform duration-200 ${
+                            isOpen ? 'rotate-180' : ''
+                        }`}
+                    />
+                </CollapsibleTrigger>
+
+                <CollapsibleContent className="mt-4">
+                    <div className="checkbox-list max-h-62.5 overflow-y-auto">
+                        {options.map((option) => (
+                            <label
+                                key={option.id}
+                                htmlFor={option.id}
+                                className="group/item flex cursor-pointer items-center py-2"
+                            >
+                                <input
+                                    id={option.id}
+                                    type="checkbox"
+                                    value={option.value}
+                                    checked={selected.includes(option.value)}
+                                    onChange={() => onToggle(option.value)}
+                                    className="mr-2.5 h-4.5 w-4.5 cursor-pointer accent-[#d92025]"
+                                />
+                                <span className="flex-1 text-sm text-[#333] group-hover/item:text-[#d92025]">
+                                    {option.label}
+                                </span>
+                            </label>
+                        ))}
+                    </div>
+                </CollapsibleContent>
+            </Collapsible>
         </div>
     );
 }
+
+function FloorLocationFilter({
+    options,
+    selected,
+    onToggle,
+}: {
+    options: FloorLocationOption[];
+    selected: string[];
+    onToggle: (val: string) => void;
+}) {
+    const [isOpen, setIsOpen] = useState(true);
+
+    return (
+        <div className="mb-6 border-b border-[#e8e8e8] pb-5">
+            <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+                <CollapsibleTrigger className="group flex w-full cursor-pointer items-center justify-between">
+                    <div className="text-base font-semibold text-[#333]">
+                        Bulunduğu Kat
+                    </div>
+                    <ChevronDown
+                        className={`h-5 w-5 text-gray-500 transition-transform duration-200 ${
+                            isOpen ? 'rotate-180' : ''
+                        }`}
+                    />
+                </CollapsibleTrigger>
+
+                <CollapsibleContent className="mt-4">
+                    <div className="checkbox-list max-h-62.5 overflow-y-auto">
+                        {options.map((option) => (
+                            <label
+                                key={option.id}
+                                htmlFor={option.id}
+                                className="group/item flex cursor-pointer items-center py-2"
+                            >
+                                <input
+                                    id={option.id}
+                                    type="checkbox"
+                                    value={option.value}
+                                    checked={selected.includes(option.value)}
+                                    onChange={() => onToggle(option.value)}
+                                    className="mr-2.5 h-4.5 w-4.5 cursor-pointer accent-[#d92025]"
+                                />
+                                <span className="flex-1 text-sm text-[#333] group-hover/item:text-[#d92025]">
+                                    {option.label}
+                                </span>
+                            </label>
+                        ))}
+                    </div>
+                </CollapsibleContent>
+            </Collapsible>
+        </div>
+    );
+}
+
+function FloorCountFilter({
+    options,
+    selected,
+    onToggle,
+}: {
+    options: FloorCountOption[];
+    selected: string[];
+    onToggle: (val: string) => void;
+}) {
+    const [isOpen, setIsOpen] = useState(true);
+
+    return (
+        <div className="mb-6 border-b border-[#e8e8e8] pb-5">
+            <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+                <CollapsibleTrigger className="group flex w-full cursor-pointer items-center justify-between">
+                    <div className="text-base font-semibold text-[#333]">
+                        Kat Sayısı
+                    </div>
+                    <ChevronDown
+                        className={`h-5 w-5 text-gray-500 transition-transform duration-200 ${
+                            isOpen ? 'rotate-180' : ''
+                        }`}
+                    />
+                </CollapsibleTrigger>
+
+                <CollapsibleContent className="mt-4">
+                    <div className="checkbox-list max-h-62.5 overflow-y-auto">
+                        {options.map((option) => (
+                            <label
+                                key={option.id}
+                                htmlFor={option.id}
+                                className="group/item flex cursor-pointer items-center py-2"
+                            >
+                                <input
+                                    id={option.id}
+                                    type="checkbox"
+                                    value={option.value}
+                                    checked={selected.includes(option.value)}
+                                    onChange={() => onToggle(option.value)}
+                                    className="mr-2.5 h-4.5 w-4.5 cursor-pointer accent-[#d92025]"
+                                />
+                                <span className="flex-1 text-sm text-[#333] group-hover/item:text-[#d92025]">
+                                    {option.label}
+                                </span>
+                            </label>
+                        ))}
+                    </div>
+                </CollapsibleContent>
+            </Collapsible>
+        </div>
+    );
+}
+
+const LocationSelects = ({
+    locations,
+    activeLocation,
+    onToggle,
+}: {
+    locations: FilterItem[];
+    activeLocation: string | null;
+    onToggle: (id: string) => void;
+}) => {
+    // Helper to find path from tree
+    const getPath = () => {
+        if (!activeLocation) return { p: '', d: '', n: '' };
+
+        const type = activeLocation.split('-')[0];
+        const id = activeLocation.replace(`${type}-`, '');
+
+        if (type === 'province') return { p: id, d: '', n: '' };
+
+        // For district, find province
+        if (type === 'district') {
+            for (const p of locations) {
+                const dist = p.children?.find((d) => d.id === `district-${id}`);
+                if (dist)
+                    return { p: p.id.replace('province-', ''), d: id, n: '' };
+            }
+        }
+
+        // For neighborhood, find district and province
+        if (type === 'neighborhood') {
+            for (const p of locations) {
+                if (p.children) {
+                    for (const d of p.children) {
+                        const neigh = d.children?.find(
+                            (n) => n.id === `neighborhood-${id}`,
+                        );
+                        if (neigh) {
+                            return {
+                                p: p.id.replace('province-', ''),
+                                d: d.id.replace('district-', ''),
+                                n: id,
+                            };
+                        }
+                    }
+                }
+            }
+        }
+        return { p: '', d: '', n: '' };
+    };
+
+    const { p: provId, d: distId, n: neighId } = getPath();
+
+    const selectedProvince = locations.find(
+        (l) => l.id === `province-${provId}`,
+    );
+    const districts = selectedProvince?.children || [];
+    const selectedDistrict = districts.find(
+        (d) => d.id === `district-${distId}`,
+    );
+    const neighborhoods = selectedDistrict?.children || [];
+
+    return (
+        <div className="mb-6 flex flex-col gap-3 pb-5">
+            <h3 className="mb-1 text-[18px] text-[#d92025]">Konum</h3>
+
+            <Select
+                value={provId}
+                onValueChange={(val) => onToggle(`province-${val}`)}
+            >
+                <SelectTrigger className="w-full bg-white">
+                    <SelectValue placeholder="İl Seçiniz" />
+                </SelectTrigger>
+                <SelectContent>
+                    {locations.map((loc) => (
+                        <SelectItem
+                            key={loc.id}
+                            value={loc.id.replace('province-', '')}
+                        >
+                            {loc.label}
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+
+            <Select
+                value={distId}
+                onValueChange={(val) => onToggle(`district-${val}`)}
+                disabled={!provId}
+            >
+                <SelectTrigger className="w-full bg-white">
+                    <SelectValue placeholder="İlçe Seçiniz" />
+                </SelectTrigger>
+                <SelectContent>
+                    {districts.map((dist) => (
+                        <SelectItem
+                            key={dist.id}
+                            value={dist.id.replace('district-', '')}
+                        >
+                            {dist.label}
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+
+            <Select
+                value={neighId}
+                onValueChange={(val) => onToggle(`neighborhood-${val}`)}
+                disabled={!distId}
+            >
+                <SelectTrigger className="w-full bg-white">
+                    <SelectValue placeholder="Mahalle Seçiniz" />
+                </SelectTrigger>
+                <SelectContent>
+                    {neighborhoods.map((neigh) => (
+                        <SelectItem
+                            key={neigh.id}
+                            value={neigh.id.replace('neighborhood-', '')}
+                        >
+                            {neigh.label}
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+        </div>
+    );
+};
 
 function Sidebar({
     categories,
@@ -447,6 +762,12 @@ function Sidebar({
     onPendingChange,
     roomOptions,
     onRoomToggle,
+    buildingAgeOptions,
+    onBuildingAgeToggle,
+    floorLocationOptions,
+    onFloorLocationToggle,
+    floorCountOptions,
+    onFloorCountToggle,
     locations,
     activeLocation,
     onLocationToggle,
@@ -454,11 +775,19 @@ function Sidebar({
 }: SidebarProps) {
     return (
         <aside className="sticky flex h-fit w-70 flex-col rounded-lg bg-white p-5 shadow-[0_2px_8px_rgba(0,0,0,0.1)] max-[1024px]:w-full">
-            <CategoryList
-                categories={categories}
-                activeCategory={activeCategory}
+            <RecursiveFilterList
+                title="Kategoriler"
+                items={categories}
+                activeId={activeCategory}
                 onSelect={onCategorySelect}
             />
+
+            <LocationSelects
+                locations={locations}
+                activeLocation={activeLocation}
+                onToggle={onLocationToggle}
+            />
+
             <RangeFilter
                 label="m² (Brüt)"
                 minValue={pendingFilters.grossMin}
@@ -478,10 +807,20 @@ function Sidebar({
                 selected={pendingFilters.rooms}
                 onToggle={onRoomToggle}
             />
-            <LocationList
-                locations={locations}
-                activeLocation={activeLocation}
-                onToggle={onLocationToggle}
+            <BuildingAgeFilter
+                options={buildingAgeOptions}
+                selected={pendingFilters.buildingAges}
+                onToggle={onBuildingAgeToggle}
+            />
+            <FloorLocationFilter
+                options={floorLocationOptions}
+                selected={pendingFilters.floorLocations}
+                onToggle={onFloorLocationToggle}
+            />
+            <FloorCountFilter
+                options={floorCountOptions}
+                selected={pendingFilters.floorCounts}
+                onToggle={onFloorCountToggle}
             />
             <div className="sticky bottom-5 mt-auto border-t border-[#e8e8e8] bg-white pt-5">
                 <button
@@ -583,6 +922,9 @@ function ListingCard({ listing, classes }: ListingCardProps) {
         >
             <img
                 src={listing.image}
+                // src={
+                //     'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600'
+                // }
                 alt="Emlak"
                 className={`shrink-0 rounded-md object-cover ${classes.image}`}
             />
@@ -631,7 +973,6 @@ function ListingCard({ listing, classes }: ListingCardProps) {
                         </span>
                     </div>
                     <div className={classes.detailItem}>
-                        <span className={classes.detailLabel}>İl / İlçe</span>
                         <span className="text-[13px] text-[#666]">
                             {listing.location}
                         </span>
@@ -659,12 +1000,27 @@ function ListingsGrid({ listings, classes }: ListingsGridProps) {
     );
 }
 
-export default function Ilanlar() {
+export default function Ilanlar({
+    listings,
+    categories,
+    locations,
+    roomOptions,
+    buildingAgeOptions,
+    floorLocationOptions,
+    floorCountOptions,
+}: {
+    listings: any[];
+    categories: FilterItem[];
+    locations: FilterItem[];
+    roomOptions: RoomOption[];
+    buildingAgeOptions: BuildingAgeOption[];
+    floorLocationOptions: FloorLocationOption[];
+    floorCountOptions: FloorCountOption[];
+}) {
     const [viewType, setViewType] = useState<ViewType>('list');
     const [currentFilter, setCurrentFilter] = useState<Tab['id']>('all');
     const [currentSort, setCurrentSort] = useState<SortType>('default');
-    const [activeCategory, setActiveCategory] =
-        useState<string>('satilik-daire');
+    const [activeCategory, setActiveCategory] = useState<string>('');
     const [activeLocation, setActiveLocation] = useState<string | null>(null);
     const [pendingFilters, setPendingFilters] = useState<PendingFilters>({
         grossMin: '',
@@ -672,18 +1028,71 @@ export default function Ilanlar() {
         netMin: '',
         netMax: '',
         rooms: [],
+        buildingAges: [],
+        floorLocations: [],
+        floorCounts: [],
     });
     const [appliedFilters, setAppliedFilters] = useState<AppliedFilters | null>(
         null,
     );
 
+    const formattedListings = useMemo<Listing[]>(() => {
+        return listings.map((l) => ({
+            ...l,
+            date: new Date(l.date),
+            area: Number(l.area),
+            netArea: l.netArea ? Number(l.netArea) : undefined,
+        }));
+    }, [listings]);
+
     const filteredListings = useMemo<Listing[]>(() => {
         let filtered =
             currentFilter === 'all'
-                ? [...listingsData]
-                : listingsData.filter((listing) =>
+                ? [...formattedListings]
+                : formattedListings.filter((listing) =>
                       listing.badges.includes(currentFilter),
                   );
+
+        // Filter by Category (Recursive)
+        if (appliedFilters?.category) {
+            const getCategoryIds = (cat: FilterItem): string[] => {
+                let ids = [cat.id];
+                if (cat.children) {
+                    cat.children.forEach((child) => {
+                        ids = [...ids, ...getCategoryIds(child)];
+                    });
+                }
+                return ids;
+            };
+
+            const findCategoryById = (
+                cats: FilterItem[],
+                id: string,
+            ): FilterItem | null => {
+                for (const cat of cats) {
+                    if (cat.id === id) return cat;
+                    if (cat.children) {
+                        const found = findCategoryById(cat.children, id);
+                        if (found) return found;
+                    }
+                }
+                return null;
+            };
+
+            const selectedCategory = findCategoryById(
+                categories,
+                appliedFilters.category,
+            );
+            if (selectedCategory) {
+                const allowedIds = getCategoryIds(selectedCategory);
+                filtered = filtered.filter((l) =>
+                    allowedIds.includes(l.categoryId),
+                );
+            }
+        }
+
+        // Location filtering is handled in listingMatchesFilters via appliedFilters,
+        // not immediately via activeLocation anymore.
 
         filtered = filtered.filter((listing) =>
             listingMatchesFilters(listing, appliedFilters),
@@ -707,7 +1116,14 @@ export default function Ilanlar() {
         }
 
         return filtered;
-    }, [currentFilter, currentSort, appliedFilters]);
+    }, [
+        currentFilter,
+        currentSort,
+        appliedFilters,
+        activeCategory,
+        formattedListings,
+        categories,
+    ]);
 
     const handleRoomToggle = (value: string): void => {
         setPendingFilters((prev) => {
@@ -715,6 +1131,33 @@ export default function Ilanlar() {
                 ? prev.rooms.filter((room) => room !== value)
                 : [...prev.rooms, value];
             return { ...prev, rooms: nextRooms };
+        });
+    };
+
+    const handleBuildingAgeToggle = (value: string): void => {
+        setPendingFilters((prev) => {
+            const nextAges = prev.buildingAges.includes(value)
+                ? prev.buildingAges.filter((age) => age !== value)
+                : [...prev.buildingAges, value];
+            return { ...prev, buildingAges: nextAges };
+        });
+    };
+
+    const handleFloorLocationToggle = (value: string): void => {
+        setPendingFilters((prev) => {
+            const nextFloors = prev.floorLocations.includes(value)
+                ? prev.floorLocations.filter((floor) => floor !== value)
+                : [...prev.floorLocations, value];
+            return { ...prev, floorLocations: nextFloors };
+        });
+    };
+
+    const handleFloorCountToggle = (value: string): void => {
+        setPendingFilters((prev) => {
+            const nextCounts = prev.floorCounts.includes(value)
+                ? prev.floorCounts.filter((count) => count !== value)
+                : [...prev.floorCounts, value];
+            return { ...prev, floorCounts: nextCounts };
         });
     };
 
@@ -731,7 +1174,11 @@ export default function Ilanlar() {
             netMin: parseNumber(pendingFilters.netMin),
             netMax: parseNumber(pendingFilters.netMax),
             rooms: [...pendingFilters.rooms],
+            buildingAges: [...pendingFilters.buildingAges],
+            floorLocations: [...pendingFilters.floorLocations],
+            floorCounts: [...pendingFilters.floorCounts],
             location: activeLocation ? activeLocation.toLowerCase() : null,
+            category: activeCategory || null,
         });
     };
 
@@ -739,11 +1186,15 @@ export default function Ilanlar() {
         setPendingFilters((prev) => ({ ...prev, ...next }));
     };
 
-    const handleLocationToggle = (label: string): void => {
-        setActiveLocation((prev) => (prev === label ? null : label));
+    const handleLocationToggle = (id: string): void => {
+        setActiveLocation((prev) => (prev === id ? null : id));
     };
 
     const listingClasses = getListingClasses(viewType);
+
+    const handleCategorySelect = (id: string) => {
+        setActiveCategory((prev) => (prev === id ? '' : id));
+    };
 
     return (
         <>
@@ -760,11 +1211,17 @@ export default function Ilanlar() {
                         <Sidebar
                             categories={categories}
                             activeCategory={activeCategory}
-                            onCategorySelect={setActiveCategory}
+                            onCategorySelect={handleCategorySelect}
                             pendingFilters={pendingFilters}
                             onPendingChange={updatePendingFilters}
                             roomOptions={roomOptions}
                             onRoomToggle={handleRoomToggle}
+                            buildingAgeOptions={buildingAgeOptions}
+                            onBuildingAgeToggle={handleBuildingAgeToggle}
+                            floorLocationOptions={floorLocationOptions}
+                            onFloorLocationToggle={handleFloorLocationToggle}
+                            floorCountOptions={floorCountOptions}
+                            onFloorCountToggle={handleFloorCountToggle}
                             locations={locations}
                             activeLocation={activeLocation}
                             onLocationToggle={handleLocationToggle}

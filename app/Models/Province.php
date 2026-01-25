@@ -13,4 +13,9 @@ class Province extends Model
     {
         return $this->hasMany(District::class);
     }
+
+    public function listings()
+    {
+        return $this->hasManyThrough(Listing::class, Address::class, 'province_id', 'id', 'id', 'listing_id');
+    }
 }

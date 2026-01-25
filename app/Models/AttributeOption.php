@@ -8,6 +8,7 @@ class AttributeOption extends Model
 {
     protected $fillable = [
         'attribute_id',
+        'value',
         'sort_order',
         'is_active',
     ];

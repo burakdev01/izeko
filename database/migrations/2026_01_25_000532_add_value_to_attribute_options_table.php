@@ -12,7 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('attribute_options', function (Blueprint $table) {
-            //
+            // $table->string('value')->after('attribute_id');
+            if (!Schema::hasColumn('attribute_options', 'value')) {
+                $table->string('value')->after('attribute_id');
+            }
         });
     }
 
@@ -22,7 +25,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('attribute_options', function (Blueprint $table) {
-            //
+            $table->dropColumn('value');
         });
     }
 };

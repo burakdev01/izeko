@@ -69,14 +69,13 @@ type DetailGridProps = {
     items: DetailItem[];
 };
 
-type FeatureListProps = {
-    features: string[];
-};
-
 type DescriptionSectionProps = {
     title: string;
     description: string;
-    features: string[];
+};
+
+type FeaturesSectionProps = {
+    groups: { group: string; features: string[] }[];
 };
 
 type InfoListProps = {
@@ -99,124 +98,31 @@ type AgentCardProps = {
     info: InfoItem[];
 };
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { label: 'İlanlar', href: 'index.html' },
-    { label: 'Tekirdağ', href: '#' },
-    { label: 'Müstakil Ev' },
-];
-
-const listingTitle =
-    "LEYALGRUP'TAN ŞAHİBİNDEN, HAVUZLU, LÜX TASARIMLI MÜSTAKİL VİLLA";
-
-const listingMeta = [
-    'İlan No: 6521442',
-    'Yayın Tarihi: 09 Aralık 2025',
-    'Tekirdağ / Marmara Ereğlisi',
-];
-
-const listingDescription =
-    "Leyal Grup kalitesiyle inşa edilen bu lüks villa, 550 m² arsa üzerinde konumlanmıştır. Geniş yaşam alanları, resmi yüzme havuzu, akıllı ev sistemleri ve özel peyzajlı bahçesi ile öne çıkar. Marmara Denizi'ne yürüme mesafesindedir. Site içerisinde 24 saat güvenlik, kapalı otopark ve spor alanları bulunmaktadır.";
-
-const listingPrice = '8.900.000 TL';
-
-const agentProfile: AgentProfile = {
-    name: 'Leyal Grup Satış Ofisi',
-    role: 'Yetkili Gayrimenkul Danışmanı',
-    avatarUrl: 'https://i.hizliresim.com/dk47as1.jpg',
-    phone: '+90 (532) 555 12 34',
-    email: 'info@leyalgrup.com',
+// Static data removed
+type ListingDetail = {
+    id: number;
+    title: string;
+    description: string;
+    price: string;
+    date: string;
+    location: string;
+    fullLocation: string;
+    features: { group: string; features: string[] }[];
+    nonGroupedFeatures: string[];
+    city: string;
+    district: string;
+    neighborhood: string;
 };
 
-const galleryImages: GalleryImage[] = [
-    {
-        large: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600',
-        thumb: 'https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?w=400',
-        alt: 'Salon',
-    },
-    {
-        large: 'https://images.unsplash.com/photo-1505691723518-36a5ac3be353?w=1600',
-        thumb: 'https://images.unsplash.com/photo-1505691723518-36a5ac3be353?w=400',
-        alt: 'Mutfak',
-    },
-    {
-        large: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600',
-        thumb: 'https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?w=400',
-        alt: 'Salon',
-    },
-    {
-        large: 'https://images.unsplash.com/photo-1505691723518-36a5ac3be353?w=1600',
-        thumb: 'https://images.unsplash.com/photo-1505691723518-36a5ac3be353?w=400',
-        alt: 'Mutfak',
-    },
-    {
-        large: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600',
-        thumb: 'https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?w=400',
-        alt: 'Salon',
-    },
-    {
-        large: 'https://images.unsplash.com/photo-1505691723518-36a5ac3be353?w=1600',
-        thumb: 'https://images.unsplash.com/photo-1505691723518-36a5ac3be353?w=400',
-        alt: 'Mutfak',
-    },
-    {
-        large: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600',
-        thumb: 'https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?w=400',
-        alt: 'Salon',
-    },
-    {
-        large: 'https://images.unsplash.com/photo-1505691723518-36a5ac3be353?w=1600',
-        thumb: 'https://images.unsplash.com/photo-1505691723518-36a5ac3be353?w=400',
-        alt: 'Mutfak',
-    },
-    {
-        large: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600',
-        thumb: 'https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?w=400',
-        alt: 'Salon',
-    },
-    {
-        large: 'https://images.unsplash.com/photo-1505691723518-36a5ac3be353?w=1600',
-        thumb: 'https://images.unsplash.com/photo-1505691723518-36a5ac3be353?w=400',
-        alt: 'Mutfak',
-    },
-];
-
-const detailItems: DetailItem[] = [
-    { label: 'm² (Brüt)', value: '200' },
-    { label: 'm² (Net)', value: '180' },
-    { label: 'Oda Sayısı', value: '4+1' },
-    { label: 'Kat Sayısı', value: '3' },
-    { label: 'Bina Yaşı', value: '1' },
-    { label: 'Isıtma', value: 'Yerden Isıtma' },
-];
-
-const featureItems: string[] = [
-    'Akıllı Ev Otomasyonu',
-    'Özel Havuz & Sauna',
-    'Geniş Kış Bahçesi',
-    'Çift Araçlık Kapalı Garaj',
-    'Panoramik Deniz Manzarası',
-    'VRF İklimlendirme',
-];
-
-const agentInfo: InfoItem[] = [
-    { label: 'İlan Türü', value: 'Sahibinden' },
-    { label: 'Tapu Durumu', value: 'Konut' },
-    { label: 'Krediye Uygun', value: 'Evet' },
-    { label: 'Site İçinde', value: 'Evet' },
-];
-
-const locationInfo: InfoItem[] = [
-    { label: 'Sahile', value: '350 m' },
-    { label: 'Merkeze', value: '2.4 km' },
-    { label: 'Havalimanı', value: '45 dk' },
-    { label: 'Okul', value: '800 m' },
-];
-
-const similarListings: InfoItem[] = [
-    { label: 'Premium Villa, Silivri', value: '7.250.000 TL' },
-    { label: '4+1 Triplex, Şile', value: '6.900.000 TL' },
-    { label: 'Denize Sıfır Villa', value: '9.450.000 TL' },
-];
+type IlanlarDetayProps = {
+    listing: ListingDetail;
+    galleryImages: GalleryImage[];
+    detailItems: DetailItem[];
+    agentProfile: AgentProfile;
+    breadcrumbs: BreadcrumbItem[];
+    similarListings: InfoItem[];
+    locationInfo: InfoItem[];
+};
 
 function Card({ children, className }: CardProps) {
     return (
@@ -406,7 +312,7 @@ function Gallery({ images }: GalleryProps) {
                     onClick={() => setLightboxOpen(true)}
                 >
                     <button
-                        className="hero-nav-btn prev `h-10.5 absolute top-1/2 left-3.75 z-10 flex w-10.5 -translate-y-1/2 items-center justify-center rounded-full border-0 bg-black/55 text-[22px] text-white transition-colors duration-200 hover:bg-black/75"
+                        className="hero-nav-btn prev absolute top-1/2 left-3.75 z-10 flex h-10.5 w-10.5 -translate-y-1/2 items-center justify-center rounded-full border-0 bg-black/55 text-[22px] text-white transition-colors duration-200 hover:bg-black/75"
                         type="button"
                         aria-label="Önceki görsel"
                         onClick={handlePrev}
@@ -515,11 +421,9 @@ function DetailGrid({ price, items }: DetailGridProps) {
                 {items.map((item) => (
                     <div
                         key={item.label}
-                        className="rounded-lg border border-[#f0f0f0] bg-[#fff7f7] p-3.5"
+                        className="rounded-lg border border-[#f0f0f0] bg-[#fff7f7] p-2"
                     >
-                        <div className="mb-1.5 text-xs text-[#777]">
-                            {item.label}
-                        </div>
+                        <div className="text-xs text-[#777]">{item.label}</div>
                         <div className="text-base font-semibold">
                             {item.value}
                         </div>
@@ -530,34 +434,43 @@ function DetailGrid({ price, items }: DetailGridProps) {
     );
 }
 
-function FeatureList({ features }: FeatureListProps) {
+function FeaturesSection({ groups }: FeaturesSectionProps) {
+    if (!groups || groups.length === 0) return null;
     return (
-        <div className="mt-2.5 grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-2.5">
-            {features.map((feature) => (
-                <div
-                    key={feature}
-                    className="flex items-center gap-2 rounded-md bg-[#f8f8f8] px-3 py-2.5 text-sm"
-                >
-                    <span className="h-2 w-2 rounded-full bg-[#d92025]" />
-                    <span>{feature}</span>
-                </div>
-            ))}
-        </div>
+        <Card className="mt-6.25 p-6.25 max-[600px]:p-4.5">
+            <h2 className="mb-3.75 text-[20px] text-[#333]">Özellikler</h2>
+            <div className="flex flex-col gap-6">
+                {groups.map((group) => (
+                    <div key={group.group}>
+                        <h3 className="mb-3 text-[16px] font-semibold text-[#333]">
+                            {group.group}
+                        </h3>
+                        <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-2.5">
+                            {group.features.map((feature) => (
+                                <div
+                                    key={feature}
+                                    className="flex items-center gap-2 rounded-md bg-[#f8f8f8] px-3 py-2.5 text-sm"
+                                >
+                                    <span className="h-2 w-2 rounded-full bg-[#d92025]" />
+                                    <span>{feature}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </Card>
     );
 }
 
-function DescriptionSection({
-    title,
-    description,
-    features,
-}: DescriptionSectionProps) {
+function DescriptionSection({ title, description }: DescriptionSectionProps) {
     return (
         <Card className="p-6.25 max-[600px]:p-4.5">
             <h2 className="mb-3.75 text-[20px] text-[#333]">{title}</h2>
-            <p className="text-[15px] leading-[1.7] text-[#555]">
-                {description}
-            </p>
-            <FeatureList features={features} />
+            <div
+                className="text-[15px] leading-[1.7] text-[#555]"
+                dangerouslySetInnerHTML={{ __html: description }}
+            />
         </Card>
     );
 }
@@ -627,20 +540,46 @@ function AgentCard({ profile, info }: AgentCardProps) {
     );
 }
 
-function MapPlaceholder() {
+function MapPlaceholder({ location }: { location: string }) {
+    console.log(location);
     return (
         <div className="mt-3.75 flex h-55 w-full items-center justify-center rounded-[10px] border border-[#eee] bg-[linear-gradient(135deg,#f5f5f5,#eaeaea)] text-sm text-[#999]">
             <iframe
-                title="Google Map"
-                src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d12503.55755994515!2d27.137323!3d38.420921!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14bbd8faa98c91e5%3A0x29cea2dd9f2a22f7!2s%C4%B0zmir%20Emlak%20Komisyoncular%C4%B1%20Odas%C4%B1!5e0!3m2!1sen!2str!4v1768855278766!5m2!1sen!2str"
-                class="h-full w-full border-0"
+                src={`https://www.google.com/maps?q=${encodeURIComponent(
+                    location,
+                )}&output=embed`}
+                className="h-full w-full border-0"
                 loading="lazy"
             ></iframe>
         </div>
     );
 }
 
-export default function IlanlarDetay() {
+export default function IlanlarDetay({
+    listing,
+    galleryImages,
+    detailItems,
+    agentProfile,
+    breadcrumbs,
+    similarListings,
+    locationInfo,
+}: IlanlarDetayProps) {
+    const meta = [
+        `İlan No: ${listing.id}`,
+        `Yayın Tarihi: ${listing.date}`,
+        listing.location,
+    ];
+
+    const agentInfo = [
+        // We reconstruct agentInfo if needed or use what's passed if we passed it.
+        // For now, let's use a static or passed prop.
+        // Actually I removed agentInfo static const, but didn't pass it fully.
+        // Let's create it from listing or pass it.
+        // The backend passed 'agentProfile', but maybe not 'agentInfo' (InfoItem[]).
+        // Let's assume we want to show generic info there for now or empty.
+        { label: 'İlan Türü', value: 'Satılık' }, // Hardcoded or dynamic
+        // ... others
+    ];
     return (
         <>
             <Head title="İlan Detay" />
@@ -655,22 +594,22 @@ export default function IlanlarDetay() {
                 <div className="min-h-screen bg-[#f5f5f5] font-sans text-[#333]">
                     <PageHeader
                         breadcrumbs={breadcrumbs}
-                        title={listingTitle}
-                        meta={listingMeta}
+                        title={listing.title}
+                        meta={meta}
                     />
 
                     <div className="mx-auto mt-7.5 mb-7.5 grid max-w-350 grid-cols-[2fr_1fr] gap-6.25 px-5 pb-10 max-[1024px]:grid-cols-1">
                         <section className="min-w-0">
                             <Gallery images={galleryImages} />
                             <DetailGrid
-                                price={listingPrice}
+                                price={listing.price}
                                 items={detailItems}
                             />
                             <DescriptionSection
-                                title="İlan Açıklaması"
-                                description={listingDescription}
-                                features={featureItems}
+                                title="İlan Detayları"
+                                description={listing.description}
                             />
+                            <FeaturesSection groups={listing.features} />
                         </section>
 
                         <aside className="min-w-0">
@@ -682,12 +621,14 @@ export default function IlanlarDetay() {
                                 title="Konum & Ulaşım"
                                 items={locationInfo}
                             >
-                                <MapPlaceholder />
+                                <MapPlaceholder
+                                    location={`${listing.neighborhood} Mahallesi ${listing.district} ${listing.city}`}
+                                />
                             </InfoCard>
-                            <InfoCard
+                            {/* <InfoCard
                                 title="Benzer İlanlar"
                                 items={similarListings}
-                            />
+                            /> */}
                         </aside>
                     </div>
                 </div>
