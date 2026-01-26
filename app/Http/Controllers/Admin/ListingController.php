@@ -62,16 +62,16 @@ class ListingController extends Controller
             if (!$attribute) return null;
 
             switch ($attribute->data_type) {
-                case 'string':
+                case \App\Models\Attribute::TYPE_STRING:
                     $value = $listingAttr->value_string;
                     break;
-                case 'number':
+                case \App\Models\Attribute::TYPE_INTEGER:
                     $value = $listingAttr->value_int . ($attribute->unit ? ' ' . $attribute->unit : '');
                     break;
-                case 'boolean':
+                case \App\Models\Attribute::TYPE_BOOLEAN:
                     $value = $listingAttr->value_bool ? 'Evet' : 'Hayır';
                     break;
-                case 'option':
+                case \App\Models\Attribute::TYPE_SELECT:
                     $value = $listingAttr->option ? $listingAttr->option->value : null;
                     break;
             }

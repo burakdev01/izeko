@@ -480,9 +480,19 @@ Route::get('/mevzuat', function () {
     return redirect()->route('duyurular');
 })->name('mevzuat');
 
-Route::get('/ilanlar', function () {
-    $listings = \App\Models\Listing::where('listing_status', 'active')
-        ->with([
+Route::get('/ilanlar', function (\Illuminate\Http\Request $request) {
+    $query = \App\Models\Listing::where('listing_status', 'active');
+
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->where(function($q) use ($search) {
+             $q->where('title', 'like', "%{$search}%")
+               ->orWhere('description', 'like', "%{$search}%")
+               ->orWhere('id', 'like', "%{$search}%");
+        });
+    }
+
+    $listings = $query->with([
             'address.province', 
             'address.district', 
             'address.neighborhood',
@@ -516,11 +526,11 @@ Route::get('/ilanlar', function () {
             // Accessor for value
             $getValue = function($attr) {
                 if (!$attr) return null;
-                if ($attr->attribute->data_type === 'option') {
+                if ($attr->attribute->data_type === \App\Models\Attribute::TYPE_SELECT) {
                     // Use 'value' column as per user instruction and DB schema
                     return $attr->option ? $attr->option->value : null;
                 }
-                if ($attr->attribute->data_type === 'boolean') {
+                if ($attr->attribute->data_type === \App\Models\Attribute::TYPE_BOOLEAN) {
                     return $attr->value_bool ? 'Evet' : 'Hayır';
                 }
                 return $attr->value_string ?? $attr->value_int;
@@ -655,6 +665,7 @@ Route::get('/ilanlar', function () {
         ]);
 
     return Inertia::render('ilanlar', [
+        'filters' => $request->only(['search']),
         'listings' => $listings,
         'categories' => $categories,
         'locations' => $locations,
@@ -678,8 +689,8 @@ Route::get('/ilanlar/{id}', function ($id) {
 
     // Ungrouped Features (Group ID is null)
     $nonGroupedFeatures = $listing->attributes
-        ->filter(fn($a) => $a->attribute && $a->attribute->data_type === 'boolean' && $a->value_bool && !$a->attribute->attribute_group_id)
-        ->map(fn($a) => $a->attribute->name)
+        ->filter(fn($a) => $a->attribute && $a->attribute->data_type === \App\Models\Attribute::TYPE_BOOLEAN && !$a->attribute->attribute_group_id)
+        ->map(fn($a) => $a->attribute->name . ': ' . ($a->value_bool ? 'Evet' : 'Hayır'))
         ->values()
         ->toArray();
 
@@ -687,22 +698,21 @@ Route::get('/ilanlar/{id}', function ($id) {
     $groupedFeatures = $listing->attributes
         ->filter(function ($a) {
             if (!$a->attribute || !$a->attribute->attribute_group_id) return false;
-            if ($a->attribute->data_type === 'boolean') return $a->value_bool;
-            if ($a->attribute->data_type === 'string') return !empty($a->value_string);
-            if ($a->attribute->data_type === 'number') return !is_null($a->value_int);
-            if ($a->attribute->data_type === 'option') return !empty($a->attribute_option_id);
+            if ($a->attribute->data_type === \App\Models\Attribute::TYPE_BOOLEAN) return true;
+            if ($a->attribute->data_type === \App\Models\Attribute::TYPE_STRING) return !empty($a->value_string);
+            if ($a->attribute->data_type === \App\Models\Attribute::TYPE_INTEGER) return !is_null($a->value_int);
+            if ($a->attribute->data_type === \App\Models\Attribute::TYPE_SELECT) return !empty($a->attribute_option_id);
             return false;
         })
         ->groupBy(fn($a) => $a->attribute->group?->name ?? 'Diğer')
         ->map(fn($group, $key) => [
             'group' => $key,
             'features' => $group->map(function ($a) {
-                if ($a->attribute->data_type === 'boolean') return $a->attribute->name;
-                
                 $value = match($a->attribute->data_type) {
-                    'string' => $a->value_string,
-                    'number' => $a->value_int,
-                    'option' => $a->option?->value,
+                    \App\Models\Attribute::TYPE_BOOLEAN => $a->value_bool ? 'Evet' : 'Hayır',
+                    \App\Models\Attribute::TYPE_STRING => $a->value_string,
+                    \App\Models\Attribute::TYPE_INTEGER => $a->value_int,
+                    \App\Models\Attribute::TYPE_SELECT => $a->option?->value,
                     default => '-'
                 };
                 return $a->attribute->name . ': ' . $value;
@@ -717,8 +727,8 @@ Route::get('/ilanlar/{id}', function ($id) {
     $getAttrValue = function($listing, $attrId) {
         $attr = $listing->attributes->first(fn($a) => $a->attribute_id === $attrId);
         if (!$attr) return null;
-        if ($attr->attribute->data_type === 'option') return $attr->option?->value;
-        if ($attr->attribute->data_type === 'boolean') return $attr->value_bool ? 'Evet' : 'Hayır';
+        if ($attr->attribute->data_type === \App\Models\Attribute::TYPE_SELECT) return $attr->option?->value;
+        if ($attr->attribute->data_type === \App\Models\Attribute::TYPE_BOOLEAN) return $attr->value_bool ? 'Evet' : 'Hayır';
         return $attr->value_string ?? $attr->value_int;
     };
 

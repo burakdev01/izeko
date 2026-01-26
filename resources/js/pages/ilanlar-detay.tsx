@@ -423,9 +423,15 @@ function DetailGrid({ price, items }: DetailGridProps) {
                         key={item.label}
                         className="rounded-lg border border-[#f0f0f0] bg-[#fff7f7] p-2"
                     >
-                        <div className="text-xs text-[#777]">{item.label}</div>
-                        <div className="text-base font-semibold">
-                            {item.value}
+                        <div className="text-xs text-[#777]">
+                            {item.label == 'Özellik'
+                                ? item.value.split(': ')[0]
+                                : item.label}
+                        </div>
+                        <div className="text-sm font-semibold">
+                            {item.label == 'Özellik'
+                                ? item.value.split(': ')[1]
+                                : item.value}
                         </div>
                     </div>
                 ))}

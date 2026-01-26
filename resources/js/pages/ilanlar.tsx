@@ -14,7 +14,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { ChevronDown } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
@@ -233,6 +233,7 @@ type ListingsHeaderProps = {
     tabs: Tab[];
     activeTab: Tab['id'];
     onSelect: (id: Tab['id']) => void;
+    count: number;
 };
 
 type ListingControlsProps = {
@@ -467,6 +468,8 @@ type SidebarProps = {
     activeLocation: string | null;
     onLocationToggle: (id: string) => void;
     onApply: () => void;
+    searchTerm: string;
+    onSearch: (term: string) => void;
 };
 
 function BuildingAgeFilter({
@@ -772,9 +775,27 @@ function Sidebar({
     activeLocation,
     onLocationToggle,
     onApply,
+    searchTerm,
+    onSearch,
 }: SidebarProps) {
     return (
         <aside className="sticky flex h-fit w-70 flex-col rounded-lg bg-white p-5 shadow-[0_2px_8px_rgba(0,0,0,0.1)] max-[1024px]:w-full">
+            <div className="mb-6 border-b border-[#e8e8e8] pb-5">
+                <h3 className="mb-3.75 text-[18px] text-[#d92025]">Arama</h3>
+                <input
+                    type="text"
+                    placeholder="İlan ara..."
+                    value={searchTerm}
+                    onChange={(e) => onSearch(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            onApply();
+                        }
+                    }}
+                    className="w-full rounded border border-[#ddd] px-3 py-2.5 text-sm placeholder:text-[#999] focus:border-[#d92025] focus:outline-none"
+                />
+            </div>
+
             <RecursiveFilterList
                 title="Kategoriler"
                 items={categories}
@@ -839,31 +860,37 @@ function ListingsHeader({
     tabs,
     activeTab,
     onSelect,
+    count,
 }: ListingsHeaderProps) {
-    return null;
     return (
         <div className="mb-5 rounded-lg bg-white p-5 shadow-[0_2px_8px_rgba(0,0,0,0.1)]">
-            <h1 className="mb-3.75 text-[24px] text-[#d92025] max-[480px]:text-[20px]">
-                {title}
-            </h1>
-            <div className="flex flex-wrap gap-2.5 max-[768px]:justify-center">
-                {tabs.map((tab) => {
-                    const isActive = activeTab === tab.id;
-                    return (
-                        <button
-                            key={tab.id}
-                            className={`rounded px-5 py-2.5 text-sm transition-colors duration-200 ${
-                                isActive
-                                    ? 'bg-[#d92025] text-white'
-                                    : 'bg-[#f5f5f5] text-[#333] hover:bg-[#e8e8e8]'
-                            }`}
-                            data-filter={tab.id}
-                            onClick={() => onSelect(tab.id)}
-                        >
-                            {tab.label}
-                        </button>
-                    );
-                })}
+            <div className="flex flex-wrap items-center justify-between gap-4">
+                <h1 className="text-[24px] text-[#d92025] max-[480px]:text-[20px]">
+                    {title || 'Tüm İlanlar'}
+                    <span className="ml-3 text-base font-normal text-gray-500">
+                        {count} ilan bulundu
+                    </span>
+                </h1>
+
+                <div className="flex flex-wrap gap-2.5 max-[768px]:justify-center">
+                    {tabs.map((tab) => {
+                        const isActive = activeTab === tab.id;
+                        return (
+                            <button
+                                key={tab.id}
+                                className={`rounded px-5 py-2.5 text-sm transition-colors duration-200 ${
+                                    isActive
+                                        ? 'bg-[#d92025] text-white'
+                                        : 'bg-[#f5f5f5] text-[#333] hover:bg-[#e8e8e8]'
+                                }`}
+                                data-filter={tab.id}
+                                onClick={() => onSelect(tab.id)}
+                            >
+                                {tab.label}
+                            </button>
+                        );
+                    })}
+                </div>
             </div>
         </div>
     );
@@ -1008,6 +1035,7 @@ export default function Ilanlar({
     buildingAgeOptions,
     floorLocationOptions,
     floorCountOptions,
+    filters,
 }: {
     listings: any[];
     categories: FilterItem[];
@@ -1016,12 +1044,14 @@ export default function Ilanlar({
     buildingAgeOptions: BuildingAgeOption[];
     floorLocationOptions: FloorLocationOption[];
     floorCountOptions: FloorCountOption[];
+    filters?: { search?: string };
 }) {
     const [viewType, setViewType] = useState<ViewType>('list');
     const [currentFilter, setCurrentFilter] = useState<Tab['id']>('all');
     const [currentSort, setCurrentSort] = useState<SortType>('default');
     const [activeCategory, setActiveCategory] = useState<string>('');
     const [activeLocation, setActiveLocation] = useState<string | null>(null);
+    const [searchTerm, setSearchTerm] = useState(filters?.search || '');
     const [pendingFilters, setPendingFilters] = useState<PendingFilters>({
         grossMin: '',
         grossMax: '',
@@ -1180,6 +1210,17 @@ export default function Ilanlar({
             location: activeLocation ? activeLocation.toLowerCase() : null,
             category: activeCategory || null,
         });
+
+        // Apply Search via Router
+        router.get(
+            '/ilanlar',
+            { search: searchTerm },
+            {
+                preserveState: true,
+                preserveScroll: true,
+                replace: true,
+            },
+        );
     };
 
     const updatePendingFilters = (next: Partial<PendingFilters>): void => {
@@ -1226,6 +1267,8 @@ export default function Ilanlar({
                             activeLocation={activeLocation}
                             onLocationToggle={handleLocationToggle}
                             onApply={applySidebarFilters}
+                            searchTerm={searchTerm}
+                            onSearch={setSearchTerm}
                         />
 
                         <main className="flex-1">
@@ -1234,6 +1277,7 @@ export default function Ilanlar({
                                 tabs={tabs}
                                 activeTab={currentFilter}
                                 onSelect={setCurrentFilter}
+                                count={filteredListings.length}
                             />
                             <ListingControls
                                 viewOptions={viewOptions}
