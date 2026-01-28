@@ -1,29 +1,87 @@
 import AdminFormHeader from '@/components/admin/admin-form-header';
 import InputError from '@/components/input-error';
+import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import AdminLayout from '@/layouts/admin-layout';
 import { Head, useForm } from '@inertiajs/react';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 
 type Office = {
     id: number;
     name: string;
-    address: string;
     is_active: boolean;
+    address_text?: string; // The old simple address
+    address?: {
+        province_id?: string | number;
+        district_id?: string | number;
+        neighborhood_id?: string | number;
+        description?: string;
+    };
 };
 
 type OfficeEditProps = {
     office: Office;
+    provinces: { id: number; name: string }[];
 };
 
-export default function OfficeEdit({ office }: OfficeEditProps) {
+export default function OfficeEdit({ office, provinces }: OfficeEditProps) {
     const { data, setData, put, processing, errors } = useForm({
         name: office.name,
-        address: office.address,
         is_active: office.is_active,
+        address: {
+            province_id: office.address?.province_id || '',
+            district_id: office.address?.district_id || '',
+            neighborhood_id: office.address?.neighborhood_id || '',
+            description: office.address?.description || '',
+        },
     });
+
+    const [districts, setDistricts] = useState<{ id: number; name: string }[]>(
+        [],
+    );
+    const [neighborhoods, setNeighborhoods] = useState<
+        { id: number; name: string }[]
+    >([]);
+
+    useEffect(() => {
+        if (data.address.province_id) {
+            axios
+                .get<{ id: number; name: string }[]>(
+                    route('admin.locations.districts', {
+                        province: data.address.province_id,
+                    }),
+                )
+                .then((res) => {
+                    setDistricts(res.data);
+                });
+        }
+    }, [data.address.province_id]);
+
+    useEffect(() => {
+        if (data.address.district_id) {
+            axios
+                .get<{ id: number; name: string }[]>(
+                    route('admin.locations.neighborhoods', {
+                        district: data.address.district_id,
+                    }),
+                )
+                .then((res) => {
+                    setNeighborhoods(res.data);
+                });
+        }
+    }, [data.address.district_id]);
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        put(`/admin/ofisler/${office.id}`);
+        put(route('admin.ofisler.update', office.id));
     };
 
     return (
@@ -59,21 +117,114 @@ export default function OfficeEdit({ office }: OfficeEditProps) {
                             />
                         </div>
 
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                            <div className="space-y-2">
+                                <Label>İl</Label>
+                                <Select
+                                    value={String(data.address.province_id)}
+                                    onValueChange={(val) => {
+                                        setData('address', {
+                                            ...data.address,
+                                            province_id: val,
+                                            district_id: '',
+                                            neighborhood_id: '',
+                                        });
+                                        setDistricts([]);
+                                        setNeighborhoods([]);
+                                    }}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="İl seçiniz" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {provinces.map((province) => (
+                                            <SelectItem
+                                                key={province.id}
+                                                value={String(province.id)}
+                                            >
+                                                {province.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2">
+                                <Label>İlçe</Label>
+                                <Select
+                                    value={String(data.address.district_id)}
+                                    onValueChange={(val) => {
+                                        setData('address', {
+                                            ...data.address,
+                                            district_id: val,
+                                            neighborhood_id: '',
+                                        });
+                                        setNeighborhoods([]);
+                                    }}
+                                    disabled={!data.address.province_id}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="İlçe seçiniz" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {districts.map((district) => (
+                                            <SelectItem
+                                                key={district.id}
+                                                value={String(district.id)}
+                                            >
+                                                {district.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Mahalle</Label>
+                                <Select
+                                    value={String(data.address.neighborhood_id)}
+                                    onValueChange={(val) =>
+                                        setData('address', {
+                                            ...data.address,
+                                            neighborhood_id: val,
+                                        })
+                                    }
+                                    disabled={!data.address.district_id}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Mahalle seçiniz" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {neighborhoods.map((neighborhood) => (
+                                            <SelectItem
+                                                key={neighborhood.id}
+                                                value={String(neighborhood.id)}
+                                            >
+                                                {neighborhood.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+
                         <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">
-                                Adres
-                            </label>
-                            <textarea
-                                value={data.address}
+                            <Label className="mb-2 block">Açık Adres</Label>
+                            <Textarea
+                                value={data.address.description}
                                 onChange={(e) =>
-                                    setData('address', e.target.value)
+                                    setData('address', {
+                                        ...data.address,
+                                        description: e.target.value,
+                                    })
                                 }
                                 rows={3}
-                                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition outline-none focus:border-transparent focus:ring-2 focus:ring-[#da1f25]"
+                                className="w-full resize-none"
+                                placeholder="Cadde, sokak, bina ve kapı no..."
                             />
+                            {/* Display errors for nested address fields if any, checking for flat keys if returned by Laravel validation */}
+                            {/* @ts-ignore */}
                             <InputError
                                 className="mt-2"
-                                message={errors.address}
+                                message={errors['address.description']}
                             />
                         </div>
 

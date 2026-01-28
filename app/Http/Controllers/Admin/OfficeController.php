@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Office;
+use App\Models\Province;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -73,8 +74,11 @@ class OfficeController extends Controller
 
     public function edit(Office $office)
     {
+        $office->load('address');
+        
         return Inertia::render('admin/offices/edit', [
             'office' => $office,
+            'provinces' => Province::select('id', 'name')->orderBy('name')->get(),
         ]);
     }
 
@@ -82,11 +86,36 @@ class OfficeController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'address' => 'required|string',
+            // Allow address to be an array with specific fields
+            'address' => 'required|array',
+            'address.province_id' => 'required|exists:provinces,id',
+            'address.district_id' => 'required|exists:districts,id',
+            'address.neighborhood_id' => 'required|exists:neighborhoods,id',
+            'address.description' => 'required|string', 
             'is_active' => 'boolean',
         ]);
 
-        $office->update($validated);
+        $addressData = $validated['address'];
+
+        // Update Office model
+        // We populate the legacy 'address' column with the description for backward compatibility
+        // and to satisfy the non-null constraint.
+        $office->update([
+            'name' => $validated['name'],
+            'is_active' => $validated['is_active'],
+            'address' => $addressData['description'],
+        ]);
+
+        // Update or Create the detailed Address record
+        $office->address()->updateOrCreate(
+            ['office_id' => $office->id],
+            [
+                'province_id' => $addressData['province_id'],
+                'district_id' => $addressData['district_id'],
+                'neighborhood_id' => $addressData['neighborhood_id'],
+                'description' => $addressData['description'],
+            ]
+        );
 
         return redirect()->route('admin.ofisler.index');
     }

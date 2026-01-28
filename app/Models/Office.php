@@ -37,4 +37,9 @@ class Office extends Model
     {
         return $this->belongsToMany(User::class, 'user_offices');
     }
+
+    public function address()
+    {
+        return $this->hasOne(Address::class);
+    }
 }

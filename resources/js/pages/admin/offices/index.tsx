@@ -203,22 +203,22 @@ export default function OfficesIndex({
                         <table className="min-w-full divide-y divide-gray-200">
                             <thead className="bg-gray-50">
                                 <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                    <th className="px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                                         Ofis Bilgileri
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                    <th className="px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                                         Sahip
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                    <th className="px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                                         İletişim
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                    <th className="px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                                         Durum
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                    <th className="px-3 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                                         Oluşturulma
                                     </th>
-                                    <th className="w-24 px-6 py-3 text-center text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                    <th className="px-3 py-3 text-center text-xs font-medium tracking-wider text-gray-500 uppercase">
                                         İşlemler
                                     </th>
                                 </tr>
@@ -229,31 +229,48 @@ export default function OfficesIndex({
                                         key={office.id}
                                         className="transition-colors hover:bg-gray-50"
                                     >
-                                        <td className="px-6 py-4">
+                                        <td className="max-w-[200px] px-3 py-4">
                                             <div className="flex items-center space-x-3">
                                                 <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 font-bold text-blue-600">
                                                     {office.name
                                                         .charAt(0)
                                                         .toUpperCase()}
                                                 </div>
-                                                <div>
-                                                    <div className="text-sm font-medium text-[#da1f25]">
+                                                <div className="min-w-0">
+                                                    <div
+                                                        className="truncate text-sm font-medium text-[#da1f25]"
+                                                        title={office.name}
+                                                    >
                                                         {office.name}
                                                     </div>
-                                                    <div className="text-xs text-gray-500">
+                                                    <div
+                                                        className="truncate text-xs text-gray-500"
+                                                        title={office.address}
+                                                    >
                                                         {office.address}
                                                     </div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="max-w-[150px] px-3 py-4">
                                             {office.users &&
                                             office.users.length > 0 ? (
                                                 <div className="text-sm text-gray-900">
-                                                    <div className="font-medium">
+                                                    <div
+                                                        className="truncate font-medium"
+                                                        title={
+                                                            office.users[0].name
+                                                        }
+                                                    >
                                                         {office.users[0].name}
                                                     </div>
-                                                    <div className="text-xs text-gray-500">
+                                                    <div
+                                                        className="truncate text-xs text-gray-500"
+                                                        title={
+                                                            office.users[0]
+                                                                .email
+                                                        }
+                                                    >
                                                         {office.users[0].email}
                                                     </div>
                                                 </div>
@@ -263,14 +280,20 @@ export default function OfficesIndex({
                                                 </span>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="max-w-[150px] px-3 py-4">
                                             {office.users &&
                                             office.users.length > 0 ? (
                                                 <div className="text-sm text-gray-500">
-                                                    <div>
+                                                    <div
+                                                        className="truncate"
+                                                        title={
+                                                            office.users[0]
+                                                                .email
+                                                        }
+                                                    >
                                                         {office.users[0].email}
                                                     </div>
-                                                    <div>
+                                                    <div className="truncate">
                                                         {office.users[0]
                                                             .phone_number ||
                                                             '-'}
@@ -282,42 +305,32 @@ export default function OfficesIndex({
                                                 </span>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-3 py-4 whitespace-nowrap">
                                             {office.is_active ? (
-                                                <div>
-                                                    <span className="inline-flex rounded-full bg-green-100 px-2 text-xs leading-5 font-semibold text-green-800">
-                                                        Aktif
-                                                    </span>
-                                                    <div className="mt-1 flex items-center text-xs text-red-500">
-                                                        <span className="mr-1">
-                                                            ⓧ
-                                                        </span>{' '}
-                                                        Doğrulanmamış
-                                                    </div>
-                                                </div>
+                                                <span className="inline-flex rounded-full bg-green-100 px-2 text-xs leading-5 font-semibold text-green-800">
+                                                    Aktif
+                                                </span>
                                             ) : (
-                                                <div>
-                                                    <span className="inline-flex rounded-full bg-yellow-100 px-2 text-xs leading-5 font-semibold text-yellow-800">
-                                                        Pasif
-                                                    </span>
-                                                    <div className="mt-1 flex items-center text-xs text-red-500">
-                                                        <span className="mr-1">
-                                                            ⓧ
-                                                        </span>{' '}
-                                                        Doğrulanmamış
-                                                    </div>
-                                                </div>
+                                                <span className="inline-flex rounded-full bg-yellow-100 px-2 text-xs leading-5 font-semibold text-yellow-800">
+                                                    Pasif
+                                                </span>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4 text-sm text-gray-600">
+                                        <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-600">
                                             {new Date(
                                                 office.created_at,
                                             ).toLocaleDateString('tr-TR')}
                                         </td>
-                                        <td className="px-6 py-4 text-center">
+                                        <td className="px-3 py-4 text-center whitespace-nowrap">
                                             <AdminRowActions
-                                                editHref={`/admin/ofisler/${office.id}/edit`}
-                                                deleteHref={`/admin/ofisler/${office.id}`}
+                                                editHref={route(
+                                                    'admin.ofisler.edit',
+                                                    office.id,
+                                                )}
+                                                deleteHref={route(
+                                                    'admin.ofisler.destroy',
+                                                    office.id,
+                                                )}
                                             />
                                         </td>
                                     </tr>
