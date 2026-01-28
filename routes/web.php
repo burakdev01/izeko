@@ -133,7 +133,7 @@ Route::get('/', function () {
             'description' => $spotlight->description,
             'slug' => $spotlight->slug,
             'image' => $spotlight->image, // Assuming accessor or raw path
-            'date' => optional($spotlight->updated_at)->locale('tr')->translatedFormat('d F Y'), // Format date for display
+            'date' => $spotlight->updated_at ? $spotlight->updated_at->locale('tr')->translatedFormat('d F Y') : '-', // Format date for display
         ]);
 
     return Inertia::render('Home', [
@@ -500,8 +500,8 @@ Route::get('/ilanlar', function (\Illuminate\Http\Request $request) {
             'attributes.option'     // Load options for select-type attributes
         ])
         ->orderByDesc('created_at')
-        ->get()
-        ->map(function ($listing) {
+        ->paginate(10)
+        ->through(function ($listing) {
             // Helpers to find specific attributes
             // User specified ID 3 is Room Count, ID 1 is Building Age, ID 4 is Floor Location, ID 5 is Floor Count
             $roomAttr = $listing->attributes->first(fn($a) => $a->attribute_id === 3);
@@ -540,7 +540,7 @@ Route::get('/ilanlar', function (\Illuminate\Http\Request $request) {
                 'id' => $listing->id,
                 'title' => $listing->title,
                 'price' => $listing->price,
-                'date' => $listing->created_at->format('Y-m-d'),
+                'date' => optional($listing->created_at)->format('Y-m-d') ?? '-',
                 'location' => ($listing->address?->province?->name ?? '') . ' / ' . ($listing->address?->district?->name ?? '') . ' / ' . ($listing->address?->neighborhood?->name ?? ''),
                 'city' => $listing->address?->province?->name ?? '',
                 'image' => $listing->main_photo_path ? config('app.url') . "/storage/listings/{$listing->id}/" . $listing->main_photo_path : 'https://placehold.co/600x400?text=No+Image',
@@ -806,7 +806,7 @@ Route::get('/ilanlar/{id}', function ($id) {
             'title' => $listing->title,
             'description' => $listing->description,
             'price' => number_format($listing->price, 0, ',', '.') . ' TL',
-            'date' => $listing->created_at->translatedFormat('d F Y'),
+            'date' => optional($listing->created_at)->translatedFormat('d F Y') ?? '-',
             'location' => ($listing->address?->district?->name ?? '') . ' / ' . ($listing->address?->province?->name ?? ''),
             'fullLocation' => ($listing->address?->neighborhood?->name ?? '') . ', ' . ($listing->address?->district?->name ?? '') . ', ' . ($listing->address?->province?->name ?? ''),
             'features' => $groupedFeatures,
@@ -861,7 +861,7 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
                     'surname' => $user->surname,
                     'email' => $user->email,
                     'phone' => $user->phone_number,
-                    'date' => $user->created_at->format('d.m.Y'),
+                    'date' => optional($user->created_at)->format('d.m.Y') ?? '-',
                 ]);
 
             $listings = \App\Models\Listing::where('listing_status', 'pending')
@@ -875,7 +875,7 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
                     'price' => number_format($listing->price, 0, ',', '.') . ' ₺',
                     'location' => $listing->district . '/' . $listing->city,
                     'owner' => $listing->user ? $listing->user->name . ' ' . $listing->user->surname : 'Silinmiş Üye',
-                    'date' => $listing->created_at->format('d.m.Y'),
+                    'date' => optional($listing->created_at)->format('d.m.Y') ?? '-',
                 ]);
 
             $activities = \Spatie\Activitylog\Models\Activity::with(['causer', 'subject'])

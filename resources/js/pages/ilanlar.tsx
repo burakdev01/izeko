@@ -7,6 +7,7 @@ import {
     CollapsibleContent,
     CollapsibleTrigger,
 } from '@/components/ui/collapsible';
+import { PaginatedData, Pagination } from '@/components/ui/pagination-custom';
 import {
     Select,
     SelectContent,
@@ -1037,7 +1038,7 @@ export default function Ilanlar({
     floorCountOptions,
     filters,
 }: {
-    listings: any[];
+    listings: PaginatedData<any>;
     categories: FilterItem[];
     locations: FilterItem[];
     roomOptions: RoomOption[];
@@ -1067,7 +1068,7 @@ export default function Ilanlar({
     );
 
     const formattedListings = useMemo<Listing[]>(() => {
-        return listings.map((l) => ({
+        return listings.data.map((l: any) => ({
             ...l,
             date: new Date(l.date),
             area: Number(l.area),
@@ -1286,10 +1287,41 @@ export default function Ilanlar({
                                 sortValue={currentSort}
                                 onSortChange={setCurrentSort}
                             />
-                            <ListingsGrid
-                                listings={filteredListings}
-                                classes={listingClasses}
-                            />
+                            {filteredListings.length === 0 ? (
+                                <div className="flex min-h-[300px] flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-200 p-8 text-center">
+                                    <div className="mb-4 rounded-full bg-gray-50 p-4">
+                                        <svg
+                                            className="h-8 w-8 text-gray-400"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <h3 className="mb-1 text-lg font-medium text-gray-900">
+                                        Sonuç Bulunamadı
+                                    </h3>
+                                    <p className="text-gray-500">
+                                        Arama kriterlerinize uygun ilan
+                                        bulunmamaktadır. Filtreleri temizleyip
+                                        tekrar deneyebilirsiniz.
+                                    </p>
+                                </div>
+                            ) : (
+                                <>
+                                    <ListingsGrid
+                                        listings={filteredListings}
+                                        classes={listingClasses}
+                                    />
+                                    <Pagination links={listings.links} />
+                                </>
+                            )}
                         </main>
                     </div>
                 </div>
