@@ -3,6 +3,7 @@ import {
     CollapsibleContent,
     CollapsibleTrigger,
 } from '@/components/ui/collapsible';
+import { Toaster } from '@/components/ui/sonner';
 import { Head, Link, usePage } from '@inertiajs/react';
 import {
     Banknote,
@@ -29,7 +30,8 @@ import {
     XCircle,
     type LucideIcon,
 } from 'lucide-react';
-import { useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { toast } from 'sonner';
 
 type AdminLayoutProps = {
     title?: string;
@@ -315,9 +317,18 @@ export default function AdminLayout({
     title = 'Anasayfa',
     children,
 }: AdminLayoutProps) {
-    const page = usePage();
+    const page = usePage<any>();
     const [mobileOpen, setMobileOpen] = useState(false);
     const currentPath = useMemo(() => page.url.split('?')[0] ?? '', [page.url]);
+
+    useEffect(() => {
+        if (page.props.flash?.success) {
+            toast.success(page.props.flash.success);
+        }
+        if (page.props.flash?.error) {
+            toast.error(page.props.flash.error);
+        }
+    }, [page.props.flash]);
 
     const isActive = (href: string) => {
         const [hrefPath, hrefQuery] = href.split('?');
@@ -362,6 +373,7 @@ export default function AdminLayout({
 
     return (
         <div className="min-h-screen bg-gray-50 font-sans text-black">
+            <Toaster position="top-right" richColors />
             <Head title={title} />
             <div className="flex min-h-screen overflow-hidden">
                 <aside className="hidden border-r border-gray-200 bg-white lg:flex lg:w-64 lg:flex-col">

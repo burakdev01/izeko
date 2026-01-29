@@ -187,7 +187,10 @@ class UserController extends Controller
                 } catch (\Exception $e) {
                      // Log error but continue? or fail?
                      \Illuminate\Support\Facades\Log::error("Failed to upload $type: " . $e->getMessage());
-                     // For now continue, maybe flash error.
+                     
+                     // ADDED: Flash error to user
+                     return redirect()->route('admin.kullanicilar.edit', $user->id)
+                        ->with('error', "Dosya yüklenirken hata oluştu ($type): " . $e->getMessage());
                 }
             }
         }
