@@ -144,6 +144,12 @@ class UserController extends Controller
         ];
 
         foreach ($documentTypes as $type) {
+            \Illuminate\Support\Facades\Log::info("Checking file: $type", [
+                'hasFile' => $request->hasFile($type),
+                'files_keys' => array_keys($request->allFiles()),
+                'input_keys' => array_keys($request->all()),
+            ]);
+
             if ($request->hasFile($type)) {
                 try {
                     // Upload and convert to WebP using trait
