@@ -24,6 +24,7 @@ class ListingFactory extends Factory
             'description' => $this->faker->paragraph(),
             'price' => $this->faker->randomFloat(2, 1000, 1000000),
             'visit_count' => $this->faker->numberBetween(0, 1000),
+            'listing_type' => $this->faker->randomElement([0, 1]),
             'listing_status' => $this->faker->randomElement(['pending', 'active', 'inactive']),
         ];
     }

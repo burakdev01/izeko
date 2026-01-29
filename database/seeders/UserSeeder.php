@@ -14,12 +14,12 @@ class UserSeeder extends Seeder
     {
         // Create 20 Active Users
         User::factory(20)->create([
-            'is_active' => true,
+            'status' => 'active',
         ]);
 
         // Create 10 Pending Users (Inactive)
         User::factory(10)->create([
-            'is_active' => false,
+            'status' => 'pending',
         ]);
     }
 }

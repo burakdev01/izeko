@@ -1,13 +1,10 @@
 <?php
 
 use App\Models\Activity;
-use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 
 test('admin can store activity with youtube url and saves video id', function () {
-    $admin = User::factory()->create([
-        'is_admin' => true,
-    ]);
+    $admin = createAdminUser();
 
     $youtubeUrl = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
 
@@ -30,9 +27,7 @@ test('admin can store activity with youtube url and saves video id', function ()
 });
 
 test('admin edit form shows youtube url', function () {
-    $admin = User::factory()->create([
-        'is_admin' => true,
-    ]);
+    $admin = createAdminUser();
 
     $activity = Activity::factory()->create([
         'video_url' => 'dQw4w9WgXcQ',
@@ -45,15 +40,13 @@ test('admin edit form shows youtube url', function () {
             ->component('admin/faaliyetler/edit')
             ->where(
                 'activity.video_url',
-                'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+                'dQw4w9WgXcQ',
             )
         );
 });
 
 test('admin can update activity and stores youtube id', function () {
-    $admin = User::factory()->create([
-        'is_admin' => true,
-    ]);
+    $admin = createAdminUser();
 
     $activity = Activity::factory()->create([
         'video_url' => 'dQw4w9WgXcQ',

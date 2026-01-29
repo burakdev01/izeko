@@ -1,15 +1,12 @@
 <?php
 
 use App\Models\BlogPost;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
 it('soft deletes blog posts from the admin panel', function () {
-    $admin = User::factory()->create([
-        'is_admin' => true,
-    ]);
+    $admin = createAdminUser();
 
     $post = BlogPost::create([
         'title' => 'Test Post',

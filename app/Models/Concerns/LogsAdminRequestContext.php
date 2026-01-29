@@ -9,7 +9,7 @@ trait LogsAdminRequestContext
 {
     public function tapActivity(Activity $activity, string $eventName): void
     {
-        if (! Auth::check() || ! Auth::user()?->is_admin) {
+        if (! Auth::check() || ! Auth::user()?->isAdmin()) {
             return;
         }
 

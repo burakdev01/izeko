@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\HandlesUploads;
 use App\Http\Controllers\Controller;
+use App\Models\SystemRole;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 use Illuminate\Validation\Rule;
-
-use App\Http\Controllers\Concerns\HandlesUploads;
+use Inertia\Inertia;
 
 class UserController extends Controller
 {
@@ -16,7 +16,9 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
-        $query = User::query()->where('is_admin', false);
+        $query = User::query()->whereDoesntHave('systemRoles', function ($roleQuery) {
+            $roleQuery->where('role_key', SystemRole::ADMIN_ROLE_KEY);
+        });
 
         // Filter by status
         if ($request->has('status') && in_array($request->status, ['active', 'pending', 'passive'])) {
@@ -27,9 +29,9 @@ class UserController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->whereRaw('name COLLATE utf8mb4_turkish_ci LIKE ?', ["%{$search}%"])
-                  ->orWhereRaw('surname COLLATE utf8mb4_turkish_ci LIKE ?', ["%{$search}%"])
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('phone_number', 'like', "%{$search}%");
+                    ->orWhereRaw('surname COLLATE utf8mb4_turkish_ci LIKE ?', ["%{$search}%"])
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone_number', 'like', "%{$search}%");
             });
         }
 
@@ -92,7 +94,7 @@ class UserController extends Controller
             'offices' => 'nullable|array',
             'offices.*.office_id' => 'required|exists:offices,id',
             'offices.*.role_id' => 'required|exists:roles,id',
-            
+
             // Files
             'oda_yetki_belgesi' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
             'yetki_belgesi' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
@@ -120,7 +122,7 @@ class UserController extends Controller
 
         // 4. Sync Customer Offices & Roles
         $submittedOffices = $request->input('offices', []);
-        
+
         // Remove old associations
         $user->userOffices()->delete(); // This deletes UserOffice records. user_office_roles should cascade delete.
 
@@ -133,7 +135,7 @@ class UserController extends Controller
                 'role_id' => $officeData['role_id'],
             ]);
         }
-        
+
         // 5. Handle File Uploads
         $documentTypes = ['oda_yetki_belgesi', 'yetki_belgesi', 'vergi_levhasi'];
         $directory = "users/{$user->id}/documents";
@@ -154,9 +156,9 @@ class UserController extends Controller
                 try {
                     // Upload and convert to WebP using trait
                     $fileName = $this->storePublicImageNameAsWebp($request, $type, $directory);
-                    
+
                     if ($fileName) {
-                        $fullPath = $directory . '/' . $fileName;
+                        $fullPath = $directory.'/'.$fileName;
 
                         // Check if file of this type already exists
                         $existingFile = $user->files()
@@ -168,15 +170,15 @@ class UserController extends Controller
                             // path stored is full url or relative? Controller stores: $directory . '/' . $fileName
                             // storePublicImageNameAsWebp returns filename.
                             // We constructed $fullPath = "users/{$user->id}/documents" . '/' . $fileName; -> relative path for Storage
-                            
+
                             // existingFile->file_path might be stored as relative path based on previous logic "users/.../file.webp"
-                            
+
                             try {
                                 if (\Illuminate\Support\Facades\Storage::disk('public')->exists($existingFile->file_path)) {
                                     \Illuminate\Support\Facades\Storage::disk('public')->delete($existingFile->file_path);
                                 }
                             } catch (\Exception $e) {
-                                \Illuminate\Support\Facades\Log::warning("Could not delete old file: " . $existingFile->file_path);
+                                \Illuminate\Support\Facades\Log::warning('Could not delete old file: '.$existingFile->file_path);
                             }
 
                             // Hard delete record
@@ -191,12 +193,12 @@ class UserController extends Controller
                         ]);
                     }
                 } catch (\Exception $e) {
-                     // Log error but continue? or fail?
-                     \Illuminate\Support\Facades\Log::error("Failed to upload $type: " . $e->getMessage());
-                     
-                     // ADDED: Flash error to user
-                     return redirect()->route('admin.kullanicilar.edit', $user->id)
-                        ->with('error', "Dosya yüklenirken hata oluştu ($type): " . $e->getMessage());
+                    // Log error but continue? or fail?
+                    \Illuminate\Support\Facades\Log::error("Failed to upload $type: ".$e->getMessage());
+
+                    // ADDED: Flash error to user
+                    return redirect()->route('admin.kullanicilar.edit', $user->id)
+                        ->with('error', "Dosya yüklenirken hata oluştu ($type): ".$e->getMessage());
                 }
             }
         }

@@ -1,15 +1,12 @@
 <?php
 
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Activitylog\Models\Activity;
 
 uses(RefreshDatabase::class);
 
 it('adds ip and user agent to admin activity logs', function () {
-    $admin = User::factory()->create([
-        'is_admin' => true,
-    ]);
+    $admin = createAdminUser();
 
     $this->actingAs($admin)
         ->withServerVariables(['REMOTE_ADDR' => '203.0.113.10'])

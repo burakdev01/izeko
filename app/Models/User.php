@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Activitylog\LogOptions;
@@ -12,13 +13,13 @@ use Spatie\Activitylog\Traits\LogsActivity;
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, LogsActivity;
+    use HasFactory, LogsActivity, Notifiable;
 
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
             ->useLogName('users')
-            ->logOnly(['name', 'email', 'status', 'is_admin'])
+            ->logOnly(['name', 'email', 'status'])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
     }
@@ -36,7 +37,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'profile_photo_path',
         'cover_photo_path',
         'password',
-        'is_admin',
         'status',
     ];
 
@@ -60,9 +60,32 @@ class User extends Authenticatable implements MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'is_admin' => 'boolean',
         ];
     }
+
+    public function systemRoles(): BelongsToMany
+    {
+        return $this->belongsToMany(SystemRole::class, 'user_system_roles');
+    }
+
+    public function hasSystemRole(string $roleKey): bool
+    {
+        if ($this->relationLoaded('systemRoles')) {
+            return $this->systemRoles->contains(
+                fn (SystemRole $role) => $role->role_key === $roleKey
+            );
+        }
+
+        return $this->systemRoles()
+            ->where('role_key', $roleKey)
+            ->exists();
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->hasSystemRole(SystemRole::ADMIN_ROLE_KEY);
+    }
+
     public function offices()
     {
         return $this->belongsToMany(Office::class, 'user_offices');

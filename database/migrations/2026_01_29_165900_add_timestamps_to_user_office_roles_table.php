@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('user_office_roles', function (Blueprint $table) {
-            $table->timestamps();
-        });
+        if (! Schema::hasColumn('user_office_roles', 'created_at')
+            && ! Schema::hasColumn('user_office_roles', 'updated_at')) {
+            Schema::table('user_office_roles', function (Blueprint $table) {
+                $table->timestamps();
+            });
+        }
     }
 
     /**
@@ -21,8 +24,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('user_office_roles', function (Blueprint $table) {
-            $table->dropTimestamps();
-        });
+        if (Schema::hasColumn('user_office_roles', 'created_at')
+            || Schema::hasColumn('user_office_roles', 'updated_at')) {
+            Schema::table('user_office_roles', function (Blueprint $table) {
+                $table->dropTimestamps();
+            });
+        }
     }
 };

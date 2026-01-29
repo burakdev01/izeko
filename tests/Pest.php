@@ -11,6 +11,9 @@
 |
 */
 
+use App\Models\SystemRole;
+use App\Models\User;
+
 pest()->extend(Tests\TestCase::class)
     ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
     ->in('Feature');
@@ -41,7 +44,16 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+function createAdminUser(array $attributes = []): User
 {
-    // ..
+    $adminRole = SystemRole::firstOrCreate(
+        ['role_key' => SystemRole::ADMIN_ROLE_KEY],
+        ['name' => 'Admin'],
+    );
+
+    $user = User::factory()->create($attributes);
+
+    $user->systemRoles()->syncWithoutDetaching([$adminRole->id]);
+
+    return $user->refresh();
 }

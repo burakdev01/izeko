@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Listing;
 use App\Models\Office;
+use App\Models\SystemRole;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Spatie\Activitylog\Models\Activity;
@@ -20,7 +21,9 @@ class ActivityLogSeeder extends Seeder
         $users = User::all();
         $offices = Office::all();
         $listings = Listing::all();
-        $admin = User::where('is_admin', true)->first() ?? $users->first();
+        $admin = User::whereHas('systemRoles', function ($query) {
+            $query->where('role_key', SystemRole::ADMIN_ROLE_KEY);
+        })->first() ?? $users->first();
 
         // Seed logs for Users
         for ($i = 0; $i < 50; $i++) {
@@ -33,14 +36,14 @@ class ActivityLogSeeder extends Seeder
                 ->log('created');
 
             if ($user->status === 'active') { // 50% chance of update if we random boolean, or just keep logic
-                 activity()
+                activity()
                     ->useLog('users')
                     ->performedOn($user)
                     ->causedBy($admin)
                     ->event('updated')
                     ->withProperties([
                         'attributes' => ['status' => 'active'],
-                        'old' => ['status' => 'pending']
+                        'old' => ['status' => 'pending'],
                     ])
                     ->log('updated');
             }
@@ -55,7 +58,7 @@ class ActivityLogSeeder extends Seeder
                 ->causedBy($admin)
                 ->event('created')
                 ->log('created');
-            
+
             // Randomly create an update log
             if (rand(0, 1)) {
                 activity()
@@ -65,7 +68,7 @@ class ActivityLogSeeder extends Seeder
                     ->event('updated')
                     ->withProperties([
                         'attributes' => ['status' => 'active'],
-                        'old' => ['status' => 'pending']
+                        'old' => ['status' => 'pending'],
                     ])
                     ->log('updated');
             }
@@ -75,7 +78,7 @@ class ActivityLogSeeder extends Seeder
         for ($i = 0; $i < 50; $i++) {
             $listing = $listings->random();
             $owner = $users->find($listing->user_id) ?? $users->random();
-            
+
             activity()
                 ->useLog('listings')
                 ->performedOn($listing)
@@ -85,14 +88,14 @@ class ActivityLogSeeder extends Seeder
 
             // Randomly create an update log
             if (rand(0, 1)) {
-                 activity()
+                activity()
                     ->useLog('listings')
                     ->performedOn($listing)
                     ->causedBy($admin)
                     ->event('updated')
                     ->withProperties([
                         'attributes' => ['listing_status' => 'active'],
-                        'old' => ['listing_status' => 'pending']
+                        'old' => ['listing_status' => 'pending'],
                     ])
                     ->log('updated');
             }

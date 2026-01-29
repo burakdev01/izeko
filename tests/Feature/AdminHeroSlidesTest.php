@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\HeroSlide;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -10,9 +9,7 @@ use Inertia\Testing\AssertableInertia as Assert;
 uses(RefreshDatabase::class);
 
 test('admin can view hero slides index', function () {
-    $admin = User::factory()->create([
-        'is_admin' => true,
-    ]);
+    $admin = createAdminUser();
 
     HeroSlide::create([
         'title' => 'Test Slide',
@@ -31,9 +28,7 @@ test('admin can view hero slides index', function () {
 });
 
 test('admin can view hero slides create page', function () {
-    $admin = User::factory()->create([
-        'is_admin' => true,
-    ]);
+    $admin = createAdminUser();
 
     $this->actingAs($admin)
         ->get(route('admin.hero-slides.create'))
@@ -44,9 +39,7 @@ test('admin can view hero slides create page', function () {
 });
 
 test('admin can view hero slides edit page', function () {
-    $admin = User::factory()->create([
-        'is_admin' => true,
-    ]);
+    $admin = createAdminUser();
 
     $slide = HeroSlide::create([
         'title' => 'Düzenleme Slaytı',
@@ -64,9 +57,7 @@ test('admin can view hero slides edit page', function () {
 });
 
 test('admin can remove hero slide image', function () {
-    $admin = User::factory()->create([
-        'is_admin' => true,
-    ]);
+    $admin = createAdminUser();
 
     $slide = HeroSlide::create([
         'title' => 'Silinecek Görsel',
@@ -91,9 +82,7 @@ test('admin can store hero slides with uploads', function () {
         'filesystems.disks.uploads.url' => config('app.url').'/uploads',
     ]);
 
-    $admin = User::factory()->create([
-        'is_admin' => true,
-    ]);
+    $admin = createAdminUser();
 
     $this->actingAs($admin)
         ->post(route('admin.hero-slides.store'), [
@@ -120,9 +109,7 @@ test('admin can store hero slides with video only', function () {
         'filesystems.disks.uploads.url' => config('app.url').'/uploads',
     ]);
 
-    $admin = User::factory()->create([
-        'is_admin' => true,
-    ]);
+    $admin = createAdminUser();
 
     $this->actingAs($admin)
         ->post(route('admin.hero-slides.store'), [
@@ -144,9 +131,7 @@ test('admin can store hero slides with video only', function () {
 });
 
 test('admin can reorder hero slides', function () {
-    $admin = User::factory()->create([
-        'is_admin' => true,
-    ]);
+    $admin = createAdminUser();
 
     $first = HeroSlide::create([
         'title' => 'Birinci Slayt',

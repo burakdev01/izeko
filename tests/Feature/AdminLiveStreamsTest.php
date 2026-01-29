@@ -1,12 +1,9 @@
 <?php
 
 use App\Models\LiveStream;
-use App\Models\User;
 
 test('admin can create live stream without thumbnail', function () {
-    $admin = User::factory()->create([
-        'is_admin' => true,
-    ]);
+    $admin = createAdminUser();
 
     $this->actingAs($admin)
         ->post(route('admin.canli-yayinlar.store'), [

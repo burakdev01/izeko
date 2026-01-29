@@ -11,7 +11,7 @@ class LogSuccessfulLogin
     {
         $user = $event->user;
 
-        if (! $user || ! $user->is_admin) {
+        if (! $user || ! $user->isAdmin()) {
             return;
         }
 
@@ -28,6 +28,6 @@ class LogSuccessfulLogin
                 'user_agent' => $request->userAgent(),
                 'guard' => $event->guard,
             ])
-            ->log('Admin giriş yaptı (' . $request->ip() . ')');
+            ->log('Admin giriş yaptı ('.$request->ip().')');
     }
 }

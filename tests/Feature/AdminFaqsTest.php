@@ -1,13 +1,10 @@
 <?php
 
 use App\Models\Faq;
-use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 
 test('admin can view faq index', function () {
-    $admin = User::factory()->create([
-        'is_admin' => true,
-    ]);
+    $admin = createAdminUser();
 
     Faq::factory()->count(2)->create();
 
@@ -21,9 +18,7 @@ test('admin can view faq index', function () {
 });
 
 test('admin can create faq', function () {
-    $admin = User::factory()->create([
-        'is_admin' => true,
-    ]);
+    $admin = createAdminUser();
 
     $this->actingAs($admin)
         ->post(route('admin.sss.store'), [
@@ -43,9 +38,7 @@ test('admin can create faq', function () {
 });
 
 test('admin can update faq', function () {
-    $admin = User::factory()->create([
-        'is_admin' => true,
-    ]);
+    $admin = createAdminUser();
 
     $faq = Faq::factory()->create([
         'active' => true,
@@ -68,9 +61,7 @@ test('admin can update faq', function () {
 });
 
 test('admin can delete faq', function () {
-    $admin = User::factory()->create([
-        'is_admin' => true,
-    ]);
+    $admin = createAdminUser();
 
     $faq = Faq::factory()->create();
 
@@ -84,9 +75,7 @@ test('admin can delete faq', function () {
 });
 
 test('admin can reorder faqs', function () {
-    $admin = User::factory()->create([
-        'is_admin' => true,
-    ]);
+    $admin = createAdminUser();
 
     $first = Faq::factory()->create([
         'sort_order' => 1,
@@ -110,9 +99,7 @@ test('faq validation requires question and answer', function (
     array $payload,
     array $errors,
 ) {
-    $admin = User::factory()->create([
-        'is_admin' => true,
-    ]);
+    $admin = createAdminUser();
 
     $this->actingAs($admin)
         ->post(route('admin.sss.store'), $payload)

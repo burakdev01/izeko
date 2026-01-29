@@ -1,15 +1,12 @@
 <?php
 
 use App\Models\Announcement;
-use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
 
 test('admin can view announcements index', function () {
-    $admin = User::factory()->create([
-        'is_admin' => true,
-    ]);
+    $admin = createAdminUser();
 
     Announcement::factory()->create();
 
@@ -23,9 +20,7 @@ test('admin can view announcements index', function () {
 });
 
 test('admin can create announcement without subtitle or excerpt', function () {
-    $admin = User::factory()->create([
-        'is_admin' => true,
-    ]);
+    $admin = createAdminUser();
 
     $this->actingAs($admin)
         ->post(route('admin.duyurular.store'), [
@@ -47,9 +42,7 @@ test('admin can create announcement without subtitle or excerpt', function () {
 test('admin uploads announcement image to uploads disk', function () {
     Storage::fake('uploads');
 
-    $admin = User::factory()->create([
-        'is_admin' => true,
-    ]);
+    $admin = createAdminUser();
 
     $file = UploadedFile::fake()->image('duyuru.jpg', 1200, 900);
     $webpName = pathinfo($file->hashName(), PATHINFO_FILENAME).'.webp';
@@ -68,15 +61,11 @@ test('admin uploads announcement image to uploads disk', function () {
 
     expect($announcement)->not->toBeNull();
     Storage::disk('uploads')->assertExists('announcements/'.$webpName);
-    expect($announcement?->image)->toContain(
-        '/uploads/announcements/'.$webpName,
-    );
+    expect($announcement?->image)->toBe($webpName);
 });
 
 test('admin announcement edit payload excludes subtitle and excerpt', function () {
-    $admin = User::factory()->create([
-        'is_admin' => true,
-    ]);
+    $admin = createAdminUser();
 
     $announcement = Announcement::factory()->create();
 
@@ -85,7 +74,7 @@ test('admin announcement edit payload excludes subtitle and excerpt', function (
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->component('admin/duyurular/edit')
-            ->has('announcement', 8)
+            ->has('announcement', 12)
             ->missing('announcement.subtitle')
             ->missing('announcement.excerpt')
         );

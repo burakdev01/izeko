@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\BlogPost;
-use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
@@ -11,9 +10,7 @@ test('admin blog uploads store image as webp in uploads blogs directory', functi
         'filesystems.disks.uploads.url' => config('app.url').'/uploads',
     ]);
 
-    $admin = User::factory()->create([
-        'is_admin' => true,
-    ]);
+    $admin = createAdminUser();
 
     $response = $this->actingAs($admin)->post(route('admin.haberler.store'), [
         'title' => 'Yeni Haber',
@@ -29,21 +26,14 @@ test('admin blog uploads store image as webp in uploads blogs directory', functi
     $post = BlogPost::query()->first();
 
     expect($post)->not->toBeNull();
-    expect($post?->image)->toContain('/uploads/blogs/');
+    expect($post?->image)->not->toBeNull();
+    expect($post?->image)->toEndWith('.webp');
 
-    $path = parse_url((string) $post?->image, PHP_URL_PATH);
-    $fileName = $path ? basename($path) : null;
-
-    expect($fileName)->not->toBeNull();
-    expect($fileName)->toEndWith('.webp');
-
-    Storage::disk('uploads')->assertExists('blogs/'.$fileName);
+    Storage::disk('uploads')->assertExists('blogs/'.$post?->image);
 });
 
 test('admin can remove blog post image', function () {
-    $admin = User::factory()->create([
-        'is_admin' => true,
-    ]);
+    $admin = createAdminUser();
 
     $post = BlogPost::factory()->create([
         'image' => 'https://example.test/uploads/blogs/ornek.webp',

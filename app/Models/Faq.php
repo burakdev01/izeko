@@ -50,6 +50,6 @@ class Faq extends Model
 
     public function shouldLogActivity(): bool
     {
-        return Auth::check() && Auth::user()?->is_admin;
+        return Auth::check() && Auth::user()?->isAdmin();
     }
 }

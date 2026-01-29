@@ -29,6 +29,7 @@ class Listing extends Model
         'price',
         'visit_count',
         'listing_status',
+        'listing_type',
         'sort_order',
         'main_photo_path',
     ];
@@ -39,6 +40,7 @@ class Listing extends Model
         'user_id' => 'integer',
         'price' => 'decimal:2',
         'visit_count' => 'integer',
+        'listing_type' => 'integer',
         'sort_order' => 'integer',
     ];
 

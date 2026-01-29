@@ -22,7 +22,7 @@ class EnsureAdmin
             return redirect()->route('admin.login');
         }
 
-        if (! $user->is_admin) {
+        if (! $user->isAdmin()) {
             Auth::logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();

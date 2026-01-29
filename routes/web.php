@@ -6,9 +6,9 @@ use App\Http\Controllers\Admin\BlogPostController;
 use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\HeroSlideController;
 use App\Http\Controllers\Admin\ListingController;
-use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\SpotlightController;
 use App\Http\Controllers\Admin\LiveStreamController;
+use App\Http\Controllers\Admin\SpotlightController;
+use App\Http\Controllers\Admin\UserController;
 use App\Models\Activity;
 use App\Models\Announcement;
 use App\Models\BlogPost;
@@ -167,7 +167,7 @@ Route::get('/kurumsal/yonetim-kurulu', function () {
             'image' => $member->image ? (
                 str_starts_with($member->image, 'http')
                     ? $member->image
-                    : config('filesystems.disks.uploads.url') . '/board_members/' . $member->image
+                    : config('filesystems.disks.uploads.url').'/board_members/'.$member->image
             ) : null,
         ]);
 
@@ -184,7 +184,7 @@ Route::get('/kurumsal/denetim-kurulu', function () {
         ->map(fn ($member) => [
             'name' => $member->name,
             'title' => $member->title,
-            'image' => $member->image ? config('filesystems.disks.uploads.url') . '/supervisory_board_members/' . $member->image : null,
+            'image' => $member->image ? config('filesystems.disks.uploads.url').'/supervisory_board_members/'.$member->image : null,
         ]);
 
     return Inertia::render('kurumsal/denetim-kurulu', [
@@ -203,7 +203,7 @@ Route::get('/kurumsal/oda-ekibimiz', function () {
             'image' => $member->image ? (
                 str_starts_with($member->image, 'http')
                     ? $member->image
-                    : config('filesystems.disks.uploads.url') . '/chamber_teams/' . $member->image
+                    : config('filesystems.disks.uploads.url').'/chamber_teams/'.$member->image
             ) : null,
         ]);
 
@@ -243,7 +243,7 @@ Route::get('/kurumsal/oda-hesap-numaralari', function () {
             'image' => $account->image ? (
                 str_starts_with($account->image, 'http')
                     ? $account->image
-                    : config('filesystems.disks.uploads.url') . '/bank_accounts/' . $account->image
+                    : config('filesystems.disks.uploads.url').'/bank_accounts/'.$account->image
             ) : null,
         ]);
 
@@ -447,7 +447,6 @@ Route::get('/kvkk-aydinlatma-metni', function () {
     return Inertia::render('kvkk-aydinlatma-metni');
 })->name('kvkk-aydinlatma-metni');
 
-
 Route::get('/kullanim-kosullari', function () {
     return Inertia::render('kullanim-kosullari');
 })->name('kullanim-kosullari');
@@ -485,47 +484,47 @@ Route::get('/ilanlar', function (\Illuminate\Http\Request $request) {
 
     if ($request->filled('search')) {
         $search = $request->search;
-        $query->where(function($q) use ($search) {
-             $q->where('title', 'like', "%{$search}%")
-               ->orWhere('description', 'like', "%{$search}%")
-               ->orWhere('id', 'like', "%{$search}%");
+        $query->where(function ($q) use ($search) {
+            $q->where('title', 'like', "%{$search}%")
+                ->orWhere('description', 'like', "%{$search}%")
+                ->orWhere('id', 'like', "%{$search}%");
         });
     }
 
     $listings = $query->with([
-            'address.province', 
-            'address.district', 
-            'address.neighborhood',
-            'attributes.attribute', // Load attribute definition to check IDs/Names
-            'attributes.option'     // Load options for select-type attributes
-        ])
+        'address.province',
+        'address.district',
+        'address.neighborhood',
+        'attributes.attribute', // Load attribute definition to check IDs/Names
+        'attributes.option',     // Load options for select-type attributes
+    ])
         ->orderByDesc('created_at')
         ->paginate(10)
         ->through(function ($listing) {
             // Helpers to find specific attributes
             // User specified ID 3 is Room Count, ID 1 is Building Age, ID 4 is Floor Location, ID 5 is Floor Count
-            $roomAttr = $listing->attributes->first(fn($a) => $a->attribute_id === 3);
-            $ageAttr = $listing->attributes->first(fn($a) => $a->attribute_id === 1);
-            $floorAttr = $listing->attributes->first(fn($a) => $a->attribute_id === 4);
-            $floorCountAttr = $listing->attributes->first(fn($a) => $a->attribute_id === 5);
-            
-            // Try to find Area attribute (looking for common names or just assume it might be ID 1 or 2 if 3 is rooms, 
-            // but safer to fallback to 0 or try to find by name if we knew it exactly. 
+            $roomAttr = $listing->attributes->first(fn ($a) => $a->attribute_id === 3);
+            $ageAttr = $listing->attributes->first(fn ($a) => $a->attribute_id === 1);
+            $floorAttr = $listing->attributes->first(fn ($a) => $a->attribute_id === 4);
+            $floorCountAttr = $listing->attributes->first(fn ($a) => $a->attribute_id === 5);
+
+            // Try to find Area attribute (looking for common names or just assume it might be ID 1 or 2 if 3 is rooms,
+            // but safer to fallback to 0 or try to find by name if we knew it exactly.
             // For now, let's try to find an attribute with 'm²' unit or containing 'Alan' in name if ID is unknown,
             // OR just map ID 3 for rooms and leave area 0 until user specifies.
-            
+
             // Let's try to be smart for Area: Look for 'Brüt' or 'Alan' or unit 'm2'
-            $areaAttr = $listing->attributes->first(fn($a) => 
-                ($a->attribute && ($a->attribute->unit === 'm²' || str_contains($a->attribute->name, 'Brüt')) && !str_contains($a->attribute->name, 'Net')) 
+            $areaAttr = $listing->attributes->first(fn ($a) => ($a->attribute && ($a->attribute->unit === 'm²' || str_contains($a->attribute->name, 'Brüt')) && ! str_contains($a->attribute->name, 'Net'))
             );
 
-            $netAreaAttr = $listing->attributes->first(fn($a) => 
-                ($a->attribute && ($a->attribute->unit === 'm²' || str_contains($a->attribute->name, 'Net'))) 
+            $netAreaAttr = $listing->attributes->first(fn ($a) => ($a->attribute && ($a->attribute->unit === 'm²' || str_contains($a->attribute->name, 'Net')))
             );
 
             // Accessor for value
-            $getValue = function($attr) {
-                if (!$attr) return null;
+            $getValue = function ($attr) {
+                if (! $attr) {
+                    return null;
+                }
                 if ($attr->attribute->data_type === \App\Models\Attribute::TYPE_SELECT) {
                     // Use 'value' column as per user instruction and DB schema
                     return $attr->option ? $attr->option->value : null;
@@ -533,6 +532,7 @@ Route::get('/ilanlar', function (\Illuminate\Http\Request $request) {
                 if ($attr->attribute->data_type === \App\Models\Attribute::TYPE_BOOLEAN) {
                     return $attr->value_bool ? 'Evet' : 'Hayır';
                 }
+
                 return $attr->value_string ?? $attr->value_int;
             };
 
@@ -541,127 +541,129 @@ Route::get('/ilanlar', function (\Illuminate\Http\Request $request) {
                 'title' => $listing->title,
                 'price' => $listing->price,
                 'date' => optional($listing->created_at)->format('Y-m-d') ?? '-',
-                'location' => ($listing->address?->province?->name ?? '') . ' / ' . ($listing->address?->district?->name ?? '') . ' / ' . ($listing->address?->neighborhood?->name ?? ''),
+                'location' => ($listing->address?->province?->name ?? '').' / '.($listing->address?->district?->name ?? '').' / '.($listing->address?->neighborhood?->name ?? ''),
                 'city' => $listing->address?->province?->name ?? '',
-                'image' => $listing->main_photo_path ? config('app.url') . "/storage/listings/{$listing->id}/" . $listing->main_photo_path : 'https://placehold.co/600x400?text=No+Image',
-                'categoryId' => (string)$listing->category_id,
+                'image' => $listing->main_photo_path ? config('app.url')."/storage/listings/{$listing->id}/".$listing->main_photo_path : 'https://placehold.co/600x400?text=No+Image',
+                'categoryId' => (string) $listing->category_id,
                 'locationIds' => [
-                    'province' => (string)$listing->address?->province_id,
-                    'district' => (string)$listing->address?->district_id,
-                    'neighborhood' => (string)$listing->address?->neighborhood_id,
+                    'province' => (string) $listing->address?->province_id,
+                    'district' => (string) $listing->address?->district_id,
+                    'neighborhood' => (string) $listing->address?->neighborhood_id,
                 ],
-                'area' => (float)($getValue($areaAttr) ?? 0),
-                'netArea' => (float)($getValue($netAreaAttr) ?? 0),
+                'area' => (float) ($getValue($areaAttr) ?? 0),
+                'netArea' => (float) ($getValue($netAreaAttr) ?? 0),
                 'rooms' => $getValue($roomAttr) ?? 'N/A',
                 'buildingAge' => $getValue($ageAttr) ?? 'N/A',
                 'floorLocation' => $getValue($floorAttr) ?? 'N/A',
                 'floorCount' => $getValue($floorCountAttr) ?? 'N/A',
-                'badges' => [], 
+                'badges' => [],
             ];
         });
 
     // Dynamic Filter Data
-    $listingCount = fn($q) => $q->where('listing_status', 'active');
-    
+    $listingCount = fn ($q) => $q->where('listing_status', 'active');
+
     // Recursive function to process categories and sum counts
-    $processCategory = function($category) use (&$processCategory) {
-        $children = $category->children->map(fn($child) => $processCategory($child));
+    $processCategory = function ($category) use (&$processCategory) {
+        $children = $category->children->map(fn ($child) => $processCategory($child));
         $ownCount = $category->listings_count;
         $totalCount = $ownCount + $children->sum('raw_count');
-        
+
         return [
-            'id' => (string)$category->id,
+            'id' => (string) $category->id,
             'label' => $category->name,
             'count' => "({$totalCount})",
             'raw_count' => $totalCount, // Internally used for recursion
-            'children' => $children->map(function($child) {
+            'children' => $children->map(function ($child) {
                 unset($child['raw_count']);
+
                 return $child;
-            })->values()->all()
+            })->values()->all(),
         ];
     };
 
     $categories = \App\Models\Category::withCount(['listings' => $listingCount])
-        ->with(['children' => function($q) use ($listingCount) {
+        ->with(['children' => function ($q) use ($listingCount) {
             $q->withCount(['listings' => $listingCount])
-              ->with(['children' => function($q) use ($listingCount) {
-                  $q->withCount(['listings' => $listingCount]);
-              }]);
+                ->with(['children' => function ($q) use ($listingCount) {
+                    $q->withCount(['listings' => $listingCount]);
+                }]);
         }])
         ->whereNull('parent_id')
         ->get()
-        ->map(fn($c) => $processCategory($c));
+        ->map(fn ($c) => $processCategory($c));
 
     // Cleanup top-level raw_count
-    $categories = $categories->map(function($c) {
+    $categories = $categories->map(function ($c) {
         unset($c['raw_count']);
+
         return $c;
     });
 
     // Hierarchical Locations
-    $locations = \App\Models\Province::withCount(['listings' => fn($q) => $q->where('listing_status', 'active')])
-        ->with(['districts' => function($q) {
-            $q->withCount(['listings' => fn($q3) => $q3->where('listing_status', 'active')])
-              ->with(['neighborhoods' => function($q4) {
-                  $q4->withCount(['listings' => fn($q6) => $q6->where('listing_status', 'active')]);
-              }]);
+    $locations = \App\Models\Province::withCount(['listings' => fn ($q) => $q->where('listing_status', 'active')])
+        ->with(['districts' => function ($q) {
+            $q->withCount(['listings' => fn ($q3) => $q3->where('listing_status', 'active')])
+                ->with(['neighborhoods' => function ($q4) {
+                    $q4->withCount(['listings' => fn ($q6) => $q6->where('listing_status', 'active')]);
+                }]);
         }])
         ->get()
-        ->map(fn($p) => [
-            'id' => 'province-'.(string)$p->id,
+        ->map(fn ($p) => [
+            'id' => 'province-'.(string) $p->id,
             'label' => $p->name,
             'count' => "({$p->listings_count})",
-            'children' => $p->districts->map(fn($d) => [
-                'id' => 'district-'.(string)$d->id,
+            'children' => $p->districts->map(fn ($d) => [
+                'id' => 'district-'.(string) $d->id,
                 'label' => $d->name,
                 'count' => "({$d->listings_count})",
-                'children' => $d->neighborhoods->map(fn($n) => [
-                    'id' => 'neighborhood-'.(string)$n->id,
+                'children' => $d->neighborhoods->map(fn ($n) => [
+                    'id' => 'neighborhood-'.(string) $n->id,
                     'label' => $n->name,
                     'count' => "({$n->listings_count})",
                     // No children for neighborhoods
-                ])->values()
-            ])->values()
+                ])->values(),
+            ])->values(),
         ]);
 
     // Room Options (Attribute ID 3)
     $roomOptions = \App\Models\AttributeOption::where('attribute_id', 3)
         ->orderBy('sort_order', 'asc')
         ->get()
-        ->map(fn($o) => [
+        ->map(fn ($o) => [
             'id' => 'room-'.$o->id,
             'label' => $o->value, // Use valid column 'value'
-            'value' => $o->value
+            'value' => $o->value,
         ]);
 
     // Building Age Options (Attribute ID 1)
     $buildingAgeOptions = \App\Models\AttributeOption::where('attribute_id', 1)
         ->orderBy('sort_order', 'asc')
         ->get()
-        ->map(fn($o) => [
+        ->map(fn ($o) => [
             'id' => 'age-'.$o->id,
             'label' => $o->value,
-            'value' => $o->value
+            'value' => $o->value,
         ]);
 
     // Floor Location Options (Attribute ID 4)
     $floorLocationOptions = \App\Models\AttributeOption::where('attribute_id', 4)
         ->orderBy('sort_order', 'asc')
         ->get()
-        ->map(fn($o) => [
+        ->map(fn ($o) => [
             'id' => 'floor-'.$o->id,
             'label' => $o->value,
-            'value' => $o->value
+            'value' => $o->value,
         ]);
 
     // Floor Count Options (Attribute ID 5)
     $floorCountOptions = \App\Models\AttributeOption::where('attribute_id', 5)
         ->orderBy('sort_order', 'asc')
         ->get()
-        ->map(fn($o) => [
+        ->map(fn ($o) => [
             'id' => 'floorcount-'.$o->id,
             'label' => $o->value,
-            'value' => $o->value
+            'value' => $o->value,
         ]);
 
     return Inertia::render('ilanlar', [
@@ -678,45 +680,57 @@ Route::get('/ilanlar', function (\Illuminate\Http\Request $request) {
 
 Route::get('/ilanlar/{id}', function ($id) {
     $listing = \App\Models\Listing::with([
-        'address.province', 
-        'address.district', 
+        'address.province',
+        'address.district',
         'address.neighborhood',
-        'user', 
+        'user',
         'attributes.attribute.group',
         'attributes.option',
-        'photos'
+        'photos',
     ])->findOrFail($id);
 
     // Ungrouped Features (Group ID is null)
     $nonGroupedFeatures = $listing->attributes
-        ->filter(fn($a) => $a->attribute && $a->attribute->data_type === \App\Models\Attribute::TYPE_BOOLEAN && !$a->attribute->attribute_group_id)
-        ->map(fn($a) => $a->attribute->name . ': ' . ($a->value_bool ? 'Evet' : 'Hayır'))
+        ->filter(fn ($a) => $a->attribute && $a->attribute->data_type === \App\Models\Attribute::TYPE_BOOLEAN && ! $a->attribute->attribute_group_id)
+        ->map(fn ($a) => $a->attribute->name.': '.($a->value_bool ? 'Evet' : 'Hayır'))
         ->values()
         ->toArray();
 
     // Grouped Features (Group ID is not null)
     $groupedFeatures = $listing->attributes
         ->filter(function ($a) {
-            if (!$a->attribute || !$a->attribute->attribute_group_id) return false;
-            if ($a->attribute->data_type === \App\Models\Attribute::TYPE_BOOLEAN) return true;
-            if ($a->attribute->data_type === \App\Models\Attribute::TYPE_STRING) return !empty($a->value_string);
-            if ($a->attribute->data_type === \App\Models\Attribute::TYPE_INTEGER) return !is_null($a->value_int);
-            if ($a->attribute->data_type === \App\Models\Attribute::TYPE_SELECT) return !empty($a->attribute_option_id);
+            if (! $a->attribute || ! $a->attribute->attribute_group_id) {
+                return false;
+            }
+            if ($a->attribute->data_type === \App\Models\Attribute::TYPE_BOOLEAN) {
+                return true;
+            }
+            if ($a->attribute->data_type === \App\Models\Attribute::TYPE_STRING) {
+                return ! empty($a->value_string);
+            }
+            if ($a->attribute->data_type === \App\Models\Attribute::TYPE_INTEGER) {
+                return ! is_null($a->value_int);
+            }
+            if ($a->attribute->data_type === \App\Models\Attribute::TYPE_SELECT) {
+                return ! empty($a->attribute_option_id);
+            }
+
             return false;
         })
-        ->groupBy(fn($a) => $a->attribute->group?->name ?? 'Diğer')
-        ->map(fn($group, $key) => [
+        ->groupBy(fn ($a) => $a->attribute->group?->name ?? 'Diğer')
+        ->map(fn ($group, $key) => [
             'group' => $key,
             'features' => $group->map(function ($a) {
-                $value = match($a->attribute->data_type) {
+                $value = match ($a->attribute->data_type) {
                     \App\Models\Attribute::TYPE_BOOLEAN => $a->value_bool ? 'Evet' : 'Hayır',
                     \App\Models\Attribute::TYPE_STRING => $a->value_string,
                     \App\Models\Attribute::TYPE_INTEGER => $a->value_int,
                     \App\Models\Attribute::TYPE_SELECT => $a->option?->value,
                     default => '-'
                 };
-                return $a->attribute->name . ': ' . $value;
-            })->values()->toArray()
+
+                return $a->attribute->name.': '.$value;
+            })->values()->toArray(),
         ])
         ->values()
         ->toArray();
@@ -724,11 +738,18 @@ Route::get('/ilanlar/{id}', function ($id) {
     // dd($groupedFeatures);
 
     // Helper to get attribute value
-    $getAttrValue = function($listing, $attrId) {
-        $attr = $listing->attributes->first(fn($a) => $a->attribute_id === $attrId);
-        if (!$attr) return null;
-        if ($attr->attribute->data_type === \App\Models\Attribute::TYPE_SELECT) return $attr->option?->value;
-        if ($attr->attribute->data_type === \App\Models\Attribute::TYPE_BOOLEAN) return $attr->value_bool ? 'Evet' : 'Hayır';
+    $getAttrValue = function ($listing, $attrId) {
+        $attr = $listing->attributes->first(fn ($a) => $a->attribute_id === $attrId);
+        if (! $attr) {
+            return null;
+        }
+        if ($attr->attribute->data_type === \App\Models\Attribute::TYPE_SELECT) {
+            return $attr->option?->value;
+        }
+        if ($attr->attribute->data_type === \App\Models\Attribute::TYPE_BOOLEAN) {
+            return $attr->value_bool ? 'Evet' : 'Hayır';
+        }
+
         return $attr->value_string ?? $attr->value_int;
     };
 
@@ -736,20 +757,20 @@ Route::get('/ilanlar/{id}', function ($id) {
     $galleryImages = collect();
     // Add main photo
     if ($listing->main_photo_path) {
-        $url = config('app.url') . "/storage/listings/{$listing->id}/" . $listing->main_photo_path;
+        $url = config('app.url')."/storage/listings/{$listing->id}/".$listing->main_photo_path;
         $galleryImages->push([
             'large' => $url,
             'thumb' => $url, // Ideally should have thumb version
-            'alt' => $listing->title
+            'alt' => $listing->title,
         ]);
     }
     // Add other photos
-    foreach($listing->photos as $photo) {
-        $url = config('app.url') . "/storage/listings/{$listing->id}/" . $photo->photo_path;
+    foreach ($listing->photos as $photo) {
+        $url = config('app.url')."/storage/listings/{$listing->id}/".$photo->photo_path;
         $galleryImages->push([
             'large' => $url,
             'thumb' => $url,
-            'alt' => $listing->title
+            'alt' => $listing->title,
         ]);
     }
     // Fallback if empty
@@ -757,34 +778,34 @@ Route::get('/ilanlar/{id}', function ($id) {
         $galleryImages->push([
             'large' => 'https://placehold.co/800x600?text=No+Image',
             'thumb' => 'https://placehold.co/200x150?text=No+Image',
-            'alt' => 'No Image'
+            'alt' => 'No Image',
         ]);
     }
 
     // Prepare Details
     $detailItems = [
-        ['label' => 'm² (Brüt)', 'value' => (string)($getAttrValue($listing, 15) ?? $listing->area ?? '-')],
-        ['label' => 'm² (Net)', 'value' => (string)($getAttrValue($listing, 16) ?? $listing->net_area ?? '-')],
-        ['label' => 'Oda Sayısı', 'value' => (string)($getAttrValue($listing, 3) ?? '-')],
-        ['label' => 'Kat Sayısı', 'value' => (string)($getAttrValue($listing, 5) ?? '-')],
-        ['label' => 'Bina Yaşı', 'value' => (string)($getAttrValue($listing, 1) ?? '-')],
-        ['label' => 'Bulunduğu Kat', 'value' => (string)($getAttrValue($listing, 4) ?? '-')],
-        ['label' => 'Isıtma', 'value' => (string)($getAttrValue($listing, 7) ?? '-')], // Assuming ID 7 is Heating
+        ['label' => 'm² (Brüt)', 'value' => (string) ($getAttrValue($listing, 15) ?? $listing->area ?? '-')],
+        ['label' => 'm² (Net)', 'value' => (string) ($getAttrValue($listing, 16) ?? $listing->net_area ?? '-')],
+        ['label' => 'Oda Sayısı', 'value' => (string) ($getAttrValue($listing, 3) ?? '-')],
+        ['label' => 'Kat Sayısı', 'value' => (string) ($getAttrValue($listing, 5) ?? '-')],
+        ['label' => 'Bina Yaşı', 'value' => (string) ($getAttrValue($listing, 1) ?? '-')],
+        ['label' => 'Bulunduğu Kat', 'value' => (string) ($getAttrValue($listing, 4) ?? '-')],
+        ['label' => 'Isıtma', 'value' => (string) ($getAttrValue($listing, 7) ?? '-')], // Assuming ID 7 is Heating
     ];
 
     // Filter out null/dash values if desired, or keep them.
-    
+
     // Append Ungrouped Features to Detail Items
-    foreach($nonGroupedFeatures as $feature) {
+    foreach ($nonGroupedFeatures as $feature) {
         $detailItems[] = ['label' => 'Özellik', 'value' => $feature];
     }
 
     // Prepare Agent Profile
     $agentProfile = [
-        'name' => $listing->user ? $listing->user->name . ' ' . $listing->user->surname : 'Silinmiş Üye',
+        'name' => $listing->user ? $listing->user->name.' '.$listing->user->surname : 'Silinmiş Üye',
         'role' => 'Gayrimenkul Danışmanı', // Could be dynamic
-        'avatarUrl' => $listing->user && $listing->user->profile_photo_path 
-            ? config('app.url') . '/storage/' . $listing->user->profile_photo_path 
+        'avatarUrl' => $listing->user && $listing->user->profile_photo_path
+            ? config('app.url').'/storage/'.$listing->user->profile_photo_path
             : 'https://placehold.co/100x100?text=Agent',
         'phone' => $listing->user?->phone_number ?? '-',
         'email' => $listing->user?->email ?? '-',
@@ -805,10 +826,10 @@ Route::get('/ilanlar/{id}', function ($id) {
             'id' => $listing->id,
             'title' => $listing->title,
             'description' => $listing->description,
-            'price' => number_format($listing->price, 0, ',', '.') . ' TL',
+            'price' => number_format($listing->price, 0, ',', '.').' TL',
             'date' => optional($listing->created_at)->translatedFormat('d F Y') ?? '-',
-            'location' => ($listing->address?->district?->name ?? '') . ' / ' . ($listing->address?->province?->name ?? ''),
-            'fullLocation' => ($listing->address?->neighborhood?->name ?? '') . ', ' . ($listing->address?->district?->name ?? '') . ', ' . ($listing->address?->province?->name ?? ''),
+            'location' => ($listing->address?->district?->name ?? '').' / '.($listing->address?->province?->name ?? ''),
+            'fullLocation' => ($listing->address?->neighborhood?->name ?? '').', '.($listing->address?->district?->name ?? '').', '.($listing->address?->province?->name ?? ''),
             'features' => $groupedFeatures,
             'nonGroupedFeatures' => $nonGroupedFeatures,
             'neighborhood' => $listing->address?->neighborhood?->name,
@@ -820,12 +841,12 @@ Route::get('/ilanlar/{id}', function ($id) {
         'agentProfile' => $agentProfile,
         'breadcrumbs' => $breadcrumbs,
         // Passing placeholders for sections not yet fully dynamic
-        'similarListings' => [], 
+        'similarListings' => [],
         'locationInfo' => [ // This could be dynamic if we had POI data
             ['label' => 'İl', 'value' => $listing->address?->province?->name ?? '-'],
             ['label' => 'İlçe', 'value' => $listing->address?->district?->name ?? '-'],
             ['label' => 'Mahalle', 'value' => $listing->address?->neighborhood?->name ?? '-'],
-        ] 
+        ],
     ]);
 })->name('ilanlar.show');
 
@@ -833,7 +854,7 @@ Route::get('/admin/login', function (Request $request) {
     $user = $request->user();
 
     if ($user) {
-        if ($user->is_admin) {
+        if ($user->isAdmin()) {
             return redirect()->route('admin.dashboard');
         }
 
@@ -872,9 +893,9 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
                 ->map(fn ($listing) => [
                     'id' => $listing->id,
                     'title' => $listing->title,
-                    'price' => number_format($listing->price, 0, ',', '.') . ' ₺',
-                    'location' => $listing->district . '/' . $listing->city,
-                    'owner' => $listing->user ? $listing->user->name . ' ' . $listing->user->surname : 'Silinmiş Üye',
+                    'price' => number_format($listing->price, 0, ',', '.').' ₺',
+                    'location' => $listing->district.'/'.$listing->city,
+                    'owner' => $listing->user ? $listing->user->name.' '.$listing->user->surname : 'Silinmiş Üye',
                     'date' => optional($listing->created_at)->format('d.m.Y') ?? '-',
                 ]);
 
@@ -888,7 +909,7 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
                     'subject_type' => class_basename($activity->subject_type),
                     'subject_id' => $activity->subject_id,
                     'subject_name' => match (class_basename($activity->subject_type)) {
-                        'User' => $activity->subject?->name . ' ' . $activity->subject?->surname,
+                        'User' => $activity->subject?->name.' '.$activity->subject?->surname,
                         'Office', 'ContactMessage', 'BoardMember', 'SupervisoryBoardMember', 'ChamberTeam', 'RegionalManager' => $activity->subject?->name,
                         'Faq' => $activity->subject?->question,
                         'BankAccount' => $activity->subject?->bank_name,
@@ -899,7 +920,7 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
                         'ChairmanMessage' => 'Yönetim Kurulu Başkanımız',
                         default => $activity->subject?->title ?? 'Silinmiş Kayıt',
                     },
-                    'causer_name' => trim($activity->causer ? $activity->causer->name . ' ' . $activity->causer->surname : 'Sistem'),
+                    'causer_name' => trim($activity->causer ? $activity->causer->name.' '.$activity->causer->surname : 'Sistem'),
                     'created_at' => $activity->created_at->diffForHumans(),
                     'properties' => $activity->properties,
                     'event' => $activity->event,
@@ -990,7 +1011,7 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
             ->name('spotlights.reorder');
         Route::resource('spotlights', SpotlightController::class)
             ->parameters(['spotlights' => 'spotlight']);
-            
+
         Route::resource('iletisim', \App\Http\Controllers\Admin\ContactMessageController::class)
             ->parameters(['iletisim' => 'contactMessage'])
             ->only(['index', 'show', 'destroy']);
@@ -1057,7 +1078,7 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
                     'subject_type' => class_basename($activity->subject_type),
                     'subject_id' => $activity->subject_id,
                     'subject_name' => match (class_basename($activity->subject_type)) {
-                        'User' => $activity->subject?->name . ' ' . $activity->subject?->surname,
+                        'User' => $activity->subject?->name.' '.$activity->subject?->surname,
                         'Office', 'ContactMessage', 'BoardMember', 'SupervisoryBoardMember', 'ChamberTeam', 'RegionalManager' => $activity->subject?->name,
                         'Faq' => $activity->subject?->question,
                         'BankAccount' => $activity->subject?->bank_name,
@@ -1068,7 +1089,7 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
                         'ChairmanMessage' => 'Yönetim Kurulu Başkanımız',
                         default => $activity->subject?->title ?? 'Silinmiş Kayıt',
                     },
-                    'causer_name' => trim($activity->causer ? $activity->causer->name . ' ' . $activity->causer->surname : 'Sistem'),
+                    'causer_name' => trim($activity->causer ? $activity->causer->name.' '.$activity->causer->surname : 'Sistem'),
                     'created_at' => $activity->created_at->diffForHumans(),
                     'properties' => $activity->properties,
                     'event' => $activity->event,
@@ -1090,7 +1111,7 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(
 // });
 
 Route::get('/test', function () {
-    return "testa";
+    return 'testa';
 })->name('test');
 
 Route::get('/manset/{slug}', function (string $slug) {

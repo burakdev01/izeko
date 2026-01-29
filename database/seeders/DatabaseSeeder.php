@@ -7,6 +7,7 @@ use App\Models\Announcement;
 use App\Models\BlogPost;
 use App\Models\HeroSlide;
 use App\Models\LiveStream;
+use App\Models\SystemRole;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -20,6 +21,11 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
+        $adminRole = SystemRole::firstOrCreate(
+            ['role_key' => SystemRole::ADMIN_ROLE_KEY],
+            ['name' => 'Admin'],
+        );
+
         User::firstOrCreate(
             ['email' => 'test@example.com'],
             [
@@ -29,15 +35,16 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        User::firstOrCreate(
+        $adminUser = User::firstOrCreate(
             ['email' => 'admin@example.com'],
             [
                 'name' => 'Admin User',
                 'password' => 'password',
-                'is_admin' => true,
                 'email_verified_at' => now(),
             ]
         );
+
+        $adminUser->systemRoles()->syncWithoutDetaching([$adminRole->id]);
 
         Activity::firstOrCreate(
             [
