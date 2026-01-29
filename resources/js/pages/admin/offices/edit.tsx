@@ -1,17 +1,22 @@
-import AdminFormHeader from '@/components/admin/admin-form-header';
+// import AdminFormHeader from '@/components/admin/admin-form-header'; // Removed layout changes
+
 import InputError from '@/components/input-error';
-import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import Combobox from '@/components/ui/combobox';
+import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import AdminLayout from '@/layouts/admin-layout';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import axios from 'axios';
+import { ArrowLeft, Save } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 type Office = {
@@ -85,192 +90,241 @@ export default function OfficeEdit({ office, provinces }: OfficeEditProps) {
     };
 
     return (
-        <AdminLayout title="Ofis Düzenle">
+        <AdminLayout>
             <Head title="Ofis Düzenle" />
 
-            <form onSubmit={submit} className="space-y-6">
-                <AdminFormHeader
-                    title="Ofis Düzenle"
-                    description="Ofis bilgilerini güncelleyin."
-                    submitLabel="Güncelle"
-                    cancelHref="/admin/ofisler"
-                    processing={processing}
-                />
-
-                <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
-                    <div className="grid grid-cols-1 gap-6 p-6">
-                        <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">
-                                Ofis Adı
-                            </label>
-                            <input
-                                type="text"
-                                value={data.name}
-                                onChange={(e) =>
-                                    setData('name', e.target.value)
-                                }
-                                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition outline-none focus:border-transparent focus:ring-2 focus:ring-[#da1f25]"
-                            />
-                            <InputError
-                                className="mt-2"
-                                message={errors.name}
-                            />
+            <div className="container mx-auto space-y-8 py-8 md:py-10">
+                {/* Header Section */}
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <div>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <Link
+                                href={route('admin.ofisler.index')}
+                                className="flex items-center hover:text-foreground"
+                            >
+                                <ArrowLeft className="mr-1 h-4 w-4" />
+                                Ofisler
+                            </Link>
+                            <span>/</span>
+                            <span>Düzenle</span>
                         </div>
-
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                            <div className="space-y-2">
-                                <Label>İl</Label>
-                                <Select
-                                    value={String(data.address.province_id)}
-                                    onValueChange={(val) => {
-                                        setData('address', {
-                                            ...data.address,
-                                            province_id: val,
-                                            district_id: '',
-                                            neighborhood_id: '',
-                                        });
-                                        setDistricts([]);
-                                        setNeighborhoods([]);
-                                    }}
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="İl seçiniz" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {provinces.map((province) => (
-                                            <SelectItem
-                                                key={province.id}
-                                                value={String(province.id)}
-                                            >
-                                                {province.name}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="space-y-2">
-                                <Label>İlçe</Label>
-                                <Select
-                                    value={String(data.address.district_id)}
-                                    onValueChange={(val) => {
-                                        setData('address', {
-                                            ...data.address,
-                                            district_id: val,
-                                            neighborhood_id: '',
-                                        });
-                                        setNeighborhoods([]);
-                                    }}
-                                    disabled={!data.address.province_id}
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="İlçe seçiniz" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {districts.map((district) => (
-                                            <SelectItem
-                                                key={district.id}
-                                                value={String(district.id)}
-                                            >
-                                                {district.name}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Mahalle</Label>
-                                <Select
-                                    value={String(data.address.neighborhood_id)}
-                                    onValueChange={(val) =>
-                                        setData('address', {
-                                            ...data.address,
-                                            neighborhood_id: val,
-                                        })
-                                    }
-                                    disabled={!data.address.district_id}
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Mahalle seçiniz" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {neighborhoods.map((neighborhood) => (
-                                            <SelectItem
-                                                key={neighborhood.id}
-                                                value={String(neighborhood.id)}
-                                            >
-                                                {neighborhood.name}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
-
-                        <div>
-                            <Label className="mb-2 block">Açık Adres</Label>
-                            <Textarea
-                                value={data.address.description}
-                                onChange={(e) =>
-                                    setData('address', {
-                                        ...data.address,
-                                        description: e.target.value,
-                                    })
-                                }
-                                rows={3}
-                                className="w-full resize-none"
-                                placeholder="Cadde, sokak, bina ve kapı no..."
-                            />
-                            {/* Display errors for nested address fields if any, checking for flat keys if returned by Laravel validation */}
-                            {/* @ts-ignore */}
-                            <InputError
-                                className="mt-2"
-                                message={errors['address.description']}
-                            />
-                        </div>
-
-                        <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">
-                                Durum
-                            </label>
-                            <div className="flex space-x-4">
-                                <label className="flex cursor-pointer items-center space-x-2">
-                                    <input
-                                        type="radio"
-                                        name="is_active"
-                                        checked={data.is_active === true}
-                                        onChange={() =>
-                                            setData('is_active', true)
-                                        }
-                                        className="h-4 w-4 border-gray-300 text-[#da1f25] focus:ring-[#da1f25]"
-                                    />
-                                    <span className="text-sm text-gray-700">
-                                        Aktif
-                                    </span>
-                                </label>
-
-                                <label className="flex cursor-pointer items-center space-x-2">
-                                    <input
-                                        type="radio"
-                                        name="is_active"
-                                        checked={data.is_active === false}
-                                        onChange={() =>
-                                            setData('is_active', false)
-                                        }
-                                        className="h-4 w-4 border-gray-300 text-[#da1f25] focus:ring-[#da1f25]"
-                                    />
-                                    <span className="text-sm text-gray-700">
-                                        Pasif
-                                    </span>
-                                </label>
-                            </div>
-                            <InputError
-                                className="mt-2"
-                                message={errors.is_active}
-                            />
-                        </div>
+                        <h1 className="mt-2 text-3xl font-bold tracking-tight">
+                            Ofis Düzenle
+                        </h1>
+                        <p className="text-muted-foreground">
+                            Ofis bilgilerini ve durumunu güncelleyin.
+                        </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Button
+                            variant="outline"
+                            onClick={() => window.history.back()}
+                            disabled={processing}
+                        >
+                            İptal
+                        </Button>
+                        <Button
+                            onClick={submit}
+                            disabled={processing}
+                            className="bg-[#da1f25] hover:bg-[#b0181d]"
+                        >
+                            <Save className="mr-2 h-4 w-4" />
+                            Kaydet
+                        </Button>
                     </div>
                 </div>
-            </form>
+
+                <form onSubmit={submit}>
+                    <div className="grid min-h-[500px] gap-8 py-6 lg:grid-cols-12">
+                        {/* Main Content - Left Column */}
+                        <div className="lg:col-span-8">
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle className="text-xl">
+                                        Ofis Bilgileri
+                                    </CardTitle>
+                                    <CardDescription>
+                                        Ofisin temel bilgileri ve adres
+                                        detayları.
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-6">
+                                    {/* Office Name */}
+                                    <div>
+                                        <Label className="mb-2 block">
+                                            Ofis Adı
+                                        </Label>
+                                        <input
+                                            type="text"
+                                            value={data.name}
+                                            onChange={(e) =>
+                                                setData('name', e.target.value)
+                                            }
+                                            className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 transition outline-none focus:border-transparent focus:ring-2 focus:ring-[#da1f25]"
+                                            placeholder="Örn: Merkez Ofis"
+                                        />
+                                        <InputError
+                                            className="mt-2"
+                                            message={errors.name}
+                                        />
+                                    </div>
+
+                                    {/* Address Fields */}
+                                    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                                        <div className="space-y-2">
+                                            <Label>İl</Label>
+                                            <Combobox
+                                                options={provinces}
+                                                value={String(
+                                                    data.address.province_id,
+                                                )}
+                                                onChange={(val) => {
+                                                    setData('address', {
+                                                        ...data.address,
+                                                        province_id: val,
+                                                        district_id: '',
+                                                        neighborhood_id: '',
+                                                    });
+                                                    setDistricts([]);
+                                                    setNeighborhoods([]);
+                                                }}
+                                                placeholder="İl seçiniz"
+                                                searchPlaceholder="İl ara..."
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>İlçe</Label>
+                                            <Combobox
+                                                options={districts}
+                                                value={String(
+                                                    data.address.district_id,
+                                                )}
+                                                onChange={(val) => {
+                                                    setData('address', {
+                                                        ...data.address,
+                                                        district_id: val,
+                                                        neighborhood_id: '',
+                                                    });
+                                                    setNeighborhoods([]);
+                                                }}
+                                                disabled={
+                                                    !data.address.province_id
+                                                }
+                                                placeholder="İlçe seçiniz"
+                                                searchPlaceholder="İlçe ara..."
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>Mahalle</Label>
+                                            <Combobox
+                                                options={neighborhoods}
+                                                value={String(
+                                                    data.address
+                                                        .neighborhood_id,
+                                                )}
+                                                onChange={(val) =>
+                                                    setData('address', {
+                                                        ...data.address,
+                                                        neighborhood_id: val,
+                                                    })
+                                                }
+                                                disabled={
+                                                    !data.address.district_id
+                                                }
+                                                placeholder="Mahalle seçiniz"
+                                                searchPlaceholder="Mahalle ara..."
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <Label className="mb-2 block">
+                                            Açık Adres
+                                        </Label>
+                                        <Textarea
+                                            value={data.address.description}
+                                            onChange={(e) =>
+                                                setData('address', {
+                                                    ...data.address,
+                                                    description: e.target.value,
+                                                })
+                                            }
+                                            rows={3}
+                                            className="w-full resize-none"
+                                            placeholder="Cadde, sokak, bina ve kapı no..."
+                                        />
+                                        {/* @ts-ignore */}
+                                        <InputError
+                                            className="mt-2"
+                                            message={
+                                                errors['address.description']
+                                            }
+                                        />
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
+
+                        {/* Side Panel - Right Column */}
+                        <div className="space-y-6 lg:col-span-4">
+                            {/* Status Card */}
+                            <Card
+                                className={
+                                    data.is_active
+                                        ? 'border-l-4 border-l-green-500'
+                                        : 'border-l-4 border-l-gray-400'
+                                }
+                            >
+                                <CardHeader className="pb-3">
+                                    <div className="flex items-center justify-between">
+                                        <CardTitle className="text-base text-muted-foreground">
+                                            Ofis Durumu
+                                        </CardTitle>
+                                        {data.is_active ? (
+                                            <Badge className="border-green-200 bg-green-100 text-green-700 hover:bg-green-100">
+                                                Aktif
+                                            </Badge>
+                                        ) : (
+                                            <Badge className="border-gray-200 bg-gray-100 text-gray-700 hover:bg-gray-100">
+                                                Pasif
+                                            </Badge>
+                                        )}
+                                    </div>
+                                    <CardDescription className="text-xs">
+                                        Ofisin sistem üzerindeki görünürlüğünü
+                                        yönetin.
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label>Durum Değiştir</Label>
+                                        <Combobox
+                                            value={data.is_active ? '1' : '0'}
+                                            onChange={(val) =>
+                                                setData(
+                                                    'is_active',
+                                                    val === '1',
+                                                )
+                                            }
+                                            options={[
+                                                { id: '1', name: 'Aktif' },
+                                                { id: '0', name: 'Pasif' },
+                                            ]}
+                                            placeholder="Durum Seçiniz"
+                                            searchPlaceholder="Ara..."
+                                            hideSearch={true}
+                                        />
+                                        <InputError
+                                            className="mt-2"
+                                            message={errors.is_active}
+                                        />
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </AdminLayout>
     );
 }

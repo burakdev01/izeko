@@ -7,14 +7,8 @@ import {
     CollapsibleContent,
     CollapsibleTrigger,
 } from '@/components/ui/collapsible';
+import Combobox from '@/components/ui/combobox';
 import { PaginatedData, Pagination } from '@/components/ui/pagination-custom';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
 import { Link, router } from '@inertiajs/react';
 import { ChevronDown } from 'lucide-react';
 import { useMemo, useState } from 'react';
@@ -696,64 +690,43 @@ const LocationSelects = ({
         <div className="mb-6 flex flex-col gap-3 pb-5">
             <h3 className="mb-1 text-[18px] text-[#d92025]">Konum</h3>
 
-            <Select
+            <Combobox
                 value={provId}
-                onValueChange={(val) => onToggle(`province-${val}`)}
-            >
-                <SelectTrigger className="w-full bg-white">
-                    <SelectValue placeholder="İl Seçiniz" />
-                </SelectTrigger>
-                <SelectContent>
-                    {locations.map((loc) => (
-                        <SelectItem
-                            key={loc.id}
-                            value={loc.id.replace('province-', '')}
-                        >
-                            {loc.label}
-                        </SelectItem>
-                    ))}
-                </SelectContent>
-            </Select>
+                onChange={(val) => onToggle(`province-${val}`)}
+                options={locations.map((loc) => ({
+                    id: loc.id.replace('province-', ''),
+                    name: loc.label,
+                }))}
+                placeholder="İl Seçiniz"
+                searchPlaceholder="İl Ara..."
+                className="w-full"
+            />
 
-            <Select
+            <Combobox
                 value={distId}
-                onValueChange={(val) => onToggle(`district-${val}`)}
+                onChange={(val) => onToggle(`district-${val}`)}
+                options={districts.map((dist) => ({
+                    id: dist.id.replace('district-', ''),
+                    name: dist.label,
+                }))}
+                placeholder="İlçe Seçiniz"
+                searchPlaceholder="İlçe Ara..."
                 disabled={!provId}
-            >
-                <SelectTrigger className="w-full bg-white">
-                    <SelectValue placeholder="İlçe Seçiniz" />
-                </SelectTrigger>
-                <SelectContent>
-                    {districts.map((dist) => (
-                        <SelectItem
-                            key={dist.id}
-                            value={dist.id.replace('district-', '')}
-                        >
-                            {dist.label}
-                        </SelectItem>
-                    ))}
-                </SelectContent>
-            </Select>
+                className="w-full"
+            />
 
-            <Select
+            <Combobox
                 value={neighId}
-                onValueChange={(val) => onToggle(`neighborhood-${val}`)}
+                onChange={(val) => onToggle(`neighborhood-${val}`)}
+                options={neighborhoods.map((neigh) => ({
+                    id: neigh.id.replace('neighborhood-', ''),
+                    name: neigh.label,
+                }))}
+                placeholder="Mahalle Seçiniz"
+                searchPlaceholder="Mahalle Ara..."
                 disabled={!distId}
-            >
-                <SelectTrigger className="w-full bg-white">
-                    <SelectValue placeholder="Mahalle Seçiniz" />
-                </SelectTrigger>
-                <SelectContent>
-                    {neighborhoods.map((neigh) => (
-                        <SelectItem
-                            key={neigh.id}
-                            value={neigh.id.replace('neighborhood-', '')}
-                        >
-                            {neigh.label}
-                        </SelectItem>
-                    ))}
-                </SelectContent>
-            </Select>
+                className="w-full"
+            />
         </div>
     );
 };

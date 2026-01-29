@@ -56,18 +56,37 @@ class OfficeController extends Controller
 
     public function create()
     {
-        return Inertia::render('admin/offices/create');
+        return Inertia::render('admin/offices/create', [
+            'provinces' => Province::select('id', 'name')->orderBy('name')->get(),
+        ]);
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'address' => 'required|string',
+            'address' => 'required|array',
+            'address.province_id' => 'required|exists:provinces,id',
+            'address.district_id' => 'required|exists:districts,id',
+            'address.neighborhood_id' => 'required|exists:neighborhoods,id',
+            'address.description' => 'required|string', 
             'is_active' => 'boolean',
         ]);
 
-        Office::create($validated);
+        $addressData = $validated['address'];
+
+        $office = Office::create([
+            'name' => $validated['name'],
+            'is_active' => $validated['is_active'],
+            'address' => $addressData['description'],
+        ]);
+
+        $office->address()->create([
+            'province_id' => $addressData['province_id'],
+            'district_id' => $addressData['district_id'],
+            'neighborhood_id' => $addressData['neighborhood_id'],
+            'description' => $addressData['description'],
+        ]);
 
         return redirect()->route('admin.ofisler.index');
     }
