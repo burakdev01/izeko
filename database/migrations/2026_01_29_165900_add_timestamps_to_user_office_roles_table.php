@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('user_offices', function (Blueprint $table) {
-            if (!Schema::hasColumn('user_offices', 'created_at')) {
-                $table->timestamps();
-            }
+        Schema::table('user_office_roles', function (Blueprint $table) {
+            $table->timestamps();
         });
     }
 
@@ -23,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('user_offices', function (Blueprint $table) {
+        Schema::table('user_office_roles', function (Blueprint $table) {
             $table->dropTimestamps();
         });
     }
